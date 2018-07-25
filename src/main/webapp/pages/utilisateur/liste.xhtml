@@ -1,0 +1,107 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+    <f:metadata>
+    </f:metadata>
+
+    <ui:define name="title" >#{msg['iw.listeutilisateurs']}</ui:define>
+    <ui:define name="subheader" >#{msg['iw.listeutilisateurs']}</ui:define>
+    <ui:define name="content">
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <h:form>
+                            <p:dataTable emptyMessage="#{iw.utilisateur.aucunutilisateutrouve}" value="#{userController.userList}" var="user" id="usersList" paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10,50,100"
+                                         rows="10"
+                                         draggableRows="true">
+
+                                <f:facet name="header">
+                                    <p:button value="#{msg['iw.button.ajouter']}" outcome="userForm" />
+                                </f:facet>
+                                <p:column style="width:50px;">
+                                    <p:graphicImage  style="height: 40px;"  rendered="#{!user.pictureSet}" url="/resources/img/avatar.png" />
+                                    <p:graphicImage  style="height: 40px;"  rendered="#{user.pictureSet}" value="#{fileController.avatar}">
+                                        <f:param name="user" value="#{user.id}" />
+                                    </p:graphicImage>
+                                </p:column>
+                                <p:column headerText="#{msg['iw.utilisateur.identifiant']}"  >
+                                    <p:link  outcome="userDetails" value="#{user.id}">
+                                        <f:param name="user" value="#{user.id}" />
+                                    </p:link>
+                                </p:column>
+
+                                <p:column headerText="#{msg['iw.utilisateur.prenom']}"  >
+                                    <p:link  outcome="userDetails" value="#{user.firstName}">
+                                        <f:param name="user" value="#{user.id}" />
+                                    </p:link>
+                                </p:column>
+
+                                <p:column headerText="#{msg['iw.utilisateur.nom']}"  >
+                                    <p:link  outcome="userDetails" value="#{user.lastName}">
+                                        <f:param name="user" value="#{user.id}" />
+                                    </p:link>
+                                </p:column>
+                                <p:column headerText="#{msg['iw.utilisateur.email']}"  >
+                                    <p:link href="mailto:#{user.email}" value="#{user.email}">
+                                    </p:link>
+                                </p:column>
+                                <p:column headerText="#{msg['iw.utilisateur.actif']}"  >
+                                    <p:outputLabel value="#{msg['iw.boolean.oui']}" rendered="#{userController.isUserActive(user.id)}" />
+                                    <p:outputLabel value="#{msg['iw.boolean.non']}" rendered="#{!userController.isUserActive(user.id)}" />
+                                </p:column>
+                                <p:column style="width: 60px !important; margin: 0 auto !important;">
+                                    <p:menuButton value="#{msg['iw.button.actions']}"
+												  styleClass="ui-button-icon-only">
+                                        <p:menuitem  value="#{msg['iw.utilisateur.modifier']}" outcome="userForm">
+                                            <f:param name="user" value="#{user.id}" />
+                                        </p:menuitem>
+                                        <p:menuitem rendered="#{userController.isUserActive(user.id)}" value="#{msg['iw.utilisateur.desactiver']}" actionListener="#{userController.disable()}" update="usersList">
+                                            <f:param name="user" value="#{user.id}" />
+                                            <p:confirm   header="#{msg['iw.confirmation.titre']}" message="#{msg['iw.message.voulezvouscontinuer']}" icon="fa fa-warning" />
+                                        </p:menuitem>
+                                        <p:menuitem rendered="#{!userController.isUserActive(user.id)}"  value="#{msg['iw.utilisateur.activer']}" actionListener="#{userController.enable()}" update="usersList">
+                                            <f:param name="user" value="#{user.id}" />
+                                        </p:menuitem>
+                                        <p:menuitem  value="#{msg['iw.utilisateur.supprimer']}" actionListener="#{userController.remove()}" update="usersList">
+                                            <f:param name="user" value="#{user.id}" />
+                                            <p:confirm   header="#{msg['iw.confirmation.titre']}" message="#{msg['iw.message.voulezvouscontinuer']}" icon="fa fa-warning" />
+                                        </p:menuitem>
+                                        <sec:authorize access="hasRole('ROLE_SUPER_ADMIN')">
+                                            <p:separator />
+                                            <p:menuitem   value="#{msg['iw.utilisateur.authentifier']}" actionListener="#{userController.login()}" update="usersList">
+                                                <f:param name="user" value="#{user.id}" />
+                                            </p:menuitem>
+                                        </sec:authorize>
+                                    </p:menuButton>
+                                </p:column>
+
+
+                            </p:dataTable>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ui:remove>
+            <div class="Container20 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect HeiAutoOnMobile">
+                            <ui:include src="../templates/processList.xhtml" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:remove>
+    </ui:define>
+</ui:composition>

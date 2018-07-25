@@ -1,0 +1,125 @@
+<ui:composition
+
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+
+    #{taskController.registerTemplate('candidats','Candidats',fn:split('rhCandidatList',',') )}
+	<f:verbatim>
+		<style>
+			.entityList th{
+				white-space: normal !important;
+			}
+		</style>
+	</f:verbatim>
+    <p:dataTable id="rhCandidatTemplate" rowIndexVar="rowId" var="rhCandidatItem" value="#{candidats.rhCandidatList}" styleClass="entityList" scrollable="true" scrollWidth="100%">
+
+        <f:facet name="header">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col center">
+                    <p:commandButton style="width: 225px"
+                                     actionListener = "#{candidats.addCandidat}"
+                                     value			= "Ajouter un candidat"
+                                     ajax  			= "true"
+                                     label			= "Ajouter un candidat"
+                                     update			="rhCandidatTemplate"
+                                     icon			= "ui-icon-plusthick"
+                                     disabled="#{!formWrapper.value.isWritable}"
+                                     >
+                    </p:commandButton>
+                </div>
+            </div>
+        </f:facet>
+
+
+        <p:column width="43" rendered="#{formWrapper.value.isWritable}">
+            <p:commandButton
+							 actionListener ="#{candidats.deleteCandidat(rowId)}"
+                             update="rhCandidatTemplate"
+                             icon="fa fa-times"
+                             title="Delete">
+            </p:commandButton>
+        </p:column>
+		<p:column headerText="Civilité" width="50">
+			<p:selectOneMenu value="#{rhCandidatItem.idCivilite}" filterMatchMode="contains" caseSensitive="false"
+							 disabled="#{candidats.greaterThan(6,candidats.taskNumber)}">
+				<f:selectItem itemLabel="Mr" itemValue="Mr" />
+				<f:selectItem itemLabel="Mme" itemValue="Mme" />
+				<f:selectItem itemLabel="Melle" itemValue="Melle" />
+			</p:selectOneMenu>
+		</p:column>
+		<p:column headerText="Prenom" width="100">
+			<p:inputText value="#{rhCandidatItem.prenom}" disabled="#{candidats.greaterThan(6,candidats.taskNumber)}" />
+		</p:column>
+		<p:column headerText="Nom" width="100">
+			<p:inputText value="#{rhCandidatItem.nom}"  disabled="#{candidats.greaterThan(6,candidats.taskNumber)}"  />
+		</p:column>
+		<p:column headerText="Email" width="100">
+			<p:inputText value="#{rhCandidatItem.emailCandidat}"  disabled="#{candidats.greaterThan(6,candidats.taskNumber)}"  />
+		</p:column>
+		<p:column headerText="Téléphone" width="100">
+			<p:inputText value="#{rhCandidatItem.telCandidatMobile1}"  disabled="#{candidats.greaterThan(6,candidats.taskNumber)}"  />
+		</p:column>
+		<p:column headerText="Cv rattaché" style="text-align: center" width="100">
+			<p:commandButton
+				actionListener ="#{candidats.selectCurrentObj(rowId)}"
+				ajax 			= "true"
+				update     = "@(.cvDialog)"
+				oncomplete 	= "PF('cvDialog').show()"
+				process 		= "@this"
+				icon="fa fa-eye">
+			</p:commandButton>
+		</p:column>
+		<p:column headerText="Date reception candidature" width="100">
+			<p:calendar value="#{rhCandidatItem.dateReceptionCandidature}" mode="Popup"  disabled="#{candidats.greaterThan(6,candidats.taskNumber)}" pattern="dd/MM/yyyy">
+			</p:calendar>
+		</p:column>
+		<p:column headerText="est sélectionné pour un entretiens" style="text-align: center" width="100">
+			<p:selectBooleanCheckbox value="#{rhCandidatItem.stSelectionPourEntretien}"  disabled="#{candidats.greaterThan(7,candidats.taskNumber)}"  />
+		</p:column>
+		<p:column headerText="Date et heure entretiens souhaité" width="150">
+			<p:calendar value="#{rhCandidatItem.dateEntretienSouhaitee}" mode="Popup"  disabled="#{candidats.greaterThan(7,candidats.taskNumber)}"  pattern="dd/MM/yyyy HH:mm">
+			</p:calendar>
+		</p:column>
+		<p:column headerText="classement candidat" width="100">
+			<p:spinner value="#{rhCandidatItem.classementCandidat}" min="1" max="100"  disabled="#{candidats.greaterThan(7,candidats.taskNumber)}"  />
+		</p:column>
+		<!--<p:column headerText="salaire souhaité" width="100">
+			<p:inputText value="#{rhCandidatItem.salaireSouhaiteCandidat}"  disabled="#{candidats.greaterThan(7,candidats.taskNumber)}"  />
+		</p:column>-->
+		<p:column headerText="confirmation proposition" style="text-align: center" width="100">
+			<p:selectBooleanCheckbox value="#{rhCandidatItem.confirmationProposition}"  disabled="#{candidats.greaterThan(10,candidats.taskNumber)}"  />
+		</p:column>
+    </p:dataTable>
+
+	<p:dialog id="cvDialog" widgetVar="cvDialog" styleClass="cvDialog" closable="true" draggable="true" closeOnEscape="true" dynamic="true"
+			 height="200" width="800" maximizable="false" modal="true"
+			  resizable="false" showEffect="fold" responsive="true" >
+		<p:fieldset id="upload" widgetVar="upload" styleClass="upload">
+			<p:fileUpload
+				fileUploadListener="#{candidats.handleUploadedFile}"
+				mode="advanced"
+				fileLimit="1"
+				update="upload"
+				disabled="#{candidats.greaterThan(6,candidats.taskNumber)}" />
+
+			<ui:repeat var="ot" value="#{candidats.currentObj.cv.iwFileList}">
+				<div>
+					<p:commandButton process="@this" value="#{ot.iwName}" icon="fa fa-download" ajax="false">
+						<p:fileDownload value="#{candidats.downloadFile(ot)}" contentDisposition="attachment" transient="true" >
+
+						</p:fileDownload>
+					</p:commandButton>
+					<p:commandButton process="@this" action="#{candidats.removeFile()}" value="#{msg['iw.button.supprimer']}" icon="fa fa-remove " ajax="true" update="@(.upload)"  disabled="#{candidats.greaterThan(6,candidats.taskNumber)}" />
+				</div>
+			</ui:repeat>
+		</p:fieldset>
+	</p:dialog>
+
+
+</ui:composition>

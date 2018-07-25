@@ -1,0 +1,106 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+
+    <ui:define name="title">
+        #{msg['iw.licence.licensedetails']}
+    </ui:define>
+    <ui:define name="subheader">
+        #{msg['iw.licence.licensedetails']}
+    </ui:define>
+    <ui:define name="content">
+        <p:messages id="notifs"  autoUpdate="true"/>
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <p:panelGrid columns="2" styleClass="Wid100">
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.numero']}" />
+                            <p:outputLabel value="#{licenseController.currentIwLicense.iwLicenseId}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.fichier']}" />
+                            <p:outputLabel value="#{licenseController.currentIwLicense.iwFileName}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.date']}" />
+                            <p:outputLabel value="#{licenseController.currentIwLicense.iwDate}">
+
+                            </p:outputLabel>
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.active']}" />
+                            <p:outputLabel value="#{msg['iw.boolean.oui']}" rendered="#{licenseController.currentIwLicense.iwActive}" />
+                            <p:outputLabel value="#{msg['iw.boolean.non']}" rendered="#{!licenseController.currentIwLicense.iwActive}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.produit']}" />
+                            <p:outputLabel value="#{licenseController.currentLicense.subject}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.cle']}" />
+                            <p:outputLabel value="#{licenseController.currentLicense.productKey}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.holder']}" />
+                            <p:outputLabel value="#{licenseController.currentLicense.holder}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.email']}" />
+                            <p:outputLabel value="#{licenseController.currentLicense.issuer}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.dateexpiration']}" />
+                            <p:outputLabel value="#{licenseController.expirationDate}" >
+                                <f:converter binding="#{dateConverter}" />
+                                <f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+                            </p:outputLabel>
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.licencemoduletableaubord']}" />
+                            <p:outputLabel value="#{msg['iw.boolean.oui']}" rendered="#{licenseController.hasModuleDashboard}" />
+                            <p:outputLabel value="#{msg['iw.boolean.non']}" rendered="#{!licenseController.hasModuleDashboard}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.licencemoduledocument']}" />
+                            <p:outputLabel value="#{msg['iw.boolean.oui']}" rendered="#{licenseController.hasModuleDocument}" />
+                            <p:outputLabel value="#{msg['iw.boolean.non']}" rendered="#{!licenseController.hasModuleDocument}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.licencemoduleconcepteurformulaire']}" />
+                            <p:outputLabel value="#{msg['iw.boolean.oui']}" rendered="#{licenseController.hasModuleFormBuilder}" />
+                            <p:outputLabel value="#{msg['iw.boolean.non']}" rendered="#{!licenseController.hasModuleFormBuilder}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.licencemoduleldap']}" />
+                            <p:outputLabel value="#{msg['iw.boolean.oui']}" rendered="#{licenseController.hasModuleLdap}" />
+                            <p:outputLabel value="#{msg['iw.boolean.non']}" rendered="#{!licenseController.hasModuleLdap}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.licencemodulemobile']}" />
+                            <p:outputLabel value="#{msg['iw.boolean.oui']}" rendered="#{licenseController.hasModuleMobile}" />
+                            <p:outputLabel value="#{msg['iw.boolean.non']}" rendered="#{!licenseController.hasModuleMobile}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.licencemodulemodeler']}" />
+                            <p:outputLabel value="#{msg['iw.boolean.oui']}" rendered="#{licenseController.hasModuleModeler}" />
+                            <p:outputLabel value="#{msg['iw.boolean.non']}" rendered="#{!licenseController.hasModuleModeler}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.licencemodulewebservice']}" />
+                            <p:outputLabel value="#{msg['iw.boolean.oui']}" rendered="#{licenseController.hasModuleWebService}" />
+                            <p:outputLabel value="#{msg['iw.boolean.non']}" rendered="#{!licenseController.hasModuleWebService}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.nombreutilisateurs']}" />
+                            <p:outputLabel value="#{licenseController.maxUsersNumber}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.nombreutilisateurssimultanes']}" />
+                            <p:outputLabel value="#{licenseController.maxSimultaneousUsersNumber}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.nombreutilisateursmobile']}" />
+                            <p:outputLabel value="#{licenseController.maxMobileUsersNumber}" />
+
+                            <p:outputLabel value="#{msg['iw.licence.licensedetails.nombreutilisateursmobilesimultanes']}" />
+                            <p:outputLabel value="#{licenseController.maxMobileSimultaneousUsersNumber}" />
+                        </p:panelGrid>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </ui:define>
+</ui:composition>
+
+

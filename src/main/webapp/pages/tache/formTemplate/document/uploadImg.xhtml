@@ -1,0 +1,46 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+	#{taskController.registerTemplate('imageController','ImageController',fn:split('',',') )}
+
+	<h:form >
+
+		<h:panelGrid  columns="2" style="margin:10px 0" cellpadding="5" id="imgGrid">
+			<p:outputLabel for="doc" value="Document : " />
+			<p:selectOneMenu id="doc" value="#{imageController.selectedDoc}" style="width:150px" required="true" requiredMessage="Veuillez choisir un document" label="Document">
+				<p:ajax listener="#{imageController.onDocSelect}" update="imgGrid" />
+				<f:selectItem itemLabel="Sélectionnez Document" itemValue="" noSelectionOption="true" />
+				<f:selectItems value="#{documentController.docList}" var="d" itemValue="#{d}" itemLabel="#{d}" />
+			</p:selectOneMenu>
+
+			<p:outputLabel for="find" value="Placeholder:" />
+			<p:selectOneMenu id="find" value="#{imageController.toFind}" style="width:150px" required="true" requiredMessage="Veuillez choisir un placeholder" label="Document">
+				<f:selectItem itemLabel="Sélectionnez Placeholder" itemValue="" noSelectionOption="true" />
+				<f:selectItems value="#{imageController.imagesPlaceholders}" var="p" itemValue="#{p}" itemLabel="#{p}" />
+			</p:selectOneMenu>
+
+		</h:panelGrid>
+
+
+		<h:panelGrid  style="margin-bottom:10px">
+		<p:messages autoUpdate="true" />
+		<p:fileUpload mode="advanced"
+					  dragDropSupport="true"
+					  label="#{msg['iw.document.load']}"
+					  allowTypes="/(\.|\/)(gif|jpe?g|png|psd)$/"
+					  skinSimple="true"
+					  sizeLimit="1048576"
+					  fileUploadListener="#{imageController.handleFileUpload}"  />
+		</h:panelGrid>
+
+		<p:commandButton value="Valider"  action="#{imageController.doAddImageToDocx()}" icon="ui-icon-check" />
+
+	</h:form>
+
+</ui:composition>

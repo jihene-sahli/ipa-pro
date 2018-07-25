@@ -1,0 +1,81 @@
+<ui:composition
+
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+
+    #{taskController.registerTemplate('annonces','Annonces',fn:split('rhAnnonceRecrutementList',',') )}
+
+    <p:dataTable id="rhAnnonceRecrutementTemplate" rowIndexVar="rowId" var="rhAnnonceRecrutementItem" value="#{annonces.rhAnnonceRecrutementList}" styleClass="entityList">
+
+        <f:facet name="header">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col center">
+                    <p:commandButton style="width: 225px"
+                                     actionListener = "#{annonces.addAnnonce}"
+                                     value			= "Ajouter une annonce"
+                                     ajax  			= "true"
+                                     label			= "Ajouter une annonce"
+                                     update			="rhAnnonceRecrutementTemplate"
+                                     icon			= "ui-icon-plusthick"
+                                     disabled="#{!formWrapper.value.isWritable}"
+                                     >
+                    </p:commandButton>
+                </div>
+            </div>
+        </f:facet>
+
+
+        <p:column width="4%" rendered="#{formWrapper.value.isWritable}">
+            <p:commandButton
+							 actionListener ="#{annonces.deleteAnnonce(rowId)}"
+                             update="rhAnnonceRecrutementTemplate"
+                             icon="fa fa-times"
+                             title="Delete">
+            </p:commandButton>
+        </p:column>
+		<p:column headerText="intitulé">
+			<p:inputText value="#{rhAnnonceRecrutementItem.intitule}" disabled="#{!formWrapper.value.isWritable}" />
+		</p:column>
+		<p:column headerText="Référence">
+			<p:inputText value="#{rhAnnonceRecrutementItem.reference}" disabled="#{!formWrapper.value.isWritable}" />
+		</p:column>
+		<p:column headerText="Nombre de poste">
+			<p:spinner value="#{rhAnnonceRecrutementItem.nombrePoste}" min="0" max="100" disabled="#{!formWrapper.value.isWritable}" />
+		</p:column>
+		<p:column headerText="Type de contrat">
+			<p:selectOneMenu value="#{rhAnnonceRecrutementItem.idTypeContrat}" disabled="#{!formWrapper.value.isWritable}" >
+				<f:selectItem itemLabel="CDD" itemValue="CDD" />
+				<f:selectItem itemLabel="CDI" itemValue="CDI" />
+				<f:selectItem itemLabel="Autres" itemValue="Autres" />
+			</p:selectOneMenu>
+		</p:column>
+		<p:column headerText="Lieu de travail">
+			<p:inputText value="#{rhAnnonceRecrutementItem.lieuDeTravail}" disabled="#{!formWrapper.value.isWritable}" />
+		</p:column>
+		<p:column headerText="Date de création">
+			<p:calendar value="#{rhAnnonceRecrutementItem.dateCreation}" mode="Popup" disabled="#{!formWrapper.value.isWritable}" >
+			</p:calendar>
+		</p:column>
+		<p:column headerText="Date de fin">
+			<p:calendar value="#{rhAnnonceRecrutementItem.dateFin}" mode="Popup" disabled="#{!formWrapper.value.isWritable}" >
+			</p:calendar>
+		</p:column>
+		<p:column headerText="Texte annonce"  style="text-align: center">
+					<p:commandButton type="button" onclick="PF(#{rowId}).show();" value="Voir" title="View">
+					</p:commandButton>
+
+					<p:dialog widgetVar="#{rowId}" closable="true" draggable="true" closeOnEscape="true" dynamic="true" maximizable="false" modal="true"
+							  resizable="true" showEffect="fold" responsive="true" width="800px">
+						<p:inputTextarea value="#{rhAnnonceRecrutementItem.texteAnnonce}" disabled="#{!formWrapper.value.isWritable}" rows="6" cols="33" />
+					</p:dialog>
+
+		</p:column>
+
+    </p:dataTable>
+</ui:composition>

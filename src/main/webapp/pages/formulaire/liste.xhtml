@@ -1,0 +1,113 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+    <f:metadata>
+    </f:metadata>
+
+    <ui:define name="title">#{msg['iw.formulaire.liste']}</ui:define>
+    <ui:define name="subheader">#{msg['iw.formulaire.liste']}</ui:define>
+    <ui:define name="content">
+        <h:form>
+            <div class="Container100 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect">
+                            <p:messages autoUpdate="true" />
+                            <p:fileUpload update="formList"
+                                          mode="advanced" multiple="true" dragDropSupport="true"
+                                          label="#{msg['iw.formulaire.ajouterformulaire']}"
+                                          fileLimit="5"
+                                          allowTypes="/(\.|\/)(xml)$/"
+                                          skinSimple="true"
+                                          sizeLimit="1048576"
+                                          fileUploadListener="#{formController.uploadForm}" />
+                        </div>
+                    </div>
+                </div>
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect">
+
+
+                            <p:dataTable value="#{formController.formList}"
+                                         var="form"
+                                         id="formList"
+                                         paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10,50,100"
+                                         draggableRows="true">
+
+                                <p:ajax event="rowReorder" listener="#{formController.onRowReorder}" update="formList" />
+
+                                <f:facet name="header">
+                                    <p:commandButton value="#{msg['iw.button.ajouter']}" icon="fa fa-plus"  action="#{formController.createNewForm}" ajax="false" />
+                                </f:facet>
+
+                                <p:column  width="4%" style="text-align: center !important;" class="dtHandle">
+                                    <i class="fa fa-fw Fs20"></i>
+                                </p:column>
+                                <p:column  width="15%" headerText="#{msg['iw.formulaire.numero']}" filterBy="#{form.iwFormId}" filterMatchMode="contains">
+                                    <p:link  href="#{navigationController.getFormEditUrl(form.iwFormId)}" value="#{form.iwFormId}">
+                                    </p:link>
+                                </p:column>
+                                <p:column width="40%" headerText="#{msg['iw.formulaire.name']}" filterBy="#{form.iwName}" filterMatchMode="contains">
+                                    <p:link  href="#{navigationController.getFormEditUrl(form.iwFormId)}" value="#{form.iwName}">
+                                    </p:link>
+                                </p:column>
+                                <p:column headerText="#{msg['iw.formulaire.datecreation']}" filterBy="#{form.iwCreateTime}" filterMatchMode="contains">
+                                    <p:outputLabel value="#{form.iwCreateTime}">
+                                        <f:converter binding="#{dateConverter}" />
+                                        <f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{msg['iw.formulaire.datemaj']}" filterBy="#{form.iwLastUpdateTime}" filterMatchMode="contains">
+                                    <p:outputLabel value="#{form.iwLastUpdateTime}">
+                                        <f:converter binding="#{dateConverter}" />
+                                        <f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column style="width: 60px !important; margin: 0 auto !important;">
+                                    <p:menuButton value="#{msg['iw.button.actions']}"
+												  styleClass="ui-button-icon-only">
+                                        <p:menuitem  value="#{msg['iw.formulaire.modifier']}" url="#{navigationController.getFormEditUrl(form.iwFormId)}">
+                                        </p:menuitem>
+                                        <p:menuitem update="formList" value="#{msg['iw.model.supprimer']}" actionListener="#{formController.delete}">
+                                            <f:param name="form" value="#{form.iwFormId}" />
+                                            <p:confirm   header="#{msg['iw.confirmation.titre']}" message="#{msg['iw.message.voulezvouscontinuer']}" icon="fa fa-warning" />
+                                        </p:menuitem>
+                                        <p:menuitem value="#{msg['iw.formulaire.copier']}" actionListener="#{formController.copy}">
+                                            <f:param name="form" value="#{form.iwFormId}" />
+                                        </p:menuitem>
+                                        <p:menuitem  ajax="false" value="#{msg['iw.formulaire.exporter']}">
+                                            <p:fileDownload value="#{fileController.exportForm(form.iwFormId)}">
+                                            </p:fileDownload>
+                                        </p:menuitem>
+                                    </p:menuButton>
+                                </p:column>
+                            </p:dataTable>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+        <ui:remove>
+            <div class="Container20 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect HeiAutoOnMobile">
+                            <ui:include src="../templates/processList.xhtml" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:remove>
+    </ui:define>
+</ui:composition>

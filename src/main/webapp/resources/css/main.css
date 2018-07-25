@@ -1,0 +1,61 @@
+.ui-datatable-data .ui-inputfield, .ui-fieldset .ui-inputfield, .ui-fieldset .ui-autocomplete, .ui-panelgrid-cell .ui-inputfield{
+    width: 95% !important;
+}
+.ui-selectonemenu{
+    width: 90% !important;
+}
+.ui-selectonemenu-label{
+    width: 90% !important;
+}
+.hide-column-names table thead tr {
+    display: none;
+}
+.round-img{
+    border-radius: 50%;
+}
+table.radio-check > tbody > tr:first-child > td:first-child{
+    width:10%;
+}
+.table-scroll {
+    text-align:center;
+    vertical-align:middle;
+    table-layout:fixed;
+}
+.table-scroll td{
+    text-align:center;
+    vertical-align:middle;
+}
+.table-scroll-wrapper {
+    overflow-x:scroll;
+    overflow-y:visible;
+    width:100%;
+}
+.table-scroll input{
+    width:100px;
+}
+
+#stickyTitle {
+	padding: 4px 10px;
+	font-weight: bold;
+	text-decoration-style: solid;
+	z-index: 150!important;;
+}
+#stickyTitle.ui-sticky {
+	margin-top: 60px;
+}
+
+.GrayModena #stickyTitle {
+	background-color: #37474F;
+}
+.BlueModena #stickyTitle {
+	background-color: #0277BD;
+}
+.IndigoModena #stickyTitle {
+	background-color: #283593;
+}
+.RedModena #stickyTitle {
+	background-color: #CC2E45;
+}
+.CyanModena #stickyTitle {
+	background-color: #00838F;
+}

@@ -1,0 +1,569 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core"
+				template="../templates/modena/template.xhtml"
+				xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+				xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<f:metadata>
+		<f:viewParam name="process" value="#{taskController.procDefKey}"/>
+	</f:metadata>
+	<ui:define name="title">#{msg['iw.mestaches']} #{taskController.procTitle}</ui:define>
+	<ui:define name="subheader">
+		#{msg['iw.mestaches']}
+	</ui:define>
+	<ui:define name="content">
+		<f:verbatim>
+			<style type="text/css">
+				.ui-datatable table, .ui-datatable-resizable table {
+					table-layout: auto !important;
+				}
+
+				.ui-datatable-scrollable table {
+					table-layout: fixed !important;
+				}
+			</style>
+		</f:verbatim>
+		<div class="Container100 Responsive100">
+			<div class="Container100">
+				<div class="ContainerIndent">
+					<div class="Card ShadowEffect">
+						<h:form id="taskForm">
+							<p:tabView activeIndex="#{navigationController.indexActiveApp}" dynamic="true" cache="true">
+								<p:ajax event="tabChange" listener="#{navigationController.updateTabIndexApp}"/>
+								<p:tab title="Tous"
+									   rendered="#{navigationController.userApplicationList.size()>1 or empty navigationController.userApplicationList}">
+									<p:menubar>
+										<p:menuitem value="#{msg['iw.mestaches']}" icon="fa fa-inbox"
+													outcome="taskList"/>
+										<p:menuitem value="#{msg['iw.tacheimplique']}" icon="fa fa-street-view"
+													outcome="taskList"
+													rendered="#{navigationController.displayInvolvedTasks}">
+											<f:param name="view" value="involved"/>
+										</p:menuitem>
+										<p:menuitem value="#{msg['iw.tacherecuperable']}" icon="fa fa-cart-plus"
+													outcome="taskList">
+											<f:param name="view" value="queue"/>
+										</p:menuitem>
+										<p:menuitem value="#{msg['iw.tachearchive']}" icon="fa fa-archive"
+													outcome="taskList"
+													rendered="#{navigationController.displayCompletedTasks}">
+											<f:param name="view" value="archive"/>
+										</p:menuitem>
+									</p:menubar>
+									<p:dataTable styleClass="taskListStyleClass"
+												 rendered="#{taskController.view!='archive' and taskController.view!='standalone'}"
+												 emptyMessage="#{iw.tache.message.tache.aucunetachetrouve}"
+												 value="#{taskController.taskList}" var="task" paginator="true"
+												 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+												 rowsPerPageTemplate="10,50,100"
+												 rows="10"
+												 resizableColumns="true">
+										<p:column headerText="#{msg['iw.tache.idinstanceprocess']}"
+												  width="15%" filterBy="#{task.processInstanceId}"
+												  filterMatchMode="contains"
+												  sortBy="#{task.processInstanceId}"
+												  rendered="#{navigationController.displayFolderNumber()}">
+											<h:outputLabel value="#{task.processInstanceId}"
+														   rendered="#{taskController.view=='queue'}"></h:outputLabel>
+											<p:link outcome="processInstanceDetails" value="#{task.processInstanceId}"
+													rendered="#{taskController.view!='queue'}">
+												<h:outputLabel value="#{task.processInstanceId}"/>
+												<f:param name="instance" value="#{task.processInstanceId}"/>
+											</p:link>
+										</p:column>
+										<p:column headerText="#{msg['iw.tache.numero']}"
+												  filterBy="#{task.id}"
+												  width="15%" filterMatchMode="contains"
+												  sortBy="#{navigationController.taskController.convertLongToString(task.id)}"
+												  rendered="#{navigationController.displayTaskNumber()}">
+											<h:outputLabel value="#{task.id}"
+														   rendered="#{taskController.view=='queue'}"></h:outputLabel>
+											<p:link outcome="taskForm" value="#{task.id}"
+													rendered="#{taskController.view!='queue'}">
+												<f:param name="task" value="#{task.id}"/>
+											</p:link>
+										</p:column>
+										<p:column headerText="#{msg['iw.tache.tache']}" width="50%"
+												  filterBy="#{task.name}" filterMatchMode="contains"
+												  sortBy="#{task.name}">
+											<h:outputLabel value="#{task.name}"
+														   rendered="#{taskController.view=='queue'}"></h:outputLabel>
+											<p:link outcome="taskForm" value="#{task.name}"
+													rendered="#{taskController.view!='queue'}">
+												<f:param name="task" value="#{task.id}"/>
+											</p:link>
+										</p:column>
+										<p:column headerText="#{msg['iw.tache.dateajout']}"
+												  filterBy="#{task.createTime}" filterMatchMode="contains"
+												  sortBy="#{task.createTime}">
+											<p:outputLabel value="#{task.createTime}">
+												<f:converter binding="#{dateConverter}"/>
+												<f:attribute name="format"
+															 value="#{navigationController.longDateFormat}"/>
+												<f:attribute name="timezone"
+															 value="#{navigationController.getLoggedInUserDetails().iwTimeZone}"/>
+											</p:outputLabel>
+										</p:column>
+										<p:column rendered="#{taskController.view=='queue'}">
+											<p:commandButton value="#{msg['iw.tache.recuperer']}"
+															 action="#{taskController.claim(task.id)}"
+															 update="@(.taskListStyleClass)"/>
+										</p:column>
+									</p:dataTable>
+								</p:tab>
+								<c:forEach items="#{navigationController.userApplicationList}" var="app"
+										   varStatus="status">
+									<c:set var="listProcessApp"
+										   value="#{navigationController.getLastProcDefListByAppKey(app.iwKey)}"/>
+									<p:tab title="#{app.iwName}" rendered="#{not empty listProcessApp}">
+										<p:tabView activeIndex="#{navigationController.indexActiveProcess}"
+												   dynamic="true" cache="true">
+											<p:ajax event="tabChange"
+													listener="#{navigationController.updateTabIndexProcess}"/>
+											<p:tab title="Tous" rendered="#{listProcessApp.size()>1}">
+												<p:menubar>
+													<p:menuitem value="#{msg['iw.mestaches']}" icon="fa fa-inbox"
+																outcome="taskList"/>
+													<p:menuitem value="#{msg['iw.tacheimplique']}"
+																icon="fa fa-street-view"
+																outcome="taskList"
+																rendered="#{navigationController.displayInvolvedTasks}">
+														<f:param name="view" value="involved"/>
+													</p:menuitem>
+													<p:menuitem value="#{msg['iw.tacherecuperable']}"
+																icon="fa fa-cart-plus"
+																outcome="taskList">
+														<f:param name="view" value="queue"/>
+													</p:menuitem>
+													<p:menuitem value="#{msg['iw.tachearchive']}" icon="fa fa-archive"
+																outcome="taskList"
+																rendered="#{navigationController.displayCompletedTasks}">
+														<f:param name="view" value="archive"/>
+													</p:menuitem>
+												</p:menubar>
+												<p:dataTable styleClass="taskListStyleClass"
+															 rendered="#{taskController.view!='archive' and taskController.view!='standalone'}"
+															 emptyMessage="#{iw.tache.message.tache.aucunetachetrouve}"
+															 value="#{taskController.taskApp.get(app.iwKey)}" var="task"
+															 paginator="true"
+															 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+															 rowsPerPageTemplate="10,50,100"
+															 rows="10"
+															 resizableColumns="true">
+
+
+													<p:column headerText="#{msg['iw.tache.idinstanceprocess']}"
+															  width="15%" filterBy="#{task.processInstanceId}"
+															  filterMatchMode="contains"
+															  sortBy="#{task.processInstanceId}"
+															  rendered="#{navigationController.displayFolderNumber()}">
+														<h:outputLabel value="#{task.processInstanceId}"
+																	   rendered="#{taskController.view=='queue'}"></h:outputLabel>
+														<p:link outcome="processInstanceDetails"
+																value="#{task.processInstanceId}"
+																rendered="#{taskController.view!='queue'}">
+															<h:outputLabel value="#{task.processInstanceId}"/>
+															<f:param name="instance" value="#{task.processInstanceId}"/>
+														</p:link>
+													</p:column>
+													<p:column headerText="#{msg['iw.tache.numero']}"
+															  filterBy="#{task.id}"
+															  width="15%" filterMatchMode="contains"
+															  sortBy="#{navigationController.taskController.convertLongToString(task.id)}"
+															  rendered="#{navigationController.displayTaskNumber()}">
+														<h:outputLabel value="#{task.id}"
+																	   rendered="#{taskController.view=='queue'}"></h:outputLabel>
+														<p:link outcome="taskForm" value="#{task.id}"
+																rendered="#{taskController.view!='queue'}">
+															<f:param name="task" value="#{task.id}"/>
+														</p:link>
+													</p:column>
+													<p:column headerText="#{msg['iw.tache.tache']}" width="50%"
+															  filterBy="#{task.name}" filterMatchMode="contains"
+															  sortBy="#{task.name}">
+														<h:outputLabel value="#{task.name}"
+																	   rendered="#{taskController.view=='queue'}"></h:outputLabel>
+														<p:link outcome="taskForm" value="#{task.name}"
+																rendered="#{taskController.view!='queue'}">
+															<f:param name="task" value="#{task.id}"/>
+														</p:link>
+													</p:column>
+													<p:column headerText="#{msg['iw.tache.dateajout']}"
+															  filterBy="#{task.createTime}" filterMatchMode="contains"
+															  sortBy="#{task.createTime}">
+														<p:outputLabel value="#{task.createTime}">
+															<f:converter binding="#{dateConverter}"/>
+															<f:attribute name="format"
+																		 value="#{navigationController.longDateFormat}"/>
+															<f:attribute name="timezone"
+																		 value="#{navigationController.getLoggedInUserDetails().iwTimeZone}"/>
+														</p:outputLabel>
+													</p:column>
+													<p:column rendered="#{taskController.view=='queue'}">
+														<p:commandButton value="#{msg['iw.tache.recuperer']}"
+																		 action="#{taskController.claim(task.id)}"
+																		 update="@(.taskListStyleClass)"/>
+													</p:column>
+												</p:dataTable>
+											</p:tab>
+											<c:forEach items="#{listProcessApp}" var="prcDef">
+												<p:tab title="#{(empty prcDef.name) ? prcDef.id : prcDef.name}">
+													<p:menubar>
+														<p:menuitem value="#{msg['iw.mestaches']}" icon="fa fa-inbox"
+																	outcome="taskList"/>
+														<p:menuitem value="#{msg['iw.tacheimplique']}"
+																	icon="fa fa-street-view"
+																	outcome="taskList"
+																	rendered="#{navigationController.displayInvolvedTasks}">
+															<f:param name="view" value="involved"/>
+														</p:menuitem>
+														<p:menuitem value="#{msg['iw.tacherecuperable']}"
+																	icon="fa fa-cart-plus"
+																	outcome="taskList">
+															<f:param name="view" value="queue"/>
+														</p:menuitem>
+														<p:menuitem value="#{msg['iw.tachearchive']}"
+																	icon="fa fa-archive" outcome="taskList"
+																	rendered="#{navigationController.displayCompletedTasks}">
+															<f:param name="view" value="archive"/>
+														</p:menuitem>
+													</p:menubar>
+													<c:set var="varProcessList"
+														   value="#{taskController.getVariableProcessByKeyList(prcDef.key)}"/>
+													<p:dataTable styleClass="taskListStyleClass"
+																 rendered="#{taskController.view!='archive' and taskController.view!='standalone'}"
+																 emptyMessage="#{iw.tache.message.tache.aucunetachetrouve}"
+																 value="#{taskController.tasksMap.get(app.iwKey).get(prcDef.key)}"
+																 var="task" id="taskList" paginator="true"
+																 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+																 rowsPerPageTemplate="10,50,100"
+																 rows="10"
+																 resizableColumns="true">
+														<f:facet name="header">
+															<p:commandButton value="#{msg['iw.button.nouveau']}"
+																			 icon="fa fa-plus"
+																			 rendered="#{navigationController.displayInstanceNameDialog==true and navigationController.showMenuItem(app.iwKey, prcDef.key)}"
+																			 oncomplete="PF('procInstNameDialog').show();"
+																			 ajax="true" process="@this"
+																			 update=":dialogIntancefrm"
+																			 actionListener="#{taskController.selectProcDef(prcDef.id)}"/>
+															<p:commandButton value="#{msg['iw.button.nouveau']}"
+																			 icon="fa fa-plus"
+																			 rendered="#{not navigationController.displayInstanceNameDialog==true and navigationController.showMenuItem(app.iwKey, prcDef.key)}"
+																			 action="#{taskController.startProcess(prcDef.id)}"
+																			 process="@this"/>
+														</f:facet>
+														<p:columns value="#{varProcessList}"
+																   var="column" columnIndexVar="colIndex"
+																   sortBy="#{column.iwInput.label}"
+																   filterBy="#{column.iwInput.label}"
+																   width="#{column.iwColumnSize}"
+																   rendered="#{column.iwColumnTask.iwColumnKey!='process_id' or navigationController.displayFolderNumber()}">
+															<f:facet name="header">
+																<h:outputText value="#{column.iwInput.label}"
+																			  rendered="#{not empty column.iwInput}"/>
+																<h:outputText value="#{msg['iw.tache.numero']}"
+																			  rendered="#{not empty column.iwColumnTask and column.iwColumnTask.iwColumnKey=='task_id'}"/>
+																<h:outputText value="#{msg['iw.tache.tache']}"
+																			  rendered="#{not empty column.iwColumnTask and column.iwColumnTask.iwColumnKey=='task_name'}"/>
+																<h:outputText
+																	value="#{msg['iw.tache.idinstanceprocess']}"
+																	rendered="#{not empty column.iwColumnTask and column.iwColumnTask.iwColumnKey=='process_id'}"/>
+																<h:outputText value="#{msg['iw.tache.dateajout']}"
+																			  rendered="#{not empty column.iwColumnTask and column.iwColumnTask.iwColumnKey=='date_creation'}"/>
+															</f:facet>
+															<p:outputLabel
+																rendered="#{column.iwInput.component=='textInput' and column.iwInput.validation=='string'}"
+																value="#{taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)}"/>
+															<p:outputLabel
+																rendered="#{column.iwInput.component=='textInput' and column.iwInput.validation=='long'}"
+																value="#{taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)}"/>
+															<p:outputLabel
+																rendered="#{column.iwInput.component=='textInput' and column.iwInput.validation=='money'}"
+																value="#{taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)}"/>
+															<p:outputLabel
+																rendered="#{column.iwInput.component=='staticText'}"
+																value="#{column.iwInput.placeholder}"/>
+															<p:outputLabel
+																rendered="#{column.iwInput.component=='dynamicText'}"
+																value="#{taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)}"/>
+															<p:outputLabel
+																rendered="#{column.iwInput.component=='percentage'}"
+																value="#{taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)} %"/>
+
+															<p:outputLabel value="#{msg['iw.boolean.oui']}"
+																		   rendered="#{column.iwInput.component=='checkbox' and taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)==true}"/>
+															<p:outputLabel value="#{msg['iw.boolean.non']}"
+																		   rendered="#{column.iwInput.component=='checkbox' and taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)==false}"/>
+															<p:outputLabel
+																rendered="#{column.iwInput.component=='date' and column.iwInput.dateformat=='Time'}"
+																value="#{taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)}">
+																<f:converter binding="#{dateConverter}"/>
+																<f:attribute name="format"
+																			 value="#{navigationController.longDateFormat}"/>
+																<f:attribute name="timezone"
+																			 value="#{navigationController.getLoggedInUserDetails().iwTimeZone}"/>
+															</p:outputLabel>
+															<p:outputLabel
+																rendered="#{column.iwInput.component=='date' and column.iwInput.dateformat=='Date'}"
+																value="#{taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)}">
+																<f:converter binding="#{dateConverter}"/>
+																<f:attribute name="format"
+																			 value="#{navigationController.longDateFormat}"/>
+																<f:attribute name="timezone"
+																			 value="#{navigationController.getLoggedInUserDetails().iwTimeZone}"/>
+															</p:outputLabel>
+															<p:outputLabel
+																rendered="#{column.iwInput.component=='date' and column.iwInput.dateformat=='Time'}"
+																value="#{taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)}">
+																<f:converter binding="#{dateConverter}"/>
+																<f:attribute name="format"
+																			 value="#{navigationController.longDateFormat}"/>
+																<f:attribute name="timezone"
+																			 value="#{navigationController.getLoggedInUserDetails().iwTimeZone}"/>
+															</p:outputLabel>
+															<p:outputLabel
+																rendered="#{column.iwInput.component=='textInput' and column.iwInput.validation=='date'}"
+																value="#{taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)}">
+																<f:converter binding="#{dateConverter}"/>
+																<f:attribute name="format"
+																			 value="#{navigationController.longDateFormat}"/>
+																<f:attribute name="timezone"
+																			 value="#{navigationController.getLoggedInUserDetails().iwTimeZone}"/>
+															</p:outputLabel>
+															<p:outputLabel
+																rendered="#{column.iwInput.component=='radio'}"
+																value="#{taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)}"/>
+															<p:outputLabel
+																rendered="#{column.iwInput.component=='select'}"
+																value="#{taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)}"/>
+															<p:outputLabel
+																rendered="#{column.iwInput.component=='document'}"
+																value="#{taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)}"/>
+															<p:outputLabel
+																rendered="#{column.iwInput.component=='textArea'}"
+																value="#{fn:substring(taskController.getVariableProcess(task.processInstanceId, column.iwInput.id),0,35)}">
+																<p:tooltip
+																	value="#{taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)}"
+																	for="@parent" style="width:25%"/>
+															</p:outputLabel>
+															<p:outputLabel
+																rendered="#{column.iwInput.component=='registre'}"
+																value="#{taskController.getVariableProcess(task.processInstanceId, column.iwInput.id)}">
+															</p:outputLabel>
+															<p:outputPanel
+																rendered="#{not empty column.iwColumnTask and column.iwColumnTask.iwColumnKey=='task_id'}">
+																<h:outputLabel value="#{task.id}"
+																			   rendered="#{taskController.view=='queue'}"></h:outputLabel>
+																<p:link outcome="taskForm" value="#{task.id}"
+																		rendered="#{taskController.view!='queue'}">
+																	<f:param name="task" value="#{task.id}"/>
+																</p:link>
+															</p:outputPanel>
+															<p:outputPanel
+																rendered="#{not empty column.iwColumnTask and column.iwColumnTask.iwColumnKey=='task_name'}">
+																<h:outputLabel value="#{task.name}"
+																			   rendered="#{taskController.view=='queue'}"></h:outputLabel>
+																<p:link outcome="taskForm" value="#{task.name}"
+																		rendered="#{taskController.view!='queue'}">
+																	<f:param name="task" value="#{task.id}"/>
+																</p:link>
+															</p:outputPanel>
+															<p:outputPanel
+																rendered="#{not empty column.iwColumnTask and column.iwColumnTask.iwColumnKey=='process_id' and navigationController.displayFolderNumber()}">
+																<p:link outcome="processDefinitionDetails"
+																		value="#{taskController.getProcessName(task.processDefinitionId)}"
+																		rendered="#{taskController.view!='queue'}">
+																	<h:outputLabel
+																		value="#{task.processInstanceId}"/>
+																	<f:param name="process"
+																			 value="#{task.processDefinitionId}"/>
+																</p:link>
+																<h:outputLabel rendered="#{taskController.view=='queue'}"
+																	value="#{task.processInstanceId}"/>
+															</p:outputPanel>
+															<p:outputPanel
+																rendered="#{not empty column.iwColumnTask and column.iwColumnTask.iwColumnKey=='date_creation'}">
+																<p:outputLabel value="#{task.createTime}">
+																	<f:converter binding="#{dateConverter}"/>
+																	<f:attribute name="format"
+																				 value="#{navigationController.longDateFormat}"/>
+																	<f:attribute name="timezone"
+																				 value="#{navigationController.getLoggedInUserDetails().iwTimeZone}"/>
+																</p:outputLabel>
+															</p:outputPanel>
+														</p:columns>
+														<p:column headerText="#{msg['iw.tache.idinstanceprocess']}"
+																  width="15%" filterBy="#{task.processInstanceId}"
+																  filterMatchMode="contains"
+																  sortBy="#{task.processInstanceId}"
+																  rendered="#{empty varProcessList and navigationController.displayFolderNumber()}">
+															<h:outputLabel value="#{task.processInstanceId}"
+																		   rendered="#{taskController.view=='queue'}"></h:outputLabel>
+															<p:link outcome="processInstanceDetails"
+																	value="#{task.processInstanceId}"
+																	rendered="#{taskController.view!='queue'}">
+																<h:outputLabel value="#{task.processInstanceId}"/>
+																<f:param name="instance"
+																		 value="#{task.processInstanceId}"/>
+															</p:link>
+														</p:column>
+														<p:column headerText="#{msg['iw.tache.numero']}"
+																  filterBy="#{task.id}"
+																  width="15%" filterMatchMode="contains"
+																  sortBy="#{navigationController.taskController.convertLongToString(task.id)}"
+																  rendered="#{empty varProcessList and navigationController.displayTaskNumber()}">
+															<h:outputLabel value="#{task.id}"
+																		   rendered="#{taskController.view=='queue'}"></h:outputLabel>
+															<p:link outcome="taskForm" value="#{task.id}"
+																	rendered="#{taskController.view!='queue'}">
+																<f:param name="task" value="#{task.id}"/>
+															</p:link>
+														</p:column>
+														<p:column headerText="#{msg['iw.tache.tache']}" width="50%"
+																  filterBy="#{task.name}" filterMatchMode="contains"
+																  sortBy="#{task.name}"
+																  rendered="#{empty varProcessList}">
+															<h:outputLabel value="#{task.name}"
+																		   rendered="#{taskController.view=='queue'}"></h:outputLabel>
+															<p:link outcome="taskForm" value="#{task.name}"
+																	rendered="#{taskController.view!='queue'}">
+																<f:param name="task" value="#{task.id}"/>
+															</p:link>
+														</p:column>
+														<p:column headerText="#{msg['iw.tache.dateajout']}"
+																  filterBy="#{task.createTime}"
+																  filterMatchMode="contains" sortBy="#{task.createTime}"
+																  rendered="#{empty varProcessList}">
+															<p:outputLabel value="#{task.createTime}">
+																<f:converter binding="#{dateConverter}"/>
+																<f:attribute name="format"
+																			 value="#{navigationController.longDateFormat}"/>
+																<f:attribute name="timezone"
+																			 value="#{navigationController.getLoggedInUserDetails().iwTimeZone}"/>
+															</p:outputLabel>
+														</p:column>
+														<p:column rendered="#{taskController.view=='queue'}">
+															<p:commandButton value="#{msg['iw.tache.recuperer']}"
+																			 action="#{taskController.claim(task.id)}"
+																			 update="taskList"/>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+											</c:forEach>
+										</p:tabView>
+									</p:tab>
+								</c:forEach>
+							</p:tabView>
+							<p:menubar rendered="#{taskController.view=='archive'}">
+								<p:menuitem value="#{msg['iw.mestaches']}" icon="fa fa-inbox" outcome="taskList"/>
+								<p:menuitem value="#{msg['iw.tacheimplique']}" icon="fa fa-street-view"
+											outcome="taskList" rendered="#{navigationController.displayInvolvedTasks}">
+									<f:param name="view" value="involved"/>
+								</p:menuitem>
+								<p:menuitem value="#{msg['iw.tacherecuperable']}" icon="fa fa-cart-plus"
+											outcome="taskList">
+									<f:param name="view" value="queue"/>
+								</p:menuitem>
+								<p:menuitem value="#{msg['iw.tachearchive']}" icon="fa fa-archive" outcome="taskList"
+											rendered="#{navigationController.displayCompletedTasks}">
+									<f:param name="view" value="archive"/>
+								</p:menuitem>
+							</p:menubar>
+							<p:dataTable rendered="#{taskController.view=='archive'}"
+										 emptyMessage="#{iw.tache.message.tache.aucunetachetrouve}"
+										 value="#{taskController.archivedTaskList}" var="task" id="archiveTaskList"
+										 paginator="true"
+										 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+										 rowsPerPageTemplate="10,50,100"
+										 rows="10"
+										 draggableRows="true">
+								<p:column headerText="#{msg['iw.tache.idinstanceprocess']}"
+										  filterBy="#{task.processInstanceId}"
+										  filterMatchMode="contains"
+										  sortBy="#{task.processInstanceId}"
+										  rendered="#{navigationController.displayFolderNumber()}">
+									<h:outputLabel value="#{task.processInstanceId}"/>
+								</p:column>
+								<p:column headerText="#{msg['iw.tache.numero']}"
+										  filterBy="#{task.id}"
+										  filterMatchMode="contains"
+										  sortBy="#{navigationController.taskController.convertLongToString(task.id)}"
+										  rendered="#{navigationController.displayTaskNumber()}">
+									<p:outputLabel value="#{task.id}"/>
+								</p:column>
+								<p:column headerText="#{msg['iw.tache.tache']}" filterBy="#{task.name}"
+										  filterMatchMode="contains" sortBy="#{task.name}">
+									<p:outputLabel value="#{task.name}"/>
+								</p:column>
+								<p:column headerText="#{msg['iw.tache.dateajout']}" filterBy="#{task.createTime}"
+										  filterMatchMode="contains" sortBy="#{task.createTime}">
+									<p:outputLabel value="#{task.createTime}">
+										<f:converter binding="#{dateConverter}"/>
+										<f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+										<f:attribute name="timezone"
+													 value="#{navigationController.getLoggedInUserDetails().iwTimeZone}"/>
+									</p:outputLabel>
+								</p:column>
+								<p:column headerText="#{msg['iw.tache.datefin']}" filterBy="#{task.createTime}"
+										  filterMatchMode="contains" sortBy="#{task.createTime}">
+									<p:outputLabel value="#{task.endTime}">
+										<f:converter binding="#{dateConverter}"/>
+										<f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+										<f:attribute name="timezone"
+													 value="#{navigationController.getLoggedInUserDetails().iwTimeZone}"/>
+									</p:outputLabel>
+								</p:column>
+							</p:dataTable>
+							<p:dataTable rendered="#{taskController.view=='standalone'}"
+										 emptyMessage="#{iw.tache.message.tache.aucunetachetrouve}"
+										 value="#{taskController.taskList}" var="task" id="standaloneTaskList"
+										 paginator="true"
+										 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+										 rowsPerPageTemplate="10,50,100"
+										 rows="10">
+								<p:column headerText="#{msg['iw.tache.numero']}" filterBy="#{task.id}"
+										  filterMatchMode="contains"
+										  sortBy="#{navigationController.taskController.convertLongToString(task.id)}">
+									<p:outputLabel value="#{task.id}"/>
+								</p:column>
+								<p:column headerText="#{msg['iw.tache.tache']}" filterBy="#{task.name}"
+										  filterMatchMode="contains" sortBy="#{task.name}">
+									<p:outputLabel value="#{task.name}"/>
+								</p:column>
+								<p:column headerText="#{msg['iw.tache.dateajout']}" filterBy="#{task.createTime}"
+										  filterMatchMode="contains" sortBy="#{task.createTime}">
+									<p:outputLabel value="#{task.createTime}">
+										<f:converter binding="#{dateConverter}"/>
+										<f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+										<f:attribute name="timezone"
+													 value="#{navigationController.getLoggedInUserDetails().iwTimeZone}"/>
+									</p:outputLabel>
+								</p:column>
+							</p:dataTable>
+						</h:form>
+						<p:dialog appendTo="@(body)" modal="true" header="#{msg['iw.taches.nominstance']}"
+								  widgetVar="procInstNameDialog">
+							<h:form id="dialogIntancefrm">
+								<p:panelGrid columns="2">
+									<p:outputLabel value="#{msg['iw.taches.saisirnominstance']}"/>
+									<p:inputText required="true" value="#{taskController.processInstanceName}"
+												 label="#{msg['iw.taches.saisirnominstance']}"/>
+									<p:outputLabel/>
+									<p:outputPanel>
+										<p:commandButton value="#{msg['iw.bouton.valider']}"
+														 action="#{taskController.startProcess(taskController.selectProcessId)}"/>
+										<p:commandButton value="#{msg['iw.bouton.annuler']}"
+														 onclick="PF('procInstNameDialog').hide();" type="reset"/>
+									</p:outputPanel>
+								</p:panelGrid>
+							</h:form>
+						</p:dialog>
+					</div>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

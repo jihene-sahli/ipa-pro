@@ -1,0 +1,70 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+    <f:metadata>
+        <f:viewParam name="notificationId" value="#{notificationController.notificationId}" />
+    </f:metadata>
+
+    <ui:define name="title" >#{msg['iw.action.detailsde']} #{notificationController.iwNotification.name}</ui:define>
+    <ui:define name="subheader" >#{msg['iw.action.detailsde']} #{notificationController.iwNotification.name}</ui:define>
+    <ui:define name="content">
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <p:panel>
+                            <f:facet name="header">
+                                #{userController.user.id}
+                            </f:facet>
+                            <h:form>
+                                <p:panelGrid columns="2" class="Wid100">
+
+                                    <p:outputLabel value="Nom" />
+                                    <p:outputLabel value="#{notificationController.iwNotification.name}" />
+
+									<p:outputLabel value="From" />
+									<p:outputLabel value="#{notificationController.iwNotification.fromName}" />
+
+									<p:outputLabel value="To User" />
+									<p:outputLabel value="#{notificationController.iwNotification.toUser}" />
+
+									<p:outputLabel value="To Role" />
+									<p:outputLabel value="#{notificationController.iwNotification.toRole}" />
+
+									<p:outputLabel value="To Email" />
+									<p:outputLabel value="#{notificationController.iwNotification.toEmail}" />
+
+									<p:outputLabel value="Sujet" />
+									<p:outputLabel value="#{notificationController.iwNotification.subject}" />
+
+									<p:outputLabel value="Message" />
+									<p:outputLabel value="#{notificationController.iwNotification.body}" />
+
+									<p:outputLabel value="Taches" />
+									<p:outputLabel value="#{notificationController.iwNotification.tasks}" />
+
+									<p:outputLabel value="Piece jointe" />
+									<p:outputLabel value="#{notificationController.iwNotification.attachment}" />
+
+									<p:outputLabel  value="Active"  />
+                                    <p:outputLabel rendered="#{notificationController.iwNotification.active==false}" value="#{msg['iw.boolean.non']}" />
+                                    <p:outputLabel rendered="#{notificationController.iwNotification.active==true}" value="#{msg['iw.boolean.oui']}" />
+
+                                </p:panelGrid>
+
+                            </h:form>
+
+                        </p:panel>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

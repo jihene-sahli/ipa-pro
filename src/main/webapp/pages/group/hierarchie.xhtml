@@ -1,0 +1,426 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                template="../templates/modena/template.xhtml">
+    <f:metadata>
+        <f:viewParam name="group" value="#{groupController.userId}" />
+    </f:metadata>
+
+    <ui:define name="title" >#{msg['iw.action.detailsde']} #{groupController.group.id}</ui:define>
+    <ui:param name="orgEntiteOrganisationnelle" value="#{groupController.getOrgEntiteOrganisationnelle()}" />
+    <ui:param name="rhCollaborateur" value="#{groupController.getRhCollaborateur()}" />
+    <ui:param name="rhPosteOccupe" value="#{groupController.getRhPosteOccupe()}" />
+    <ui:param name="users" value="#{groupController.getUser()}" />
+
+    <ui:define name="content">
+        <div class="Container40 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="Container60 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <p:panel>
+                        <h:form id="groupForm">
+                            <p:commandButton action="#{groupController.saveLinks}" onclick="makeArrays()" value="#{msg['iw.button.enregistrer']}"  oncomplete="location.reload()" />
+                            <h:inputHidden id="groupLinks" value="#{groupController.groupLinks}" />
+                            <h:inputHidden id="entiteOrganisationnelLinks" value="#{groupController.entiteOrganisationnelLinks}" />
+                            <h:inputHidden id="collaborateurLinks" value="#{groupController.collaborateurLinks}" />
+                            <!--p:commandButton type="button" icon="ui-icon-zoomout"  onclick="zoomDown()"/>
+                            <p:commandButton type="button" icon="ui-icon-zoomin"  onclick="zoomUp()"/-->
+                            <div id="paper" style="max-width: 1024px;"></div>
+
+                        </h:form>
+
+                    </p:panel>
+					<h:outputStylesheet name="jOrgChart/css/jquery.jOrgChart.css" />
+					<h:outputStylesheet name="jOrgChart/css/custom.css" />
+					<h:outputScript name="jOrgChart/js/jquery.jOrgChart.js" />
+					<h:outputScript name="jOrgChart/js/taffy.js" />
+					<h:outputScript name="jOrgChart/js/jquery.js" />
+					<h:outputScript name="jOrgChart/js/jquery-ui.min.js" />
+
+					<f:verbatim>
+						<script type="text/javascript">
+						//<![CDATA[
+                                                        var zoom = 1;
+							var directions = '#{ fn:replace(orgEntiteOrganisationnelle, "\'", "\\\\\'")}';
+                                                        directions = JSON.parse(directions);
+							var colaborators = '#{ fn:replace(rhCollaborateur, "\'", "\\\\\'")}';
+                                                        colaborators = JSON.parse(colaborators);
+                                                        var postesOccupes = '#{ fn:replace(rhPosteOccupe, "\'", "\\\\\'")}';
+                                                        postesOccupes = JSON.parse(postesOccupes);
+                                                        var act_users = '#{ fn:replace(users, "\'", "\\\\\'")}';
+                                                        act_users = JSON.parse(act_users);
+
+							  var inHerarchy = [];
+							  var outHerarchy = [];
+                                                          var postes = [];
+							  function init() {
+								  for (var i =  0; i < directions.length; i++) {
+									directions[i]["id"] = "d-" + directions[i]["id"];
+									directions[i]["type"] = "d";
+									if(directions[i]["root"]){
+										inHerarchy.push(directions[i]);
+									}else if(directions[i]["parent"] != ""){
+										directions[i]["parent"] = "d-" + directions[i]["parent"];
+										inHerarchy.push(directions[i]);
+									}else{
+										outHerarchy.push(directions[i]);
+										$("#upload-chart").append("<li id='" + directions[i]["id"] + "' class='node child direction'><span class='label_node'><a href='' onclick='return false;'>" + directions[i]["name"] + "</a><br><i>&nbsp;</i></span></li>");
+									}
+								  }
+                                                                  for (var i =  0; i < postesOccupes.length; i++) {
+                                                                    postes[postesOccupes[i]["id"]] = postesOccupes[i]["description"];
+                                                                    $('#edit_node_poste').append('<option value="'+ postesOccupes[i]["id"] +'">'+ postesOccupes[i]["description"] +'</option>');
+                                                                    $('#new_node_poste').append('<option value="'+ postesOccupes[i]["id"] +'">'+ postesOccupes[i]["description"] +'</option>');
+								  }
+                                                                  for (var i =  0; i < act_users.length; i++) {
+                                                                    $('#edit_node_user').append('<option value="'+ act_users[i]["id"] +'">'+ act_users[i]["firstName"] + ' ' + act_users[i]["lastName"] + '</option>');
+                                                                    $('#new_node_user').append('<option value="'+ act_users[i]["id"] +'">'+ act_users[i]["firstName"] + ' ' + act_users[i]["lastName"] + '</option>');
+                                                                  }
+								  for (var i =  0; i < colaborators.length; i++) {
+									colaborators[i]["id"] = "c-" + colaborators[i]["id"];
+									colaborators[i]["type"] = "c";
+									if(colaborators[i]["direction"] != ""){
+										colaborators[i]["parent"] = "d-" + colaborators[i]["direction"];
+										inHerarchy.push(colaborators[i]);
+									}else{
+										outHerarchy.push(colaborators[i]);
+                                                                                var poste = "&nbsp;";
+                                                                                if(colaborators[i]["poste"].length != 0)
+                                                                                    poste = postes[colaborators[i]["poste"]];
+										$("#upload-chart").append("<li id='" + colaborators[i]["id"] + "' class='node child'><span class='label_node nowrapt'><a href='' onclick='return false;'><span class='firstName'>" + colaborators[i]["firstName"] + "</sapn>&nbsp;<span class='lastName'>" + colaborators[i]["lastName"] + "</sapn></a><br><i class='post'>" + poste + "</i>" + "<input type='hidden' name='poste' class='poste' value='" + colaborators[i]['poste'] + "'>" + "<input type='hidden' name='poste' class='poste' value='" + colaborators[i]['actIdUser'] + "'>" + "<div style='display:table;'><img src='" + colaborators[i]["image"] + "' style='height: 52px;width: 45px;background-color: #99A596;'></div></span></li>");
+									}
+								  }
+                                                                  for (var i =  0; i < postesOccupes.length; i++) {
+                                                                    postes[postesOccupes[i]["id"]] = postesOccupes[i]["description"];
+                                                                    $('#edit_node_poste').append('<option value="'+ postesOccupes[i]["id"] +'">'+ postesOccupes[i]["description"] +'</option>');
+								  }
+							  }
+							  // read json and convert to html formate
+							  // Here I am laod the json format to html structure. You no need to do this incase you have order list HTML in you body
+							  //Start Load HTML
+							  function loadjson() {
+								var items = [];
+								var data = TAFFY(inHerarchy);
+
+								data({
+								  "parent": ""
+								}).each(function(record, recordnumber) {
+								  loops(record);
+								});
+								//start loop the json and form the html
+								function loops(root) {
+								  var img ="";
+								  var poste ="&nbsp;";
+                                                                  var poste_hidden ="&nbsp;";
+                                                                  var actIdUser_hidden ="&nbsp;";
+								  var direction = "";
+								  var responsable = "";
+                                                                  var nowrapt ="";
+								  if(root.type == 'c'){
+									img = "<img src='" + root.image + "' style='height: 52px;width: 45px;background-color: #99A596;'>";
+									var name = "<span class='firstName'>" + root.firstName + "</span>&nbsp; <span class='lastName'>" + root.lastName +"</span>"
+                                                                        if(root.poste.length != 0){
+                                                                            poste = postes[root.poste];
+                                                                            poste_hidden = '<input type="hidden" name="poste" class="poste" value="' + root.poste + '">';
+                                                                        }
+                                                                        if(root.responsable)
+                                                                            responsable = "<img src='../../resources/jOrgChart/images/boss.png' class='boss'>";
+                                                                        nowrapt ="nowrapt";
+                                                                        actIdUser_hidden = '<input type="hidden" name="actIdUser" class="actIdUser" value="' + root.actIdUser + '">';
+								  }else{
+									var name = root.name
+									direction = "direction";
+								  }
+
+								  if (root.parent == "") {
+									items.push("<li class='" + direction +" unic" + root.id + " root' id='" + root.id + "'><span class='label_node'><a href='' onclick='return false;'>" + name + "</a></br><i class='post'>" + poste + "</i><div style='display:table;'>" + img + responsable + "</div></span>");
+								  } else {
+									items.push("<li class='" + direction +" child unic" + root.id + "' id='" + root.id + "'><span class='label_node " + nowrapt + "'><a href='' onclick='return false;'>" + name + "</a></br><i class='post'>" + poste + "</i>" + poste_hidden + actIdUser_hidden + "<input type='hidden' name='createActIdUser' class='createActIdUser' value='false'><div style='display:table;'>" + img + responsable + "</div></span>");
+								  }
+
+								  var c = data({
+									"parent": root.id
+								  }).count();
+								  if (c != 0) {
+									items.push("<ul>");
+									data({
+									  "parent": root.id
+									}).each(function(record, recordnumber) {
+									  loops(record);
+									});
+									items.push("</ul></li>");
+								  } else {
+									items.push("</li>");
+								  }
+								} // End the generate html code
+
+								//push to html code
+								$("<ul/>", {
+								  "id": "org",
+								  "style": "float:right;",
+								  html: items.join("")
+								}).appendTo("body");
+							  }
+							  // End Load HTML
+						//]]>
+						</script>
+					</f:verbatim>
+						<div class="chart">
+							<div class="ui-grid-row">
+								<div class="ui-grid-col-2">
+									<ul id="upload-chart">
+									</ul>
+								</div>
+								<div class="ui-grid-col-10">
+									<div id="in" style="display:none">
+									</div>
+									<div id="chart" class="orgChart"></div>
+								</div>
+							</div>
+						</div>
+
+                                                <div id="fancy_add_entity" class="hidden">
+                                                  <form>
+                                                    <h1 class="title_lb">Nouvelle EntitÃƒÂ©</h1>
+                                                    <div class="span12" id="add_nodo">
+                                                      <input type="text" name="node_name" id="new_node_name" placeholder="Nom" />
+                                                      <div class="span12">
+                                                        <button id="add_node_entity" class="aqua_btn span3">Valider</button>
+                                                      </div>
+                                                    </div>
+                                                  </form>
+                                                  <i class="close">X</i>
+                                                </div>
+
+                                                <div id="fancy_edit_entity" class="hidden">
+                                                  <form>
+                                                    <h1 class="title_lb">Modifier EntitÃƒÂ©</h1>
+                                                    <div class="span12" id="edit_nodo">
+                                                      <input type="text" name="node_name" id="edit_node_name" placeholder="Nom" />
+                                                      <div class="span12">
+                                                        <button id="edit_node_entity" class="aqua_btn span3">Valider</button>
+                                                      </div>
+                                                    </div>
+                                                  </form>
+                                                  <i class="close">X</i>
+                                                </div>
+
+                                                <div id="fancy_add_collaborateur" class="hidden">
+                                                  <form>
+                                                    <h1 class="title_lb">Nouveau Collaborateur</h1>
+                                                    <div class="span12" id="add_nodo">
+                                                      <label>Nom</label>
+                                                      <input type="text" name="node_firstname" id="new_node_firstname"  /><br/>
+                                                      <label>Prénom</label>
+                                                      <input type="text" name="node_lastname" id="new_node_lastname"  /><br/>
+                                                      <label>Poste</label>
+                                                      <select name="node_poste" id="new_node_poste">
+                                                      </select><br/>
+                                                      <label>Utilisateur</label>
+                                                      <select name="node_user" id="new_node_user">
+                                                        <option value=""></option>
+                                                      </select><br/>
+                                                      <label>
+                                                        <input type="checkbox" name="node_create_user" id="new_node_create_user" />
+                                                        Créer l'utilisateur correspondant
+                                                      </label>
+                                                      <div class="span12">
+                                                        <button id="add_node_collaborateur" class="aqua_btn span3">Valider</button>
+                                                      </div>
+                                                    </div>
+                                                  </form>
+                                                  <i class="close">X</i>
+                                                </div>
+
+                                                <div id="fancy_edit_collaborateur" class="hidden">
+                                                  <form>
+                                                    <h1 class="title_lb">Modifier Collaborateur</h1>
+                                                    <div class="span12" id="edit_nodo">
+                                                      <label>Nom</label>
+                                                      <input type="text" name="node_firstname" id="edit_node_firstname"  /><br/>
+                                                      <label>Prénom</label>
+                                                      <input type="text" name="node_lastname" id="edit_node_lastname"  /><br/>
+                                                      <label>Poste</label>
+                                                      <select name="node_poste" id="edit_node_poste">
+                                                      </select><br/>
+                                                      <label>Utilisateur</label>
+                                                      <select name="node_user" id="edit_node_user">
+                                                        <option value=""></option>
+                                                      </select><br/>
+                                                      <label>
+                                                        <input type="checkbox" name="node_create_user" id="edit_node_create_user" />
+                                                        Créer l'utilisateur correspondant
+                                                      </label>
+                                                      <div class="span12">
+                                                        <button id="edit_node_collaborateur" class="aqua_btn span3">Valider</button>
+                                                      </div>
+                                                    </div>
+                                                  </form>
+                                                  <i class="close">X</i>
+                                                </div>
+					<f:verbatim>
+						<script type="text/javascript">
+						//<![CDATA[
+							function init_tree() {
+								var opts = {
+								  chartElement: '#chart',
+								  dragAndDrop: true,
+								  expand: true,
+								  control: true,
+								  rowcolor: false
+								};
+								$("#chart").html("");
+								$("#org").jOrgChart(opts);
+							  }
+
+							  function scroll() {
+								$(".node").click(function() {
+								  $("#chart").scrollTop(0)
+								  $("#chart").scrollTop($(this).offset().top - 140);
+								})
+							  }
+
+
+
+							  function makeArrays() {
+                                                                var directions = [];
+								var colaborators = [];
+
+								$("#org li").each(function() {
+								  var uid = $(this).attr("id");
+								  var name = $(this).find(">:first-child a");
+								  var hidSTR = "";
+								  var hid = $(this).parents("li");
+								  if (hid.length == 0) //If this object is the root user, substitute id with "orgName" so the DB knows it's the name of organization and not a user
+								  {
+									hidSTR = "";
+									var user = new Object();
+                                                                        //if(uid == undefined)
+                                                                        //    user.id = "new";
+                                                                        //else
+                                                                        user.id = uid.substring(2);
+									user.name = name.text();
+									user.parent = hidSTR;
+									user.root = true;
+                                                                        directions.push(user);
+								  } else {
+									var direction = $(this).hasClass("direction")
+									var user = new Object();
+									if(direction){
+                                                                                //if(uid == undefined)
+                                                                                //    user.id = "new";
+                                                                                //else
+                                                                                user.id = uid.substring(2);
+										user.name = name.text();
+										user.parent = hid[0].id.substring(2);
+										user.root = false;
+                                                                                directions.push(user);
+									}else{
+                                                                                //if(uid == undefined)
+                                                                                //    user.id = "new";
+                                                                                //else
+                                                                                user.id = uid.substring(2);
+										user.firstName = name.find('.firstName').text();
+										user.lastName = name.find('.lastName').text();
+										user.post = $(this).find('.poste').val();
+                                                                                user.actIdUser = $(this).find('.actIdUser').val();
+                                                                                if($(this).find('.createActIdUser').val() == "true")
+                                                                                    user.createActIdUser = true;
+                                                                                else
+                                                                                    user.createActIdUser = false;
+										for (var i =  0; i < hid.length; i++) {
+                                                                                    if(hid[i].id.substring(0,1) == 'd'){
+											user.direction = hid[i].id.substring(2);
+                                                                                        i = hid.length;
+                                                                                    }
+										}
+										if($(this).find('*').filter('.boss').hasClass('boss')) user.responsable = true;
+										else user.responsable = false;
+                                                                                colaborators.push(user);
+									}
+								  }
+
+								});
+                                                                console.log(directions)
+								console.log(colaborators)
+                                                                $('#groupForm\\:collaborateurLinks').val(JSON.stringify(colaborators));
+                                                                $('#groupForm\\:entiteOrganisationnelLinks').val(JSON.stringify(directions));
+							  }
+
+
+
+							  $(document).ready(function() {
+
+								init();
+								loadjson();
+								init_tree();
+
+								//forms behavior
+								$("#new_node_name, #edit_node_name").on("keyup", function(evt) {
+								  var id = $(this).attr("id");
+								  if ($(this).val() != '') {
+									if (id == "new_node_name") {
+									  $("#add_node").show();
+									} else {
+									  $("#edit_node").show();
+									}
+								  } else {
+									if (id == "new_node_name") {
+									  $("#add_node").hide();
+									} else {
+									  $("#edit_node").hide();
+									}
+								  }
+								});
+
+
+								scroll()
+
+							  });
+
+                                                          function zoomDown() {
+                                                              if(zoom != 0.4){
+                                                                zoom = zoom - 0.1;
+                                                                zoom = Math.round( zoom * 10 ) / 10;
+                                                                $('.chart').css("zoom",zoom);
+                                                            }
+                                                          }
+
+                                                          function zoomUp() {
+                                                              if(zoom != 1){
+                                                                zoom = zoom + 0.1;
+                                                                zoom = Math.round( zoom * 10 ) / 10;
+                                                                $('.chart').css("zoom",zoom);
+                                                            }
+                                                          }
+						//]]>
+						</script>
+					</f:verbatim>
+                </div>
+            </div>
+        </div>
+
+    </ui:define>
+</ui:composition>

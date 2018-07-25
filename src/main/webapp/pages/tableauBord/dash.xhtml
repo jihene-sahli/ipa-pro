@@ -1,0 +1,88 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core"
+				template="../templates/modena/template.xhtml">
+	<ui:define name="title">#{msg['iw.tableaubord']}</ui:define>
+	<ui:define name="subheader">
+		#{msg['iw.dashboard.collaborators']}
+	</ui:define>
+	<ui:define name="head">
+		<f:verbatim>
+			<style>
+				button {
+					float: right;
+					color: #fff;
+					background-image: linear-gradient(to bottom, #e53935 0, #ce2246 100%);
+					background-repeat: repeat-x;
+					padding: 5px 10px;
+					font-size: 12px;
+					font-weight: bold;
+					line-height: 1.5;
+					border-radius: 3px;
+					cursor: pointer;
+					border-color: #ce2246;
+					text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
+					box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+				}
+
+				button:hover {
+					background-image: linear-gradient(to top, #e53935 0, #ce2246 100%);
+					box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 1px 1px rgba(0, 0, 0, .175);
+				}
+			</style>
+
+
+		</f:verbatim>
+	</ui:define>
+	<ui:define name="content">
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+				<div class="Card ShadowEffect ui-fluid">
+
+					<p:tabView activeIndex="#{dashController.activeIndex}">
+						<p:tab title="Moyenne d'ages">
+
+							<ui:include src="dashboard/moyAge.xhtml"/>
+
+						</p:tab>
+
+						<p:tab title="Nb Personnes agés">
+
+							<ui:include src="dashboard/minMaxAge.xhtml"/>
+
+
+						</p:tab>
+						<p:tab title="Répartitions Homme/Femme">
+							<ui:include src="dashboard/manWoman.xhtml"/>
+						</p:tab>
+						<p:tab title="Satisfaction Formation">
+							<ui:include src="dashboard/satisfactions.xhtml"/>
+						</p:tab>
+						<p:tab title=" Formation Effectuées">
+							<ui:include src="dashboard/formationDayOrYear.xhtml"/>
+						</p:tab>
+						<p:tab title="Statut Formation">
+							<ui:include src="dashboard/status.xhtml"/>
+						</p:tab>
+						<p:tab title="Solde des congés">
+							<ui:include src="dashboard/soldeConges.xhtml"/>
+						</p:tab>
+						<p:tab title="Satisfaction Formation A Froid">
+							<ui:include src="dashboard/evalFroid.xhtml"/>
+						</p:tab>
+						<p:tab title="Moyenne Ancienneté">
+							<ui:include src="dashboard/anciennete.xhtml"/>
+						</p:tab>
+						<p:tab title="Récapitulatif Formation" rendered="#{dashController.visibleRecap()}">
+							<ui:include src="recapFormation.xhtml"/>
+						</p:tab>
+					</p:tabView>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+
+</ui:composition>

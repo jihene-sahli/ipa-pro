@@ -1,0 +1,183 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+    <f:metadata>
+        <f:viewParam name="group" value="#{hierarchyController.userId}" />
+    </f:metadata>
+
+    <ui:define name="title" >#{msg['iw.action.detailsde']} #{hierarchyController.group.id}</ui:define>
+    <ui:define name="subheader">#{msg['iw.action.detailsde']} #{hierarchyController.group.id}</ui:define>
+    <ui:define name="content">
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <h:form>
+                            <p:panelGrid columns="2" class="Wid100">
+
+
+                                <p:outputLabel value="#{msg['iw.group.identifiant']}" />
+
+                                <p:outputLabel value="#{hierarchyController.group.id}" />
+
+                                <p:outputLabel value="#{msg['iw.group.nom']}" />
+                                <p:outputLabel value="#{hierarchyController.group.name}" />
+                                <p:outputLabel  value="#{msg['iw.group.responsable']}" />
+                                <p:outputLabel  value="#{hierarchyController.groupDetails.iwResponsible}" />
+
+                                <p:outputLabel value="#{msg['iw.group.active']}" />
+                                <p:outputLabel rendered="#{hierarchyController.groupDetails.iwActive}"   value="#{msg['iw.boolean.oui']}"/>
+                                <p:outputLabel rendered="#{!hierarchyController.groupDetails.iwActive}"  value="#{msg['iw.boolean.non']}"/>
+
+
+
+                                <p:outputLabel  value=" "   />
+                                <p:button  outcome="hierarchygroupForm" value="#{msg['iw.bouton.modifier']}">
+                                    <f:param name="group" value="#{hierarchyController.group.id}" />
+                                </p:button>
+
+                            </p:panelGrid>
+
+                        </h:form>
+
+                    </div>
+                </div>
+            </div>
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <p:panel toggleable="true">
+                            <f:facet name="header" >
+                                #{msg['iw.groupe.membres']}
+
+                            </f:facet>
+                            <h:form>
+                                <p:panelGrid columns="2" class="Wid100">
+                                    <p:outputLabel value="#{msg['iw.groupe.ajoutermembre']}" />
+                                    <p:autoComplete id="newMembersList"
+                                                    multiple="true"
+                                                    value="#{hierarchyController.newMembersList}"
+                                                    completeMethod="#{suggestionController.completeUsers}"
+                                                    var="user"
+                                                    itemLabel="#{user.id}"
+                                                    itemValue="#{user}"
+                                                    converter="#{userConverter}">
+                                        <p:column style="width:10%">
+                                            <p:graphicImage rendered="#{user.pictureSet}" style="height: 40px;"
+                                                            value="#{fileController.avatar}">
+                                                <f:param name="user" value="#{user.id}" />
+                                            </p:graphicImage>
+                                            <p:graphicImage style="height: 40px;"
+                                                            rendered="#{!user.pictureSet}"
+                                                            url="/resources/img/avatar.png" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{user.id}" />
+                                        </p:column>
+                                    </p:autoComplete>
+                                    <p:outputLabel  value=" "   />
+                                    <p:commandButton   value="#{msg['iw.bouton.valider']}"  action="#{hierarchyController.addMembership}" ajax="false"/>
+                                </p:panelGrid>
+                                <p:dataTable emptyMessage="#{iw.utilisateur.aucunutilisateutrouve}" value="#{hierarchyController.memberList}" var="user" id="usersList" paginator="true"
+                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="10,50,100"
+                                             rows="10">
+                                    <p:column headerText="#{msg['iw.utilisateur.identifiant']}"  >
+                                        <p:link  outcome="userDetails" value="#{user.id}">
+                                            <f:param name="user" value="#{user.id}" />
+                                        </p:link>
+                                    </p:column>
+
+                                    <p:column headerText="#{msg['iw.utilisateur.prenom']}"  >
+                                        <p:link  outcome="userDetails" value="#{user.firstName}">
+                                            <f:param name="user" value="#{user.id}" />
+                                        </p:link>
+                                    </p:column>
+
+                                    <p:column headerText="#{msg['iw.utilisateur.nom']}"  >
+                                        <p:link  outcome="userDetails" value="#{user.lastName}">
+                                            <f:param name="user" value="#{user.id}" />
+                                        </p:link>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </h:form>
+                        </p:panel>
+                    </div>
+                </div>
+            </div>
+            <h:outputLabel>
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect">
+                            <p:panel toggleable="true">
+                                <f:facet name="header" >
+                                    #{msg['iw.groupe.hierarchie']}
+
+                                </f:facet>
+                                <div id="paper"></div>
+                            </p:panel>
+                        </div>
+                    </div>
+                </div>
+            </h:outputLabel>
+        </div>
+        <ui:remove>
+            <div class="Container20 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect HeiAutoOnMobile">
+                            <ui:include src="../templates/processList.xhtml" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:remove>
+        <h:outputStylesheet library="css" name="joint.min.css" />
+
+        <h:outputScript library="js" name="joint/lib/lodash.min.js" />
+        <h:outputScript library="js" name="joint/lib/backbone-min.js" />
+        <h:outputScript library="js" name="joint/lib/graphlib.core.min.js" />
+        <h:outputScript library="js" name="joint/lib/dagre.core.min.js" />
+
+        <h:outputScript library="js" name="joint/lib/vectorizer.min.js" />
+        <h:outputScript library="js" name="joint/lib/geometry.min.js" />
+
+
+        <h:outputScript library="js" name="joint/joint.clean.min.js" />
+        <h:outputScript library="js" name="joint/lib/joint.shapes.org.min.js" />
+        <h:outputScript library="js" name="joint/lib/joint.shapes.devs.min.js" />
+        <h:outputScript library="js" name="orgchart.js" />
+        <f:verbatim>
+            <script type="text/javascript">
+                //<![CDATA[
+                    iw.sec.roleAdmin = "#{navigationController.adminRole}";
+                    iw.group.hierarchyType.normal = "#{navigationController.normalHierarchyName}";
+                iw.group.hierarchyType.functional = "#{navigationController.functionalHierarchyName}";
+
+                        function updateLinks() {
+                        $('#groupForm\\:groupLinks').val(JSON.stringify(iw.group.getLinks()));
+                    $('#groupForm\\:groupLinks').change();
+                    }
+                //]]>            </script>
+        </f:verbatim>
+
+
+
+        <f:verbatim>
+            <script type="text/javascript">
+                //<![CDATA[
+                #{hierarchyController.initHierarchyModel()}
+                //]]>            </script>
+
+        </f:verbatim>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,81 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+    <f:metadata>
+        <ui:remove>
+            <f:viewParam name="licence" value="#{licenseController.procDefId}" />
+        </ui:remove>
+    </f:metadata>
+
+    <ui:define name="title">
+        #{msg['iw.licence.managelicensespagetitle']}
+    </ui:define>
+    <ui:define name="subheader">
+        #{msg['iw.licence.managelicensespagetitle']}
+    </ui:define>
+    <ui:define name="content">
+
+        <div class="Container100 Responsive100">
+            <h:form>
+                <p:messages />
+                <div class="Container100">
+                    <div class="ContainerIndent">
+
+                        <div class="Card ShadowEffect">
+                            <p:dataTable id="licenseList" value="#{licenseController.licenseList}" var="license"  paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10,50,100">
+                                <p:column headerText="#{msg['iw.licence.numero']}" >
+                                    <p:link  outcome="licenseDetails" value="#{license.iwLicenseId}">
+                                        <f:param name="licence" value="#{license.iwLicenseId}" />
+                                    </p:link>
+                                </p:column>
+                                <p:column headerText="#{msg['iw.licence.fichier']}" >
+                                    <p:link  outcome="licenseDetails" value="#{license.iwFileName}">
+                                        <f:param name="licence" value="#{license.iwLicenseId}" />
+                                    </p:link>
+                                </p:column>
+                                <p:column headerText="#{msg['iw.licence.dateajout']}" >
+                                    <p:link  outcome="licenseDetails" value="#{license.iwDate}">
+                                        <f:param name="licence" value="#{license.iwLicenseId}" />
+                                        <f:converter binding="#{dateConverter}" />
+                                        <f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+                                    </p:link>
+                                </p:column>
+                                <p:column headerText="#{msg['iw.licence.active']}">
+                                    <p:outputLabel value="#{msg['iw.boolean.oui']}" rendered="#{license.iwActive}" />
+                                    <p:outputLabel value="#{msg['iw.boolean.non']}" rendered="#{!license.iwActive}" />
+                                </p:column>
+                                <p:column style="width: 60px !important; margin: 0 auto !important;">
+                                    <p:menuButton value="#{msg['iw.button.actions']}"
+												  styleClass="ui-button-icon-only">
+                                        <p:menuitem  update="licenseList" rendered="#{license.iwActive==true}" value="#{msg['iw.licence.desactiver']}" actionListener="#{licenseController.disable}">
+                                            <f:param name="license" value="#{license.iwLicenseId}" />
+                                            <p:confirm   header="#{msg['iw.confirmation.titre']}" message="#{msg['iw.message.voulezvouscontinuer']}" icon="fa fa-warning" />
+                                        </p:menuitem>
+                                        <p:menuitem rendered="#{license.iwActive==false}" update="licenseList" value="#{msg['iw.licence.activer']}" actionListener="#{licenseController.enable}">
+                                            <f:param name="license" value="#{license.iwLicenseId}" />
+
+                                        </p:menuitem>
+                                        <p:menuitem update="licenseList" value="#{msg['iw.licence.supprimer']}" actionListener="#{licenseController.delete}">
+                                            <f:param name="license" value="#{license.iwLicenseId}" />
+                                            <p:confirm   header="#{msg['iw.confirmation.titre']}" message="#{msg['iw.message.voulezvouscontinuer']}" icon="fa fa-warning" />
+                                        </p:menuitem>
+
+                                    </p:menuButton>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

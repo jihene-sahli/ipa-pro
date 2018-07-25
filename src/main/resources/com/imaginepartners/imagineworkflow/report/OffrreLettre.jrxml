@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OffrreLettre" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="42ed1803-e15f-4df4-8e91-03c95bab0be4">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="parameter1" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="71" splitType="Stretch">
+			<staticText>
+				<reportElement x="71" y="7" width="432" height="59" uuid="427c8d09-a580-48ab-98c6-0361a3f64387"/>
+				<textElement>
+					<font fontName="Times New Roman" size="40" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SAPPL Mercedes-Benz]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="111" splitType="Stretch">
+			<textField>
+				<reportElement x="196" y="24" width="100" height="20" uuid="23efee4b-3b4c-46ca-bfd6-4f22e98072fe"/>
+				<textFieldExpression><![CDATA[$P{parameter1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="223" splitType="Stretch">
+			<staticText>
+				<reportElement x="422" y="-110" width="132" height="111" uuid="87aee84b-7e28-4048-8bd6-f8098a912499"/>
+				<textElement>
+					<font fontName="Times New Roman" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Societe Algerienne pour la
+Production de Poids Lourds de
+marque Mercedes-Benz SPA
+
+Route Nationale N° 5 Rouïba
+Alger, Algérie.
+
+Tel. +213 (0) 21 81 62 12
+Fax +213 (0) 21 81 62 13]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="44" width="135" height="20" uuid="5bd5f2af-9aba-4aa0-8418-4137e53e30fd"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Réf / 00/ DRH/ 2016]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="196" y="89" width="154" height="20" uuid="ff112646-a085-4e8e-ae7b-21870b6cda04"/>
+				<textElement>
+					<font fontName="Times New Roman" size="15" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[LETTRE D’OFFRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="1" width="554" height="222" uuid="36f03dd2-08ec-4794-8469-5a6b564dc16b"/>
+				<text><![CDATA[M.
+
+Nous avons le plaisir de vous faire part de notre intention de vous recruter au sein de la société  SAPPL-Mercedes Benz Spa, en qualité de :
+
+- Poste :
+- Affetcé(é) a la Direction de :]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="391" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="615" splitType="Stretch"/>
+	</summary>
+</jasperReport>

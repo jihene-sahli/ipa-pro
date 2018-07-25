@@ -1,0 +1,85 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core" xmlns:bp="http://java.sun.com/jsf/html"
+>
+	#{taskController.registerTemplate('sondageController','SondageController',fn:split('sondagesList,allSondages',','))}
+
+	<div class="Container100 Responsive100">
+		<div class="Container100">
+			<div class="ContainerIndent">
+				<div class="Card ShadowEffect">
+
+					<p:dataTable emptyMessage="#{iw.utilisateur.aucunutilisateutrouve}"
+								 value="#{sondageController.sondagesList}"
+								 var="aldSondage"
+								 id="sondageList"
+								 rowIndexVar="rowIdex"
+								 styleClass="entityList"
+					 rowStyleClass="#{sondageController.ShowOrHideRowByCollaborator(aldSondage)}">
+
+						<f:facet name="header">
+							<p:commandButton value="#{msg['iw.button.ajouter']}    "
+											 actionListener="#{sondageController.addSondage }"
+											 ajax="true"
+											 update="sondageList"
+											 icon="ui-icon-plusthick"
+											 style=" margin: 15px !important;width: 120px;"
+											 disabled="#{!sondageController.userIsDRH}"/>
+						</f:facet>
+
+
+						<p:column headerText="#{msg['iw.sondage.question']}">
+							<p:inputText label="#{aldSondage.question}"
+										 value="#{aldSondage.question}"
+										 disabled="#{!sondageController.userIsDRH}"
+							>
+								<p:ajax event="blur"/>
+							</p:inputText>
+
+						</p:column>
+
+						<p:column headerText="#{msg['iw.sondage.reponse']}">
+
+							<p:panelGrid columns="2" class="Wid100" id="columnPanel" rendered="#{!sondageController.taskIsAnalyseResultat and sondageController.taskIsRespond}">
+								<p:selectOneMenu id="idReponse"   style="width:100px !important;"
+												 value="#{sondageController.reponseSelectionnee}"
+												 disabled="#{sondageController.userIsDRH}">
+
+									<f:selectItems value="#{sondageController.listeReponces}" var="reponse"
+												   itemLabel="#{reponse}" itemValue="#{reponse}"/>
+								<p:ajax event="itemSelect" listener="#{sondageController.changerReponse(aldSondage,rowIdex)}" update="columnPanel"/>
+								</p:selectOneMenu>
+								<!--rendered="#{!aldSondage.reponse.startsWith('Oui')}"-->
+								<p:inputText label="#{sondageController.reponseEcrite}"  style="width:350px !important;" rendered="#{aldSondage.reponse != null and !aldSondage.reponse.startsWith('Oui') and
+								!aldSondage.reponse.startsWith('Non')}"
+											 value="#{sondageController.reponseEcrite}"
+											 disabled="#{sondageController.userIsDRH}">
+
+									<p:ajax event="blur"  listener="#{sondageController.ecrireReponse(aldSondage)}" />
+								</p:inputText>
+							</p:panelGrid>
+							<p:panelGrid columns="1" class="Wid100" id="columnPanel2" rendered="#{sondageController.taskIsAnalyseResultat}">
+								<p:inputText label="#{aldSondage.reponse}"  value="#{aldSondage.reponse}" disabled="true"/>
+							</p:panelGrid>
+
+						</p:column>
+						<p:column style="width:50px" rendered="#{sondageController.userIsDRH}">
+
+							<p:commandButton
+								icon="ui-icon-closethick"
+								update="sondageList"
+								action="#{sondageController.deleteSondage(aldSondage)}">
+
+							</p:commandButton>
+						</p:column>
+
+					</p:dataTable>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</ui:composition>

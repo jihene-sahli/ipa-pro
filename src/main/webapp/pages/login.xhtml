@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+	  xmlns:p="http://primefaces.org/ui">
+<f:view locale="#{navigationController.currentLocale}" >
+	<h:head>
+		<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+			<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+			<meta name="apple-mobile-web-app-capable" content="yes" />
+			<ui:include src="templates/component/favicon.xhtml" />
+			<title>#{msg['iw.authentification']} | #{navigationController.imagineworkflowTitle}</title>
+		</f:facet>
+		<ui:insert name="head" />
+	</h:head>
+	<h:body styleClass="GrayModena Geometry" style="height:auto;">
+		<div class="Wid90 DispBlock MarAuto MarTopPerc5 TexAlCenter">
+			<div class="Wid33 MarAuto WidAutoOnMobile">
+				<h:graphicImage rendered="#{empty fileController.loginLogo}" name="#{navigationController.loginLogo}" library="img" style="width:40%; max-width:200px;"/>
+				<p:graphicImage rendered="#{not empty fileController.loginLogo}" value="#{fileController.loginLogo}" style="width:40%; max-width:200px;"/>
+				<div class="EmptyBox30"></div>
+				<div class="Card ShadowEffect">
+					<h:form id="loginForm" prependId="false">
+						<f:event listener="#{authenticationController.updateMessages()}" type="preRenderView" />
+						<div class="EmptyBox20"></div>
+						<div class="Wid100 OvHidden BigTopic Fs30"><i class="icon-security Fs60 DispBlock"></i>#{msg['iw.authentification']}</div>
+						<div class="EmptyBox30"></div>
+						<div class="Wid100">
+							<p:inputText id="username" required="true" label="#{msg['iw.authentification.nomutilisateur']}" placeholder="#{msg['iw.authentification.nomutilisateur']}" styleClass="Wid80 TexAlCenter Fs18"/>
+						</div>
+						<div class="EmptyBox10"></div>
+						<div class="Wid100">
+							<p:inputText id="password" required="true" label="#{msg['iw.authentification.motpasse']}" type="password" placeholder="#{msg['iw.authentification.motpasse']}" styleClass="Wid80 TexAlCenter Fs18"/>
+							<p:selectOneMenu id="som" value="#{navigationController.currentLanguage}"  rendered="#{navigationController.displayLangagesList}"  valueChangeListener="#{navigationController.localeChnageListener}" styleClass="Wid80 TexAlCenter Fs18" var="language">
+								<f:selectItem  itemLabel="selectionner le language" itemValue="#{navigationController.currentLanguage}" noSelectionOption="true"/>
+								<f:selectItems value="#{navigationController.languageList}" />
+								<p:column style="width:10%">
+									<p:graphicImage value="/resources/img/#{language}.png" width="16" height="16" />
+								</p:column>
+								<p:column>
+									#{language}
+								</p:column>
+								<p:ajax event="change" update=":loginForm" />
+							</p:selectOneMenu>
+						</div>
+						<div class="EmptyBox30"></div>
+						<div class="Separator"></div>
+						<p:messages id="errorMessages" escape="false"/>
+						<div class="Wid50 Fleft Responsive50">
+							<p:commandButton update="errorMessages" ajax="false" action="#{authenticationController.doLogin()}" type="submit" value="#{msg['iw.login.sauthentifier']} &#160;&#160;&#160;&#160;" icon="fa fa-sign-in" styleClass=" White RaisedButton Fright FloatNoneOnMobile" style="" />
+						</div>
+						<div class="EmptyBox5 ShowOnMobile"></div>
+						<div class="Wid50 Fleft Responsive50"><p:button value="#{msg['iw.login.motpasseoublie']}" icon="fa fa-lock" styleClass="RedButton White RaisedButton Fleft FloatNoneOnMobile"/></div>
+						<div class="EmptyBox20"></div>
+					</h:form>
+				</div>
+				<div class="Wid100 TexAlCenter MarTop20 Fs14 FontRobotoRegular Gray">
+					<p>Version <strong>#{msg['iw.version']}</strong> Build <strong>#{msg['iw.commit.hash']}</strong><br></br>#{msg['iw.build.date']}</p>
+					<p:outputLabel escape="false" value="#{navigationController.copyright}" />
+				</div>
+			</div>
+		</div>
+		<h:outputStylesheet name="css/core-layout.css" library="modena-layout" />
+		<h:outputStylesheet name="css/animate.css" library="modena-layout" />
+		<h:outputStylesheet name="css/modena-font.css" library="modena-layout" />
+		<h:outputStylesheet name="css/ripple-effect.css" library="modena-layout" />
+		<h:outputStylesheet name="css/font-awesome.css" library="modena-layout" />
+		<h:outputStylesheet name="css/modena-layout.css" library="modena-layout" />
+		<h:outputStylesheet library="css" name="css-corrections.css"  />
+	</h:body>
+</f:view>
+</html>

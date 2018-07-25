@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LettreOffre" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e3a2fb66-7251-447a-92eb-c28b6639e873">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="524"/>
+	<parameter name="dateLettreOffre" class="java.util.Date"/>
+	<parameter name="nomPrenomCondicat" class="java.lang.String"/>
+	<parameter name="salaireBaseMensuel" class="java.lang.String"/>
+	<parameter name="IndemnitePanier" class="java.lang.String"/>
+	<parameter name="dateExpireOffre" class="java.util.Date"/>
+	<parameter name="nomPoste" class="java.lang.String"/>
+	<parameter name="direction" class="java.lang.String"/>
+	<parameter name="typeContrat" class="java.lang.String"/>
+	<parameter name="periodeEssai" class="java.lang.String"/>
+	<parameter name="dateInstallation" class="java.util.Date"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="802" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="555" height="802" uuid="de5fad01-8ffd-49f4-ae88-1820e8f58df2"/>
+				<imageExpression><![CDATA["imageRapportLetrre.png"]]></imageExpression>
+			</image>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="433" y="270" width="120" height="20" uuid="4b4df410-fa56-470a-90db-b4f4a10faa88"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dateLettreOffre}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="80" y="292" width="232" height="20" uuid="452cdd5a-b230-4dbb-9422-15e7ac110e5a"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nomPrenomCondicat}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="131" y="358" width="255" height="20" uuid="dd558e6d-278b-4900-b7c3-4d2dc03f9df2"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nomPoste}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="218" y="369" width="217" height="20" uuid="66246029-2ae3-4871-abbd-ecffd27424c3"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{direction}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="213" y="441" width="263" height="20" uuid="23b4a8b4-548b-4516-8452-1c614d98b337"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{salaireBaseMensuel}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="233" y="455" width="281" height="20" uuid="a4462c4f-2027-4d0e-9405-66f096c6b9f5"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{IndemnitePanier}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="222" y="607" width="260" height="20" uuid="14683313-d24a-4ed1-90e0-04fb5a315354"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dateExpireOffre}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="173" y="594" width="238" height="20" uuid="8256551c-9fa3-4e36-808d-bb19ae5bac94"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{periodeEssai}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="171" y="582" width="205" height="20" uuid="45e99576-59e7-443a-ad92-355f705a0690"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{typeContrat}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="239" y="531" width="169" height="20" uuid="13b34fdb-bd6c-4121-a76f-2e2cd7e3eaf0"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dateInstallation}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="300" y="441" width="100" height="20" uuid="e5a039f2-0e4d-4664-8b04-fbe5514e338d"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="302" y="455" width="100" height="20" uuid="4eaffa2f-41b0-40b7-914a-f25779687409"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="203" y="594" width="100" height="20" uuid="62e393d5-8560-4526-9df9-c1eab24cc87f"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[mois]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

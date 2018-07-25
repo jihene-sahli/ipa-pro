@@ -1,0 +1,318 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="../templates/modena/template.xhtml">
+
+    <f:metadata>
+        <f:viewParam name="task" value="#{taskController.taskId}" />
+    </f:metadata>
+
+    <ui:define name="title">#{taskController.task.name} - #{taskController.processInstanceName}</ui:define>
+    <ui:define name="subheader">
+        #{taskController.task.name} - #{taskController.processInstanceName}
+    </ui:define>
+    <ui:define name="head">
+        <f:verbatim>
+            <style type="text/css">
+                .ui-lightbox{
+                    width:90% !important;
+                    height:90% !important;
+                }
+                .ui-lightbox-content-wrapper, .ui-lightbox-content
+                {
+                    width:100% !important;
+                    height:100% !important;
+                }
+            </style>
+            <script type="text/javascript">
+                function submitComment(event) {
+                    if (event.keyCode == 10 || event
+                            .keyCode == 13)
+                        if (!event.ctrlKey) {
+                            submitTaskComment();
+                            return false;
+
+                        } else
+                            return true;
+                }
+            </script>
+        </f:verbatim>
+    </ui:define>
+    <ui:define name="content">
+
+        <div class="Container100 Responsive100">
+
+            <div class="Container100 Responsive100">
+                <div  class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect">
+                            <p:tabView orientation="bottom" effect="slide" style="width:100%;">
+                                <p:tab title="#{msg['iw.tache.description']}" rendered="#{not empty taskController.task.description}">
+                                    <h:outputText escape="false" value="#{navigationController.formatTextareaOutput(taskController.task.description)}" />
+                                </p:tab>
+                                <p:tab title="#{msg['iw.tache.avancement']}">
+                                    <p:lightBox widgetVar="progressLb" height="100%" width="100%" style="display:inline;" iframe="true" id="lighbox3">
+                                        <p:link  style="display:inline;" href="#{navigationController.getProgressUrl(taskController.currentTask.processDefinitionId, taskController.currentTask.processInstanceId)}" title="#{msg['iw.instance.avancement']}">
+                                            <h:outputText value="#{msg['iw.instance.voiravancement']}" />
+                                        </p:link>
+                                    </p:lightBox>
+                                    |
+                                    <p:link style="display:inline;" target="_blank" value="#{msg['iw.instance.voiravancementaurepage']}" href="#{navigationController.getProgressUrl(taskController.currentTask.processDefinitionId, taskController.currentTask.processInstanceId)}" >
+                                    </p:link>
+                                    <div class="EmptyBox30"></div>
+                                    <ui:remove>
+                                        <p:progressBar value="#{taskController.progress}" labelTemplate="{value}%" displayOnly="true"/>
+                                    </ui:remove>
+                                    <p:outputLabel rendered="#{not empty taskController.progress}" style="padding-left: #{taskController.progress}%;" value="#{taskController.progress} %" />
+                                    <p:outputLabel rendered="#{not empty taskController.progressEnd}" class="Fright" style="padding-right: #{100 -taskController.progressEnd}%;" value="#{taskController.progressEnd} %" />
+                                    <p:slider for="minId,maxId" range="true" disabled="true" minValue="0" maxValue="100" step="1" />
+                                    <h:inputHidden id="minId" value="#{taskController.progress}" />
+                                    <h:inputHidden id="maxId" value="#{taskController.progressEnd}" />
+                                </p:tab>
+                                <p:tab  title="#{msg['iw.tache.cartouche']}" rendered="#{not empty taskController.globalFormList}">
+                                    <ui:include src="../templates/component/cartridge.xhtml" >
+                                        <ui:param name="cartridgeData" value="#{taskController.globalFormList}" />
+                                    </ui:include>
+                                </p:tab>
+                                <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN')">
+                                    <p:tab title="#{msg['iw.tache.gestion']}">
+                                        <h:form id="manageTask">
+                                            <p:panelGrid columns="3" columnClasses=",,col10percent"  class="Wid100">
+                                                <p:outputLabel value="#{msg['iw.tache.priorite']}" />
+                                                <p:inputText id="priority" value="#{taskController.currentTask.priority}" />
+                                                <p:slider for="priority" displayTemplate="{value}"  />
+
+                                                <p:outputLabel value="#{msg['iw.tache.assigne']}" for="assigne" />
+                                                <p:autoComplete id="assigne"
+                                                                value="#{taskController.assignee}"
+                                                                completeMethod="#{suggestionController.completeUsers}"
+                                                                var="user"
+                                                                itemLabel="#{user.id}"
+                                                                itemValue="#{user}"
+                                                                converter="#{userConverter}">
+                                                    <p:column style="width:10%">
+                                                        <p:graphicImage rendered="#{user.pictureSet}" style="height: 40px;"
+                                                                        value="#{fileController.avatar}">
+                                                            <f:param name="user" value="#{user.id}" />
+                                                        </p:graphicImage>
+                                                        <p:graphicImage style="height: 40px;"
+                                                                        rendered="#{!user.pictureSet}"
+                                                                        url="/resources/img/avatar.png" />
+                                                    </p:column>
+
+                                                    <p:column>
+                                                        <h:outputText value="#{user.id}" />
+                                                    </p:column>
+
+                                                    <p:ajax event="itemSelect"
+                                                            update="assigneeAvatarContainer" />
+                                                </p:autoComplete>
+                                                <p:outputPanel id="assigneeAvatarContainer">
+                                                    <p:graphicImage rendered="#{taskController.assignee.pictureSet}" style="height: 40px;"
+                                                                    value="#{fileController.avatar}">
+                                                        <f:param name="user" value="#{taskController.assignee.id}" />
+                                                    </p:graphicImage>
+                                                    <p:graphicImage style="height: 40px;"
+                                                                    rendered="#{!taskController.assignee.pictureSet}"
+                                                                    url="/resources/img/avatar.png" />
+                                                </p:outputPanel>
+
+                                                <p:outputLabel value="#{msg['iw.tache.proprietaire']}" for="proprietaire" />
+                                                <p:autoComplete id="proprietaire" value="#{taskController.owner}"
+                                                                completeMethod="#{suggestionController.completeUsers}"
+                                                                var="user"
+                                                                itemLabel="#{user.id}"
+                                                                itemValue="#{user}"
+                                                                forceSelection="true"
+                                                                converter="#{userConverter}">
+                                                    <p:column style="width:10%">
+                                                        <p:graphicImage rendered="#{user.pictureSet}"  style="height: 40px;"
+                                                                        value="#{fileController.avatar}">
+                                                            <f:param name="user" value="#{user.id}" />
+                                                        </p:graphicImage>
+                                                        <p:graphicImage style="height: 40px;"
+                                                                        rendered="#{!user.pictureSet}"
+                                                                        url="/resources/img/avatar.png" />
+                                                    </p:column>
+
+                                                    <p:column>
+                                                        <h:outputText value="#{user.id}" />
+                                                    </p:column>
+                                                    <p:ajax event="itemSelect"
+                                                            update="ownerAvatarContainer" />
+                                                </p:autoComplete>
+                                                <p:outputPanel id="ownerAvatarContainer">
+                                                    <p:graphicImage rendered="#{taskController.owner.pictureSet}" style="height: 40px;"
+                                                                    value="#{fileController.avatar}">
+                                                        <f:param name="user" value="#{taskController.owner.id}" />
+                                                    </p:graphicImage>
+                                                    <p:graphicImage style="height: 40px;"
+                                                                    rendered="#{taskController.owner!=null and !taskController.owner.pictureSet}"
+                                                                    url="/resources/img/avatar.png" />
+                                                </p:outputPanel>
+                                                <p:outputLabel value="#{msg['iw.tache.dateecheance']}" />
+                                                <p:calendar  pattern="#{navigationController.longDateFormat}"
+                                                             showWeek="true" value="#{taskController.currentTask.dueDate}">
+
+                                                </p:calendar>
+                                                <p:outputPanel  >
+
+                                                </p:outputPanel>
+                                                <ui:remove>
+                                                    <p:outputLabel value="#{msg['iw.tache.utilisateurscandidats']}" />
+                                                    <p:autoComplete multiple="true"
+                                                                    value="#{taskController.candidatUserList}"
+                                                                    completeMethod="#{suggestionController.completeUsers}"
+                                                                    var="user"
+                                                                    itemLabel="#{user.id}"
+                                                                    itemValue="#{user}"
+                                                                    converter="#{userConverter}">
+                                                        <p:column style="width:10%">
+                                                            <p:graphicImage rendered="#{user.pictureSet}" style="height: 40px;"
+                                                                            value="#{fileController.avatar}">
+                                                                <f:param name="user" value="#{user.id}" />
+                                                            </p:graphicImage>
+                                                            <p:graphicImage style="height: 40px;"
+                                                                            rendered="#{!user.pictureSet}"
+                                                                            url="/resources/img/avatar.png" />
+                                                        </p:column>
+
+                                                        <p:column>
+                                                            <h:outputText value="#{user.id}" />
+                                                        </p:column>
+
+                                                        <p:ajax event="itemUnselect"
+                                                                update="candidatUserContainer" />
+                                                        <p:ajax event="itemSelect"
+                                                                update="candidatUserContainer" />
+                                                    </p:autoComplete>
+
+                                                    <p:outputPanel id="candidatUserContainer">
+                                                        <p:dataGrid emptyMessage="" value="#{taskController.candidatUserList}" var="user">
+                                                            <p:outputPanel id="ownerAvatarContainer">
+                                                                <p:graphicImage rendered="#{user.pictureSet}" style="height: 40px;"
+                                                                                value="#{fileController.avatar}">
+                                                                    <f:param name="user" value="#{user.id}" />
+                                                                </p:graphicImage>
+                                                                <p:graphicImage style="height: 40px;"
+                                                                                rendered="#{user!=null and !user.pictureSet}"
+                                                                                url="/resources/img/avatar.png" />
+                                                            </p:outputPanel>
+                                                        </p:dataGrid>
+
+                                                    </p:outputPanel>
+                                                    <p:outputLabel value="#{msg['iw.tache.groupescandidats']}" />
+                                                    <p:autoComplete multiple="true"
+                                                                    value="#{taskController.candidatGroupList}"
+                                                                    completeMethod="#{suggestionController.completeGroups}"
+                                                                    var="group"
+                                                                    itemLabel="#{group.name}"
+                                                                    itemValue="#{group}"
+                                                                    converter="#{groupConverter}">
+                                                    </p:autoComplete>
+                                                    <p:outputPanel></p:outputPanel>
+                                                </ui:remove>
+                                                <p:outputPanel></p:outputPanel>
+                                                <p:outputPanel></p:outputPanel>
+                                                <p:commandButton action="#{taskController.registerConfig()}" icon="fa fa-check" value="#{msg['iw.tache.enregisterconfiguration']}" ajax="true"/>
+                                            </p:panelGrid>
+
+                                        </h:form>
+                                    </p:tab>
+                                </sec:authorize>
+
+
+                            </p:tabView>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <h:form enctype="multipart/form-data" id="iwFormsForm">
+                            <p:dataTable class="hide-column-names" rendered="#{empty taskController.currentTask.formKey}" value="#{taskController.formList}" var="formWrapper" >
+
+                                <p:column>
+                                    <p:outputLabel value="#{formWrapper.form.name} : " />
+                                    <p:outputLabel class="red" value="*" rendered="#{formWrapper.form.required==true}" />
+                                </p:column>
+
+                                <p:column>
+                                    <p:inputText label="#{formWrapper.form.name}" rendered="#{formWrapper.form.type.name=='string' and formWrapper.form.readable==true}" value="#{formWrapper.value}" disabled="#{formWrapper.form.writable==false}"  required="#{formWrapper.form.required==true}" />
+                                    <p:inputText label="#{formWrapper.form.name}" rendered="#{formWrapper.form.type.name=='long'  and formWrapper.form.readable==true}" value="#{formWrapper.value}" disabled="#{formWrapper.form.writable==false}"  required="#{formWrapper.form.required==true}">
+                                        <f:convertNumber integerOnly="true" />
+                                    </p:inputText>
+                                    <p:calendar pattern="#{navigationController.longDateFormat}" label="#{formWrapper.form.name}" rendered="#{formWrapper.form.type.name=='date' and formWrapper.form.readable==true}" value="#{formWrapper.value}" disabled="#{formWrapper.form.writable==false}"  required="#{formWrapper.form.required==true}" />
+                                    <p:inputTextarea label="#{formWrapper.form.name}" rendered="#{formWrapper.form.type.name=='text'  and formWrapper.form.readable==true}" value="#{formWrapper.value}" disabled="#{formWrapper.form.writable==false}"  required="#{formWrapper.form.required==true}" />
+                                    <p:selectBooleanCheckbox label="#{formWrapper.form.name}" rendered="#{formWrapper.form.type.name=='boolean'  and formWrapper.form.readable==true}" value="#{formWrapper.value}" disabled="#{formWrapper.form.writable==false}"  required="#{formWrapper.form.required==true}" />
+                                    <p:selectOneMenu label="#{formWrapper.form.name}" rendered="#{formWrapper.form.type.name=='enum'  and formWrapper.form.readable==true}" value="#{formWrapper.value}" disabled="#{formWrapper.form.writable==false}"  required="#{formWrapper.form.required==true}" >
+                                        <f:selectItems value="#{formWrapper.form.type.getInformation('values').entrySet()}" var="selectItem" itemLabel="#{selectItem.value}" itemValue="#{selectItem.key}" />
+                                    </p:selectOneMenu>
+                                    <p:inputText label="#{formWrapper.form.name}" rendered="#{formWrapper.form.type.name=='money' and formWrapper.form.readable==true}" value="#{formWrapper.value}" disabled="#{formWrapper.form.writable==false}"  required="#{formWrapper.form.required==true}">
+                                        <f:converter converterId="javax.faces.BigDecimal" />
+                                    </p:inputText>
+                                </p:column>
+
+                                <f:facet name="footer">
+                                    <p:commandButton action="#{taskController.completeTask()}" icon="fa fa-check" value="#{msg['iw.tache.completer']}" ajax="false" process=":iwFormsForm" validateClient="true"/>
+                                </f:facet>
+                            </p:dataTable>
+
+                            <ui:include src="./component/iwForms.xhtml">
+                                <ui:param name="formWraperList"     value="#{taskController.formList}" />
+                                <ui:param name="displayIwForms"     value="#{not empty taskController.standaloneTask.formKey}" />
+                                <ui:param name="disableIwInputs"    value="false" />
+                            </ui:include>
+
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <h:form >
+                            <p:fieldset legend="#{msg['iw.tache.commentaires']}" toggleable="true">
+                                <p:remoteCommand update="@form" name="submitTaskComment"
+                                                 actionListener="#{commentController.submitProcInstComment(taskController.currentTask.processInstanceId)}" />
+                                <p:inputTextarea value="#{commentController.comment}" onkeypress="return submitComment(event)
+                                                ;" />
+                                <p:dataTable emptyMessage="#{msg['iw.commentaire.aucuncommentaire']}" class="hide-column-names" value="#{commentController.getProcInstCommentList(taskController.currentTask.processInstanceId)}" var="comment">
+                                    <p:column style="width:40px;">
+                                        <p:graphicImage rendered="#{navigationController.isPictureSet(comment.userId)}"
+                                                        style="height: 40px;"
+                                                        value="#{fileController.avatar}">
+                                            <f:param name="user" value="#{comment.userId}" />
+                                        </p:graphicImage>
+                                        <p:graphicImage style="height: 40px;"
+                                                        rendered="#{!navigationController.isPictureSet(comment.userId)}"
+                                                        url="/resources/img/avatar.png" />
+
+                                    </p:column>
+                                    <p:column style="width:10%">
+                                        #{comment.userId}
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputPanel>
+                                            #{comment.fullMessage}
+                                        </p:outputPanel>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:fieldset>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </ui:define>
+</ui:composition>
+

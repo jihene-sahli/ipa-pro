@@ -1,0 +1,107 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+    <f:metadata>
+    </f:metadata>
+
+    <ui:define name="title" >#{msg['iw.listeequipes']}</ui:define>
+    <ui:define name="subheader" >#{msg['iw.listeequipes']}</ui:define>
+    <ui:define name="content">
+
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <h:form>
+                            <p:dataTable emptyMessage="#{iw.group.aucungrouptrouve}" value="#{hierarchyController.groupList}" var="group" id="groupList" paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10,50,100"
+                                         rows="10">
+
+                                <f:facet name="header">
+                                    <p:button value="#{msg['iw.button.ajouter']}" outcome="hierarchygroupForm">
+                                    </p:button>
+                                </f:facet>
+                                <p:column headerText="#{msg['iw.group.identifiant']}"   >
+                                    <p:link  outcome="hierarchygroupDetails" value="#{group.id}">
+                                        <f:param name="group" value="#{group.id}" />
+                                    </p:link>
+                                </p:column>
+
+                                <p:column headerText="#{msg['iw.group.nom']}"  >
+                                    <p:link  outcome="hierarchygroupDetails" value="#{group.name}">
+                                        <f:param name="group" value="#{group.id}" />
+                                    </p:link>
+                                </p:column>
+
+                                <p:column headerText="#{msg['iw.group.estadministrateur']}"  >
+                                    <p:link  rendered="#{group.type=='admin'}" outcome="hierarchygroupDetails" value="#{msg['iw.boolean.oui']}">
+                                        <f:param name="group" value="#{group.id}" />
+                                    </p:link>
+                                    <p:link rendered="#{group.type!='admin'}" outcome="hierarchygroupDetails" value="#{msg['iw.boolean.non']}">
+                                        <f:param name="group" value="#{group.id}" />
+                                    </p:link>
+                                </p:column>
+
+
+                                <p:column headerText="#{msg['iw.group.active']}" >
+                                    <f:facet name="header">
+                                        <h:outputText value="#{msg['iw.group.active']}"/>
+                                        <p:selectOneMenu value="#{hierarchyController.activeGroup}">
+                                            <f:selectItem itemLabel="#{msg['iw.boolean.oui']}" itemValue="true" />
+                                            <f:selectItem itemLabel="#{msg['iw.boolean.non']}" itemValue="false" />
+                                            <p:ajax event="change" update="groupList" />
+                                        </p:selectOneMenu>
+                                    </f:facet>
+                                    <p:link  rendered="#{hierarchyController.isActiveGroup(group.id)}" outcome="hierarchygroupDetails" value="#{msg['iw.boolean.oui']}">
+                                        <f:param name="group" value="#{group.id}" />
+                                    </p:link>
+                                    <p:link rendered="#{!hierarchyController.isActiveGroup(group.id)}" outcome="hierarchygroupDetails" value="#{msg['iw.boolean.non']}" >
+                                        <f:param name="group" value="#{group.id}" />
+                                    </p:link>
+                                </p:column>
+
+                                <p:column style="width: 60px !important; margin: 0 auto !important;">
+                                    <p:menuButton value="#{msg['iw.button.actions']}"
+												  styleClass="ui-button-icon-only">
+                                        <p:menuitem value="#{msg['iw.group.modifier']}" outcome="hierarchygroupForm" >
+                                            <f:param name="group" value="#{group.id}" />
+                                        </p:menuitem>
+                                        <p:menuitem  value="#{msg['iw.group.supprimer']}" actionListener="#{hierarchyController.removeGroup(group.id)}"  update="groupList">
+                                            <p:confirm   header="#{msg['iw.confirmation.titre']}" message="#{msg['iw.message.voulezvouscontinuer']}" icon="fa fa-warning" />
+                                        </p:menuitem>
+                                        <p:menuitem   rendered="#{!hierarchyController.isActiveGroup(group.id)}" value="#{msg['iw.group.activer']}" actionListener="#{hierarchyController.activateGroup(group.id, true)}" update="groupList">
+                                        </p:menuitem>
+                                        <p:menuitem  rendered="#{hierarchyController.isActiveGroup(group.id)}" value="#{msg['iw.group.desactiver']}" actionListener="#{hierarchyController.activateGroup(group.id, false)}" update="groupList">
+                                        </p:menuitem>
+                                        <p:menuitem  value="#{msg['iw.group.details']}"  outcome="hierarchygroupDetails">
+                                            <f:param  name="group" value="#{group.id}"/>
+                                        </p:menuitem>
+                                    </p:menuButton>
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ui:remove>
+            <div class="Container20 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect HeiAutoOnMobile">
+                            <ui:include src="../templates/processList.xhtml" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:remove>
+    </ui:define>
+</ui:composition>

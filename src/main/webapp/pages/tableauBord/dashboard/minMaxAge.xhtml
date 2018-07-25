@@ -1,0 +1,74 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core">
+
+	<h:form id="ageMinMax">
+		<h:panelGrid columns="5" styleClass="ui-grid Wid100" style="margin-bottom:10px" cellpadding="5">
+			<h:outputLabel for="min" value="Min Age: "/>
+			<p:spinner id="min" value="#{dashController.ageMin}" min="0" max="100"/>
+			<h:outputLabel for="max" value="Max Age: "/>
+			<p:spinner id="max" value="#{dashController.ageMax}" min="0" max="100"/>
+			<p:commandButton value="Valider" update="ageMinMax" oncomplete="minMaxAgeFuntion()"/>
+		</h:panelGrid>
+		<p:panel rendered="#{dashController.ageMax != null and dashController.ageMin !=null}">
+			<div id="buttons2"></div>
+
+			<br/><br/>
+			<div id="minMaxAge">
+				<div id="chart_minMaxAge" style="width: 100%; height: 250px;"></div>
+			</div>
+		</p:panel>
+
+		<script type="text/javascript">
+			/*<![CDATA[*/
+
+			var minMaxAgeFuntion = function () {
+
+				function AddNamespaceHandlerMinMax() {
+					var svg = jQuery('#chart_minMaxAge svg');
+					svg.attr("xmlns", "http://www.w3.org/2000/svg");
+					svg.css('overflow', 'visible');
+				}
+
+				var click = "return xepOnline.Formatter.Format('minMaxAge', {render:'download', srctype:'svg'})";
+				jQuery('#buttons2').append('<button onclick="' + click + '">PDF</button>');
+				google.charts.load('current', {packages: ['corechart', 'bar']});
+				google.charts.setOnLoadCallback(drawAgeMinMax);
+				function drawAgeMinMax() {
+					var mydata = JSON.parse('#{dashController.getAgeMinMaxAsJson()}');
+					console.log("************: " + JSON.stringify(mydata));
+					var dataMinMax = new google.visualization.DataTable();
+					dataMinMax.addColumn('number', 'Age');
+					dataMinMax.addColumn('number', 'Membres');
+					dataMinMax.addColumn({type: 'string', role: 'annotation'});
+					for (var colab of mydata) {
+						dataMinMax.addRows([[colab.age, colab.nbMembers, colab.nbMembers + " Membre(s)"]]);
+					}
+
+					var optionsMinMax = {
+						title: 'Nombre des personnes agées',
+						bar: {groupWidth: "30%"},
+						legend: {position: "none"},
+						hAxis: {
+							title: 'Age',
+							minValue: '#{dashController.ageMin - 1}',
+							maxValue: '#{dashController.ageMax}',
+							ticks: [10, 20, 30, 40, 50,60,70,80]
+						},
+						vAxis: {
+							title: 'NB Personnes'
+						}
+					};
+
+					var minMaxAgeChart = new google.visualization.ColumnChart(document.getElementById('chart_minMaxAge'));
+					google.visualization.events.addListener(minMaxAgeChart, 'ready', AddNamespaceHandlerMinMax);
+					minMaxAgeChart.draw(dataMinMax, optionsMinMax);
+				}
+			}
+
+			/*]]>*/
+		</script>
+	</h:form>
+</ui:composition>

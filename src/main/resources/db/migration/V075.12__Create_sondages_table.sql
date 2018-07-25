@@ -1,0 +1,5 @@
+CREATE TABLE `RH_Sondages`
+( `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `QUESTION` varchar(50) NOT NULL,
+  `REPONSE` varchar(50) NOT NULL,
+   PRIMARY KEY (`ID`));

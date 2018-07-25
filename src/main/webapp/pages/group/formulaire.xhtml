@@ -1,0 +1,101 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+    <f:metadata>
+        <ui:remove>
+            <f:viewParam name="group" value="#{groupController.groupId}" />
+        </ui:remove>
+    </f:metadata>
+
+    <!--Title of the page-->
+    <ui:define name="title" >#{(empty groupController.groupId)?msg['iw.ajoutergroup']:msg['iw.action.modification']} #{groupController.group.id}</ui:define>
+
+    <!--Title of the content: "Ajouter un utilisateur"-->
+    <ui:define name="subheader"  >#{(empty groupController.groupId)?msg['iw.ajoutergroup']:msg['iw.action.modification']} #{groupController.group.id}</ui:define>
+
+    <ui:define name="content">
+        <div class="Container100 Responsive100">
+            <div class="ContainerIndent">
+                <div class="iw2-center-block">
+                    <p:panel styleClass="iw2-center-block iw2-width-80">
+
+                        <!--The actual form-->
+                        <h:form enctype="multipart/form-data">
+                            <div class="Card ShadowEffect ui-fluid">
+                                <!--<h:outputLabel styleClass="CardTopic" name="subheader" rendered="#{empty userController.userId}" value="#{msg['iw.utilisateur.ajoututilisateur']}" />-->
+                                <!--<div class="SeparatorFull"></div>-->
+
+                                <div class="ui-panelgrid ui-widget ui-panelgrid-blank" style="border:0px !important; background:none;">
+                                    <div class="ui-panelgrid-content ui-widget-content ui-grid ui-grid-responsive">
+
+                                        <!--Identifiant-->
+                                        <div class="ui-grid-row">
+                                            <div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+                                                <p:outputLabel style="font-size: medium !important; margin: 5px;" value="#{msg['iw.group.identifiant']}" />
+                                                <p:outputLabel value=" *" class="Red"/>
+                                                <p:outputLabel value=" ROLE_" />
+                                                <p:inputText validatorMessage="#{msg['iw.goup.invalide']}" disabled="#{not empty groupController.groupId}" value="#{groupController.group.id}" required="true" label="#{msg['iw.group.identifiant']}" >
+                                                    <f:validateRegex pattern="#{navigationController.groupIdRegExp}" />
+                                                </p:inputText>
+                                            </div>
+                                        </div>
+
+                                        <!--Nom-->
+                                        <div class="ui-grid-row">
+                                            <div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+                                                <p:outputLabel style="font-size: medium !important; margin: 5px;" value="#{msg['iw.group.nom']}" />
+                                                <p:inputText value="#{groupController.group.name}" label="#{msg['iw.group.nom']}" />
+                                            </div>
+                                        </div>
+
+                                        <!--Administrateur ou pas-->
+                                        <div class="ui-grid-row">
+                                            <div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+                                                <p:outputLabel style="font-size: medium !important; margin: 5px;" value="#{msg['iw.group.estadministrateur']}"  />
+
+                                                <p:selectOneRadio value="#{groupController.group.type}">
+                                                    <f:selectItem itemLabel="#{msg['iw.boolean.oui']}" itemValue="admin" />
+                                                    <f:selectItem itemLabel="#{msg['iw.boolean.non']}" itemValue="user" />
+                                                </p:selectOneRadio>
+                                            </div>
+                                        </div>
+
+                                        <!--Active ou pas-->
+                                        <div class="ui-grid-row">
+                                            <div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+                                                <p:outputLabel style="font-size: medium !important; margin: 5px;" value="#{msg['iw.group.active']}"  />
+
+                                                <p:selectOneRadio value="#{groupController.groupDetails.iwActive}">
+                                                    <f:selectItem itemLabel="#{msg['iw.boolean.oui']}" itemValue="true" />
+                                                    <f:selectItem itemLabel="#{msg['iw.boolean.non']}" itemValue="false" />
+                                                </p:selectOneRadio>
+                                            </div>
+                                        </div>
+
+                                        <!--Validation-->
+                                        <div class="ui-grid-row" style="margin-top: 30px !important;">
+                                            <div class="ui-grid-col-3 iw2-center-block" style="margin-right: -10% !important;">
+                                                <p:commandButton action="#{groupController.saveGroup(true)}" value="#{msg['iw.bouton.enregistrernouveau']}" ajax="false"/>
+                                            </div>
+
+                                            <div class="ui-grid-col-3 iw2-center-block">
+                                                <p:commandButton styleClass="CyanButton" action="#{groupController.saveGroup(false)}" value="Valider" ajax="false"/>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:panel>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

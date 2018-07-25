@@ -1,0 +1,65 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="../templates/modena/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <f:metadata>
+
+    </f:metadata>
+
+    <ui:define name="title">#{msg['iw.mestaches']} </ui:define>
+    <ui:define name="subheader">
+        #{msg['iw.mestaches']}
+    </ui:define>
+    <ui:define name="content">
+
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+
+                        <h:form id="taskForm">
+                            <p:dataTable id="listId" value="#{standaloneTaskController.standAloneTaskList}" var="standaloneTask" emptyMessage="#{msg['iw.tache.message.tache.aucunetachetrouve']}"
+                                         paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10,50,100"
+                                         rows="10"
+                                         resizableColumns="true"
+                                         draggableRows="true">
+
+                                <f:facet name="header">
+                                    <p:button value="#{msg['iw.button.ajouter']}"  outcome="formulmairefonction">
+                                        <f:param name="fonctionId" value="" />
+                                    </p:button>
+                                </f:facet>
+
+                                <p:column>
+                                    <p:outputLabel value="#{standaloneTask.iwName}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{standaloneTask.iwDescription}"/>
+                                </p:column>
+                                <p:column width="6%">
+                                    <p:menuButton styleClass="ui-button-icon-only">
+                                        <p:menuitem value="#{msg['iw.bouton.modifier']}" outcome="formulmairefonction" >
+                                            <f:param name="fonctionId" value="#{standaloneTask.iwStandAloneTaskId}" />
+                                        </p:menuitem>
+                                        <p:menuitem value="#{msg['iw.tacheautonome.description']}" actionListener="#{standaloneTaskController.delete(standaloneTask)}" update="listId">
+                                        </p:menuitem>
+                                    </p:menuButton>
+                                </p:column>
+                            </p:dataTable>
+
+
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,145 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+
+    <f:metadata>
+    </f:metadata>
+
+    <ui:define name="title">Détail application #{applicationController.application.iwName}</ui:define>
+    <ui:define name="subheader">Détail application #{applicationController.application.iwName}</ui:define>
+
+    <ui:define name="content">
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+
+                        <h:form>
+                            <p:panelGrid columns="2" class="Wid100">
+
+
+                                <p:outputLabel value="#{msg['iw.application.name']}" />
+                                <p:outputLabel value="#{applicationController.application.iwName}" />
+
+                                <p:outputLabel value="#{msg['iw.application.description']}" />
+                                <h:outputText  value="#{applicationController.application.iwDescription}"/>
+
+
+                                <p:outputLabel  value=" "   />
+                                <p:button  outcome="applicationForm" value="#{msg['iw.bouton.modifier']}">
+                                    <f:param name="application" value="#{applicationController.application.iwApplicationId}" />
+                                </p:button>
+
+                            </p:panelGrid>
+
+                        </h:form>
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <p:button value="Créer un nouveau modèle"  outcome="modelForm">
+                            <f:param name="application" value="#{applicationController.applicationId}"  />
+                        </p:button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <h:form id="fromModel">
+                            <p:dataTable id="modelList" value="#{applicationController.modelList}" var="model"  paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10,50,100"
+                                         emptyMessage="Aucun modèle trouvé !">
+
+                                <p:column  width="15%" headerText="#{msg['iw.modele.numero']}" filterBy="#{model.id}" filterMatchMode="contains">
+                                    <p:outputLabel value="#{model.id}">
+                                        <f:param name="task" value="#{model.id}" />
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column  width="40%" headerText="#{msg['iw.modele.nom']}" filterBy="#{model.name}" filterMatchMode="contains">
+                                    <p:outputLabel value="#{model.name}" />
+                                </p:column>
+                                <ui:remove>
+                                    <p:column headerText="Tâche" filterBy="#{model.category}" filterMatchMode="contains">
+                                        <p:link  outcome="taskForm" value="#{model.category}">
+                                            <f:param name="task" value="#{model.id}" />
+                                        </p:link>
+                                    </p:column>
+                                </ui:remove>
+                                <p:column headerText="#{msg['iw.modele.deploiment']}" filterBy="#{model.deploymentId}" filterMatchMode="contains">
+                                    <p:outputLabel value="#{model.deploymentId}" />
+                                </p:column>
+                                <ui:remove>
+                                    <p:column headerText="#{msg['iw.modele.version']}" filterBy="#{model.version}" filterMatchMode="contains">
+                                        <p:outputLabel value="#{model.version}" />
+                                    </p:column>
+                                </ui:remove>
+                                <p:column headerText="#{msg['iw.modele.datemaj']}" filterBy="#{model.lastUpdateTime}" filterMatchMode="contains">
+                                    <p:outputLabel value="#{model.lastUpdateTime}">
+                                        <f:converter  binding="#{dateConverter}" />
+                                        <f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column  width="15%">
+                                    <p:menuButton value="#{msg['iw.button.actions']}" >
+                                        <p:menuitem  value="#{msg['iw.model.modifier']}" outcome="modelForm">
+                                            <f:param name="model" value="#{model.id}" />
+                                        </p:menuitem>
+                                        <p:menuitem  value="#{msg['iw.model.supprimer']}" actionListener="#{modelController.delete}" update=":fromModel">
+                                            <f:param name="model" value="#{model.id}" />
+                                            <p:confirm   header="#{msg['iw.confirmation.titre']}" message="#{msg['iw.message.voulezvouscontinuer']}" icon="fa fa-warning" />
+                                        </p:menuitem>
+                                        <p:menuitem update="modelList" value="#{msg['iw.model.copy']}" outcome="modelForm">
+                                            <f:param name="model" value="#{model.id}" />
+                                            <f:param name="copy" value="true" />
+                                        </p:menuitem>
+                                        <p:menuitem ajax="false" value="#{msg['iw.model.exporter']}">
+                                            <p:fileDownload value="#{fileController.exportModel(model.id)}">
+                                            </p:fileDownload>
+                                        </p:menuitem>
+                                        <p:menuitem  value="#{msg['iw.model.deployer']}" actionListener="#{modelController.deployModel()}">
+                                            <f:param name="model" value="#{model.id}" />
+                                        </p:menuitem>
+                                    </p:menuButton>
+
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ui:remove>
+
+            <div class="Container20 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect HeiAutoOnMobile">
+                            <ui:include src="../templates/processList.xhtml" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:remove>
+
+    </ui:define>
+</ui:composition>

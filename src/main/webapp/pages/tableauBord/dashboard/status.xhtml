@@ -1,0 +1,164 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core">
+
+	<h:form id="statusFormation">
+
+
+		<p:panelGrid columns="5" styleClass="ui-grid Wid100" style="margin-bottom:10px" cellpadding="5">
+			<p:outputLabel for="dmin" value="Date Début:"/>
+			<p:calendar id="dmin" value="#{dashController.dateMin}"/>
+
+			<p:outputLabel for="dmax" value="Date Fin:"/>
+			<p:calendar id="dmax" value="#{dashController.dateMax}"/>
+			<p:commandButton value="Valider" update="statusFormation"
+							 oncomplete="statusFuntion()"/>
+		</p:panelGrid>
+
+		<p:panelGrid rendered="#{dashController.dateMax !=null and dashController.dateMin !=null}" styleClass="Wid100">
+			<p:row>
+				<p:column style="width: 50%">
+					<p:panel styleClass="Wid100">
+						<div id="buttons8"></div>
+
+						<br/><br/>
+						<div id="statusBarF">
+							<div id="chart_statusBarF" style="width: 100%; height: 400px;"></div>
+						</div>
+					</p:panel>
+
+				</p:column>
+				<p:column style="width: 50%">
+					<p:panel styleClass="Wid100">
+						<div id="buttons9"></div>
+						<br/><br/>
+						<div id="statusPieF">
+							<div id="chart_statusPieF" style="width: 100%; height: 400px;"></div>
+						</div>
+					</p:panel>
+				</p:column>
+			</p:row>
+
+
+		</p:panelGrid>
+		<script type="text/javascript">
+			/*<![CDATA[*/
+
+
+			var statusFuntion = function () {
+				var dateDebut = '#{dashController.getFormatedDate(dashController.dateMin)}';
+				var dateFin = '#{dashController.getFormatedDate(dashController.dateMax)}';
+				var resDebut = dateDebut.split("-");
+				var resFin = dateFin.split("-");
+				statusBarFuntion(dateDebut,dateFin);
+				statusPieFuntion(dateDebut,dateFin);
+
+			};
+
+
+
+			var statusBarFuntion = function (resDebut, resFin) {
+
+				function AddNamespaceHandlerStatusBar() {
+					var svg = jQuery('#chart_statusBarF svg');
+					svg.attr("xmlns", "http://www.w3.org/2000/svg");
+					svg.css('overflow', 'visible');
+				}
+
+				var click = "return xepOnline.Formatter.Format('statusBarF', {render:'download', srctype:'svg'})";
+				jQuery('#buttons8').append('<button onclick="' + click + '">PDF</button>');
+				google.charts.load('current', {packages: ['corechart', 'bar']});
+				google.charts.setOnLoadCallback(drawStatusBarFormation);
+				function drawStatusBarFormation() {
+					var mydata = JSON.parse('#{dashController.getFormationStatusAsJson()}');
+					console.log("************: " + JSON.stringify(mydata));
+					var data = new google.visualization.DataTable();
+					data.addColumn('string', 'Status');
+					data.addColumn('number', 'Formations');
+					data.addColumn({type: 'string', role: 'annotation'});
+					var x1 = 0;
+					for (var formation of mydata) {
+						data.addRows([[formation.status, formation.nbFormations, formation.nbFormations + " Formation(s)"]]);
+						if(formation.nbFormations >2){
+							x1 = 1;
+						}
+					}
+
+
+					if(x1){
+						var options = {
+							title: 'Statut Formation',
+							bar: {groupWidth: "30%"},
+							legend: {position: "right"},
+							hAxis: {
+								title: 'NB Formations',
+								minValue: 0,
+							},
+							vAxis: {
+								title: 'Statut'
+							}
+						};
+					}else {
+						var options = {
+							title: 'Statut Formation',
+							bar: {groupWidth: "30%"},
+							legend: {position: "right"},
+							hAxis: {
+								title: 'NB Formations',
+								minValue: 0,
+								ticks: [0, 1, 2, 3 ]
+							},
+							vAxis: {
+								title: 'Statut'
+							}
+						};
+					}
+
+					var statusBarFormationChart = new google.visualization.BarChart(document.getElementById('chart_statusBarF'));
+					google.visualization.events.addListener(statusBarFormationChart, 'ready', AddNamespaceHandlerStatusBar);
+					statusBarFormationChart.draw(data, options);
+
+				}
+			}
+
+			var statusPieFuntion = function () {
+
+				function AddNamespaceHandlerStatusPie() {
+					var svg = jQuery('#chart_statusPieF svg');
+					svg.attr("xmlns", "http://www.w3.org/2000/svg");
+					svg.css('overflow', 'visible');
+				}
+
+				var click = "return xepOnline.Formatter.Format('statusPieF', {render:'download', srctype:'svg'})";
+				jQuery('#buttons9').append('<button onclick="' + click + '">PDF</button>');
+
+				google.charts.load('current', {packages: ['corechart']});
+				google.charts.setOnLoadCallback(drawStatusPie);
+
+				function drawStatusPie() {
+					var mydata = JSON.parse('#{dashController.getFormationStatusAsJson()}');
+
+					var data = new google.visualization.DataTable();
+					data.addColumn('string', 'Status');
+					data.addColumn('number', 'Formations');
+
+					for (var formation of mydata) {
+						data.addRows([[ formation.status, formation.nbFormations]]);
+					}
+
+					var options = {
+						title: 'Statut Formation',
+						pieHole: 0.4
+					};
+					var statusPieChart = new google.visualization.PieChart(document.getElementById('chart_statusPieF'));
+					google.visualization.events.addListener(statusPieChart, 'ready', AddNamespaceHandlerStatusPie);
+					statusPieChart.draw(data, options);
+				}
+			}
+
+			/*]]>*/
+		</script>
+	</h:form>
+</ui:composition>

@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core">
+
+
+				<h:form id="dash3" >
+
+
+
+							<p:panel class="Wid100">
+								<div id="buttons4"></div>
+								<br/><br/>
+								<div id="DA_En_BC">
+									<div id="chart_DA_En_BC" style="width: 100%; height: 250px;"></div>
+								</div>
+							</p:panel>
+
+
+
+
+
+
+
+					<script type="text/javascript"> /*For DA_En_BC */
+
+					function AddNamespaceHandlerDA_En_BC() {
+						var svg = jQuery('#chart_DA_En_BC svg');
+						svg.attr("xmlns", "http://www.w3.org/2000/svg");
+						svg.css('overflow', 'visible');
+					}
+
+					var click = "return xepOnline.Formatter.Format('DA_En_BC', {render:'download', srctype:'svg'})";
+					jQuery('#buttons4').append('<button onclick="' + click + '">PDF</button>');
+					google.charts.load('current', {packages: ['corechart', 'bar']});
+					google.charts.setOnLoadCallback(drawChart_DA_En_BC);
+					function drawChart_DA_En_BC() {
+						var mydata = JSON.parse('#{dashAchatsController.getNbrDaBcRejected()}');
+						console.log("************: " + JSON.stringify(mydata));
+						var dataDA_BC = new google.visualization.DataTable();
+						dataDA_BC.addColumn('string', 'DA');
+						dataDA_BC.addColumn('number', 'nbr DA');
+						dataDA_BC.addColumn({type: 'string', role: 'annotation'});
+
+						dataDA_BC.addRows([["DA", mydata.da,mydata.da + " Achat(s)"]]);
+						dataDA_BC.addRows([["BC", mydata.bc,mydata.bc + " Achat(s)"]]);
+						dataDA_BC.addRows([["DA Rejetées", mydata.dA_rejected,mydata.dA_rejected + " Achat(s)"]]);
+
+
+
+						var optionsMinMax = {
+							title: 'DA transformée en BC / Rejetées',
+							bar: {groupWidth: "80%"},
+							legend: {position: "none"},
+							hAxis: {
+								ticks: ["DA","BC","DA Rejetées"]
+							},
+							vAxis: {
+								title: 'NB Achats'
+							}
+						};
+
+						var chart_DA_En_BC = new google.visualization.ColumnChart(document.getElementById('chart_DA_En_BC'));
+						google.visualization.events.addListener(chart_DA_En_BC, 'ready', AddNamespaceHandlerDA_En_BC);
+						chart_DA_En_BC.draw(dataDA_BC, optionsMinMax);
+					}
+
+					</script>
+				</h:form>
+</ui:composition>

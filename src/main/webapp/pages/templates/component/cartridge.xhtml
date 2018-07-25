@@ -1,0 +1,79 @@
+<ui:composition
+
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <h:panelGrid columns="4"  cellspacing="8"  width="100%">
+        <c:forEach  var="form" items="#{cartridgeData}" >
+            <h:column>
+                <div class="Card ShadowEffect BlueBack White TexAlCenter HoverEffect">
+                    <div class=" Fs16 White DispBlock ClearBoth">
+                        <b>#{form.var.iwInput.label} : </b>
+                        <p:outputLabel rendered="#{form.var.iwInput.component=='textInput' and form.var.iwInput.validation=='string'}" class="White" value="#{form.val}" />
+                        <p:outputLabel rendered="#{form.var.iwInput.component=='textInput' and form.var.iwInput.validation=='long'}" class="White" value="#{form.val}" />
+                        <p:outputLabel rendered="#{form.var.iwInput.component=='textInput' and form.var.iwInput.validation=='money'}" class="White" value="#{form.val}" />
+
+                        <p:outputLabel rendered="#{form.var.iwInput.component=='textInput' and form.var.iwInput.validation=='date'}" class="White" value="#{form.val}" >
+                            <f:converter binding="#{dateConverter}" />
+                            <f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+                        </p:outputLabel>
+
+                        <p:outputLabel rendered="#{form.var.iwInput.component=='staticText'}" class="White" value="#{form.var.iwInput.placeholder}" />
+
+                        <p:outputLabel rendered="#{form.var.iwInput.component=='dynamicText'}" class="White" value="#{form.val}" />
+                        <p:outputLabel rendered="#{form.var.iwInput.component=='percentage'}" class="White" value="#{form.val} %" />
+                        <p:outputLabel rendered="#{form.var.iwInput.component=='textArea'}" class="White" value="#{fn:substring(form.val,0,35)}">
+                            <p:tooltip  value="#{form.val}" for="@parent" style="width:25%" />
+                        </p:outputLabel>
+
+                        <p:outputLabel class="White" value="#{msg['iw.boolean.oui']}" rendered="#{form.var.iwInput.component=='checkbox' and form.val==true}" />
+                        <p:outputLabel class="White" value="#{msg['iw.boolean.non']}" rendered="#{form.var.iwInput.component=='checkbox' and form.val==false}" />
+
+                        <p:outputLabel rendered="#{form.var.iwInput.component=='date' and form.var.iwInput.dateformat=='Time'}" class="White" value="#{form.val}" >
+                            <f:converter binding="#{dateConverter}" />
+                            <f:attribute name="format" value=""/>
+                        </p:outputLabel>
+                        <p:outputLabel rendered="#{form.var.iwInput.component=='date' and form.var.iwInput.dateformat=='Date'}" class="White" value="#{form.val}" >
+                            <f:converter binding="#{dateConverter}" />
+                            <f:attribute name="format" value="dd/MM/yyyy"/>
+                        </p:outputLabel>
+                        <p:outputLabel rendered="#{form.var.iwInput.component=='date' and form.var.iwInput.dateformat=='Time'}" class="White" value="#{form.val}" >
+                            <f:converter binding="#{dateConverter}" />
+                            <f:attribute name="format" value="dd/MM/yyyy HH:mm:ss"/>
+                        </p:outputLabel>
+
+                        <p:outputLabel rendered="#{form.var.iwInput.component=='radio'}" class="White" value="#{form.val}" />
+                        <p:outputLabel rendered="#{form.var.iwInput.component=='select'}" class="White" value="#{form.val}" />
+
+                        <p:outputPanel rendered="#{form.var.iwInput.component=='picklist'}" class="White">
+                            <ul style="list-style-type: square;">
+                                <ui:repeat value="#{form.val}" var="item">
+                                    <li>- #{item}</li>
+                                </ui:repeat>
+                            </ul>
+                        </p:outputPanel>
+
+                        <p:outputPanel rendered="#{form.var.iwInput.component=='checklist'}" class="White">
+                            <ul style="list-style-type: square;">
+                                <ui:repeat value="#{form.val}" var="item">
+                                    <li>- #{item}</li>
+                                </ui:repeat>
+                            </ul>
+                        </p:outputPanel>
+                        <p:outputLabel rendered="#{form.var.iwInput.component=='document'}" class="White" value="#{form.var.iwInput.value}" />
+                    </div>
+                </div>
+
+            </h:column>
+        </c:forEach>
+
+    </h:panelGrid>
+
+</ui:composition>
+
+

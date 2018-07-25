@@ -1,0 +1,207 @@
+<ui:composition
+
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:pe="http://primefaces.org/ui/extensions" xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <p:column  rendered="#{formWrapper.value.iwInput.component eq 'multilineentityconfig'}" colspan="2" >
+
+
+        <p:outputPanel styleClass="ssq">
+
+
+            <!--Datatable : Modifierr/Enregistrer/Retour-->
+
+
+            <p:dataTable   rendered="#{formWrapper.value.iwInput.component eq 'multilineentityconfig' and not empty formWrapper.value.configEntityValueSeleted}" value="#{formWrapper.value.iwInput.options2}" var="column" resizableColumns="true">
+                <p:column>
+                    <p:outputLabel  style="font-size: medium !important;" value="#{taskController.getDescriptionField(formWrapper.value.iwInput.value, column)}" />
+                </p:column>
+                <p:column>
+                    <p:calendar value="#{formWrapper.value.configEntityValueSeleted[column]}"
+                                mode="popup"
+                                pattern="dd/MM/yyyy"
+                                locale="#{navigationController.locale}"
+                                showButtonPanel="true"
+                                rendered="#{taskController.isDateInput(formWrapper.value.iwInput.value,column)}"
+                                >
+                        <f:attribute name="format" value="dd/MM/yyyy"/>
+                        <f:converter  binding="#{dateConverter}" />
+                    </p:calendar>
+                    <p:selectOneMenu value="#{formWrapper.value.configEntityValueSeleted[column]}"
+                                     rendered="#{taskController.isBooleanSelectInput(formWrapper.value.iwInput.value,column)}"
+                                     >
+                        <f:selectItem itemValue="#{null}" itemLabel="#{msg['iw.selectionner']}" noSelectionOption="true" />
+                        <f:selectItem itemValue="#{true}" itemLabel="Oui"  />
+                        <f:selectItem itemValue="#{false}" itemLabel="Non"  />
+                    </p:selectOneMenu>
+                    <p:inputText value="#{formWrapper.value.configEntityValueSeleted[column]}"
+                                 rendered="#{not taskController.isBooleanSelectInput(formWrapper.value.iwInput.value,column)
+                                             and not taskController.isDateInput(formWrapper.value.iwInput.value,column)
+                                             and not taskController.isIwUploadFile(formWrapper.value.iwInput.value,column)
+                                             and empty formWrapper.value.iwListMap[column]}">
+                    </p:inputText>
+                    <p:outputLabel value="#{not empty formWrapper.value.configEntityValueSeleted[column].iwFileList.size() ? formWrapper.value.configEntityValueSeleted[column].iwFileList.size() : '0'} "
+                                   rendered="#{taskController.isIwUploadFile(formWrapper.value.iwInput.value,column)}">
+                    </p:outputLabel>
+                    <p:commandButton  icon="fa fa-upload"
+                                      ajax="true"
+                                      process="@this"
+                                      actionListener="#{taskController.setIwUploadSelected(formWrapper.value.configEntityValueSeleted[column].iwFileList)}"
+                                      update="@(.entityList)"
+                                      immediate="true"
+                                      class="Fright"
+                                      rendered="#{taskController.isIwUploadFile(formWrapper.value.iwInput.value,column)}"
+                                      >
+                        <f:setPropertyActionListener value="#{formWrapper.value}" target="#{fileController.formWrapperSelected}" />
+                        <f:setPropertyActionListener value="#{column}" target="#{fileController.columnSelected}" />
+                        <f:setPropertyActionListener value="#{formWrapper.value.configEntityValueSeleted}" target="#{fileController.entitySelected}" />
+                        <f:setPropertyActionListener value="#{formWrapper.value.configEntityValueSeleted[column]}" target="#{fileController.iwUploadSelected}" />
+                        <f:setPropertyActionListener value="#{formWrapper.value.iwInput.value}" target="#{fileController.calssName}" />
+
+                        <f:setPropertyActionListener value="#{taskController.currentTask}" target="#{fileController.currentTask}" />
+                        <f:setPropertyActionListener value="#{taskController.functionId}" target="#{fileController.functionId}" />
+                        <f:setPropertyActionListener value="#{taskController.taskAutonomeId}" target="#{fileController.standalonetaskId}" />
+                    </p:commandButton>
+
+                    <p:selectOneMenu id="iwListeIdcfg" value="#{formWrapper.value.configEntityValueSeleted[column]}"
+                                     rendered="#{not empty formWrapper.value.iwListMap[column]}"
+                                     >
+                        <f:selectItem itemLabel="#{msg['iw.selectionner']}" itemValue="#{null}" />
+                        <f:selectItems value="#{formWrapper.value.iwListMap.get(column)}" var="optionList"  itemLabel="#{optionList}" itemValue="#{optionList}" />
+                    </p:selectOneMenu>
+
+
+                </p:column>
+                <f:facet name="header">
+                    <p:commandButton value="Enregister" ajax="true"  actionListener="#{formWrapper.value.confirmEntityChange()}"  update="@(.ssq,.entityconfigst,.colomnEntitycfg)" process="@(.ssq)" />
+                    <ui:remove>
+                        <p:commandButton value="Retour" ajax="true" actionListener="#{formWrapper.value.resetEntityConfig()}" process="@this" update="@(.ssq,.entityconfigst)"/>
+                    </ui:remove>
+                </f:facet>
+            </p:dataTable>
+
+
+            <!-- Datatable: Afficher les entrées de la table/Modifier/Filtre-->
+
+
+            <p:dataTable  rendered="#{formWrapper.value.iwInput.component eq 'multilineentityconfig' and empty formWrapper.value.configEntityValueSeleted and formWrapper.value.iwInput.allowSearch}"
+                          styleClass="entityconfigst"
+                          value="#{formWrapper.value.entityList}"
+                          var="entity"
+                          emptyMessage="#{msg['iw.tache.multiligne.emptymsg']}"
+                          rowIndexVar="entityIndex"
+                          resizableColumns="true"
+                          filteredValue="#{formWrapper.value.filtredData}"
+                          >
+                <f:facet name="header">
+                    <p:commandButton  value="Ajouter" ajax="true"  actionListener="#{formWrapper.value.initDialogEntityConfig(entityIndex,true)}" rendered="#{formWrapper.value.iwInput.allowCreate}"  update="@(.ssq)">
+                    </p:commandButton>
+                </f:facet>
+                <p:column width="25">
+                    <p:commandButton  icon="fa fa-edit" ajax="true"  actionListener="#{formWrapper.value.initDialogEntityConfig(entityIndex,false)}"  process="@this"  update="@(.ssq)" rendered="#{formWrapper.value.iwInput.allowUpdate}">
+                    </p:commandButton>
+                    <p:commandButton  icon="fa fa-remove" ajax="true" actionListener="#{formWrapper.value.deleteEntity(entityIndex)}"  process="@this" update="@(.entityconfigst)" rendered="#{formWrapper.value.iwInput.allowDelete}">
+                        <p:confirm header="Confirmation" message="Êtes-vous sûr de vouloir supprimer ?" icon="fa fa-warning"/>
+                    </p:commandButton>
+
+                </p:column>
+
+                <p:columns  id="colomnEntitycfg"
+                            value="#{formWrapper.value.iwInput.options2}"
+                            var="column"
+                            columnIndexVar="colIndex"
+                            rendered="#{formWrapper.value.iwInput.options2.contains(column)}"
+                            width="#{(empty formWrapper.value.resizeMultilignColomns(formWrapper.value.iwInput,colIndex))?150:formWrapper.value.resizeMultilignColomns(formWrapper.value.iwInput,colIndex)}"
+                            filterable="true"
+                            filterFunction="#{taskController.filterColumns}"
+                            filterBy="#{entity[column]}"
+                            filterValue="#{formWrapper.value.iwInput.entityFilter[colIndex]}"
+                            >
+
+                    <f:facet name="header">
+                        <h:outputText value="#{taskController.getDescriptionField(formWrapper.value.iwInput.value,column)}" />
+                    </f:facet>
+                    <p:outputLabel value="#{entity[column]}"  rendered="#{taskController.isDateInput(formWrapper.value.iwInput.value,column)}"  >
+                        <f:converter binding="#{dateConverter}" />
+                        <f:attribute name="format" value="dd/MM/yyyy"/>
+                    </p:outputLabel>
+                    <p:outputLabel value="Oui"  rendered="#{taskController.isBooleanSelectInput(formWrapper.value.iwInput.value,column) and  entity[column] == true}" />
+                    <p:outputLabel value="Non"  rendered="#{taskController.isBooleanSelectInput(formWrapper.value.iwInput.value,column) and  entity[column] == false}" />
+                    <p:outputLabel value="#{entity[column]}"
+                                   rendered="#{not taskController.isBooleanSelectInput(formWrapper.value.iwInput.value,column)
+                                               and not taskController.isDateInput(formWrapper.value.iwInput.value,column)
+                                               and not taskController.isIwUploadFile(formWrapper.value.iwInput.value,column)}"/>
+                    <p:outputLabel value="#{not empty entity[column].iwFileList.size() ? entity[column].iwFileList.size() : '0'} "
+                                   rendered="#{taskController.isIwUploadFile(formWrapper.value.iwInput.value,column)}">
+                    </p:outputLabel>
+                </p:columns>
+            </p:dataTable>
+
+
+            <!--Datatable: Afficher les entrées de la table/Modifier/ Sans filtre-->
+
+
+            <p:dataTable  rendered="#{formWrapper.value.iwInput.component eq 'multilineentityconfig' and empty formWrapper.value.configEntityValueSeleted and !formWrapper.value.iwInput.allowSearch}"
+                          styleClass="entityconfigst"
+                          value="#{formWrapper.value.entityList}"
+                          var="entity"
+                          emptyMessage="#{msg['iw.tache.multiligne.emptymsg']}"
+                          rowIndexVar="entityIndex"
+                          resizableColumns="true"
+                          filteredValue="#{formWrapper.value.filtredData}">
+                <f:facet name="header">
+                    <p:commandButton  value="Ajouter" ajax="true"  actionListener="#{formWrapper.value.initDialogEntityConfig(entityIndex,true)}"  process="@this" rendered="#{formWrapper.value.iwInput.allowCreate}" update="@(.ssq)">
+                    </p:commandButton>
+                </f:facet>
+                <p:column width="25">
+                    <p:commandButton  icon="fa fa-edit" ajax="true"  actionListener="#{formWrapper.value.initDialogEntityConfig(entityIndex,false)}" process="@this"  update="@(.ssq)" rendered="#{formWrapper.value.iwInput.allowUpdate}">
+                    </p:commandButton>
+                    <p:commandButton  icon="fa fa-remove" ajax="true" actionListener="#{formWrapper.value.deleteEntity(entityIndex)}"  process="@this" update="@(.entityconfigst)" rendered="#{formWrapper.value.iwInput.allowDelete}">
+                        <p:confirm header="Confirmation" message="Êtes-vous sûr de vouloir supprimer ?" icon="fa fa-warning"/>
+                    </p:commandButton>
+
+                </p:column>
+
+                <p:columns  id="colomnEntitycfg"
+                            value="#{formWrapper.value.iwInput.options2}"
+                            var="column"
+                            styleClass="colomnEntitycfg"
+                            columnIndexVar="colIndex"
+                            rendered="#{formWrapper.value.iwInput.options2.contains(column)}"
+                            width="#{(empty formWrapper.value.resizeMultilignColomns(formWrapper.value.iwInput,colIndex))?150:formWrapper.value.resizeMultilignColomns(formWrapper.value.iwInput,colIndex)}"
+                            >
+
+                    <f:facet name="header">
+                        <h:outputText
+							style="white-space: normal"
+							value="#{taskController.getDescriptionField(formWrapper.value.iwInput.value,column)}" />
+                    </f:facet>
+                    <p:outputLabel value="#{entity[column]}"  rendered="#{taskController.isDateInput(formWrapper.value.iwInput.value,column)}"  >
+                        <f:converter binding="#{dateConverter}" />
+                        <f:attribute name="format" value="dd/MM/yyyy"/>
+                    </p:outputLabel>
+                    <p:outputLabel value="Oui"  rendered="#{taskController.isBooleanSelectInput(formWrapper.value.iwInput.value,column) and  entity[column] == true}" />
+                    <p:outputLabel value="Non"  rendered="#{taskController.isBooleanSelectInput(formWrapper.value.iwInput.value,column) and  entity[column] == false}" />
+                    <p:outputLabel value="#{entity[column]}"
+                                   rendered="#{not taskController.isBooleanSelectInput(formWrapper.value.iwInput.value,column)
+                                               and not taskController.isDateInput(formWrapper.value.iwInput.value,column)
+                                               and not taskController.isIwUploadFile(formWrapper.value.iwInput.value,column)}"/>
+                    <p:outputLabel value="#{not empty entity[column].iwFileList.size() ? entity[column].iwFileList.size() : '0'} "
+                                   rendered="#{taskController.isIwUploadFile(formWrapper.value.iwInput.value,column)}">
+
+                    </p:outputLabel>
+
+                </p:columns>
+            </p:dataTable>
+
+        </p:outputPanel>
+
+    </p:column>
+</ui:composition>
+
+

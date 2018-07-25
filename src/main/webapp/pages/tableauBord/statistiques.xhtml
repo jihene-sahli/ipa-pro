@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+
+    <ui:define name="title">#{msg['iw.statistiques']}</ui:define>
+    <ui:define name="subheader">
+        #{msg['iw.statistiques']} | #{ticketingController.processPie.title}
+    </ui:define>
+    <ui:define name="head">
+        <f:verbatim>
+            <script type="text/javascript">
+
+                function extLegend()
+                {
+                    this.cfg.legend = {
+                        show: true,
+                        location: 's',
+                        placement: 'outsideGrid'
+                    };
+                }
+            </script>
+        </f:verbatim>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="Container33 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <p:chart  type="pie" model="#{ticketingController.processPie}" style="width:100%;height:500px;max-height:100%" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

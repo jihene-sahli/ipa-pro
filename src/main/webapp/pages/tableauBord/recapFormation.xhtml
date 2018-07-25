@@ -1,0 +1,146 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+>
+
+
+	<h:form id="recapFormation">
+
+		<p:accordionPanel activeIndex="null" multiple="true" >
+			<p:tab title="Formations demandées" scrollable="true" scrollHeight="400">
+				<p:dataTable value="#{dashController.aldformations.get('Formations demandées')}" var="formation" >
+					<p:column headerText="Intitulé" width="100" sortBy="#{formation.intituleFormation}">
+						<h:outputText value="#{formation.intituleFormation}" style="font-size: medium !important;" >
+
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Période Souhaitée" width="150" style="font-size: medium !important;">
+						<h:outputText value="#{formation.periodeFormation}"
+						>
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Objectif" width="150" style="font-size: medium !important;">
+						<h:outputText value="#{formation.objectifFormation}"
+						>
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Collaborateur" width="150" sortBy="#{formation.collaborateur}" style="font-size: medium !important;">
+						<h:outputText value="#{formation.collaborateur}"
+						>
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+
+			</p:tab >
+			<p:tab title="Formations rejetées" scrollable="true" scrollHeight="400">
+				<p:dataTable value="#{dashController.aldformations.get('Formations Rejetées')}" var="formation" >
+					<p:column headerText="Intitulé" width="100" sortBy="#{formation.intituleFormation}">
+						<h:outputText value="#{formation.intituleFormation}" style="font-size: medium !important;" >
+
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Période Souhaitée" width="150" style="font-size: medium !important;">
+						<h:outputText value="#{formation.periodeFormation}"
+						>
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Objectif" width="150" style="font-size: medium !important;">
+						<h:outputText value="#{formation.objectifFormation}"
+						>
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Collaborateur" width="150" sortBy="#{formation.collaborateur}" style="font-size: medium !important;">
+						<h:outputText value="#{formation.collaborateur}"
+						>
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+
+			</p:tab >
+
+			<c:forEach items="#{dashController.aldformations}" var="formlist" >
+				<p:tab title="#{formlist.key}"  rendered="#{formlist.key!='Formations demandées' and formlist.key!='Formations Rejetées' }">
+					<p:dataTable value="#{formlist.value}" var="formation" >
+						<p:column headerText="Intitulé" width="100">
+							<h:outputText value="#{formation.intituleFormation}" style="font-size: medium !important;">
+
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Période Souhaitée" width="150">
+							<h:outputText value="#{formation.periodeFormation}" style="font-size: medium !important;"
+							>
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Objectif" width="150">
+							<h:outputText value="#{formation.objectifFormation}" style="font-size: medium !important;"
+							>
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Collaborateur" width="150" sortBy="#{formation.collaborateur}">
+							<h:outputText value="#{formation.collaborateur}" style="font-size: medium !important;"
+							>
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Date Formation" width="100">
+							<h:outputText value="#{formation.dateFormation}" style="font-size: medium !important;"
+							>
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Attestation " style="text-align: center" width="100" >
+							<p:commandButton icon="fa fa-download" ajax="false" style=" text-align:center; margin-left: 50%;width: 50px; " action="#{dashController.buttonAction}" >
+								<p:fileDownload value="#{dashController.getiwFileForForamtion(formation,1) }"
+												contentDisposition="attachement"
+												transient="true">
+
+								</p:fileDownload>
+							</p:commandButton>
+						</p:column>
+						<p:column headerText="Evaluation à chaud" width="100">
+							<h:outputText value="#{formation.evalChaud}" style="font-size: medium !important;"
+							>
+							</h:outputText>
+
+						</p:column>
+						<p:column headerText="Attestation à chaud" width="100">
+							<p:commandButton icon="fa fa-download" ajax="false" style=" text-align:center; margin-left: 50%;width: 50px; " >
+								<p:fileDownload value="#{dashController.getiwFileForForamtion(formation,2)}"
+												contentDisposition="attachement"
+												transient="true">
+
+								</p:fileDownload>
+							</p:commandButton>
+						</p:column>
+						<p:column headerText="Evaluation à froid" width="100">
+							<h:outputText value="#{formation.evalFroid}" style="font-size: medium !important;">
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Attestation à froid" width="100" >
+							<p:commandButton icon="fa fa-download" ajax="false" style=" text-align:center; margin-left: 50%;width: 50px; " >
+								<p:fileDownload value="#{dashController.getiwFileForForamtion(formation,3)}"
+												contentDisposition="attachement"
+												transient="true">
+
+								</p:fileDownload>
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+				</p:tab>
+
+			</c:forEach>
+
+		</p:accordionPanel>
+
+
+	</h:form>
+</ui:composition>

@@ -1,0 +1,425 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:c="http://java.sun.com/jsp/jstl/core"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:sec="http://www.springframework.org/security/tags"
+				xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+				template="../templates/modena/template.xhtml">
+
+	<f:metadata>
+		<ui:remove>
+			<f:viewParam name="instance" value="#{instanceController.instanceId}"/>
+		</ui:remove>
+	</f:metadata>
+
+	<ui:define name="title">#{msg['iw.instance.detailsinstance']} #{instanceController.currentInstance.name}</ui:define>
+	<ui:define
+		name="subheader">#{msg['iw.instance.detailsinstance']} #{instanceController.currentInstance.name}</ui:define>
+	<ui:define name="head">
+		<f:verbatim>
+			<style type="text/css">
+				.ui-lightbox {
+					width: 90% !important;
+					height: 90% !important;
+				}
+
+				.ui-lightbox-content-wrapper, .ui-lightbox-content {
+					width: 100% !important;
+					height: 100% !important;
+				}
+
+				.ui-inputfield-ntask .ui-inputfield, .ui-inputfield-ntask .ui-inputfield {
+					width: 55px;
+				}
+			</style>
+			<script type="text/javascript">
+				function submiComment(event) {
+					if (event.keyCode == 10 || event.keyCode == 13)
+						if (!event.ctrlKey) {
+							submitProcInstComment();
+							return false;
+						} else
+							return true;
+				}
+			</script>
+		</f:verbatim>
+	</ui:define>
+	<ui:define name="content">
+
+		<div class="Container100 Responsive100">
+			<div class="Container100 Responsive100">
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<div class="Card ShadowEffect">
+							<p:tabView orientation="bottom" effect="slide" style="width:100%;">
+								<p:tab title="#{msg['iw.instance.avancement']}">
+									<ui:fragment>
+										<p:outputLabel class="Fright" style="padding-left:100%;" value="100%"/>
+										<br/>
+										<p:slider for="maxId" disabled="true"/>
+										<h:inputHidden id="maxId" value="100"/>
+									</ui:fragment>
+								</p:tab>
+								<p:tab title="#{msg['iw.instance.details']}">
+									<p:panelGrid columns="2" class="Wid100"
+												 rendered="#{instanceController.currentInstance!=null}">
+
+
+										<p:outputLabel value="#{msg['iw.instance.numero']} : "/>
+										<p:outputLabel value="#{instanceController.currentInstance.processInstanceId}"/>
+
+										<p:outputLabel value="#{msg['iw.instance.nom']} : "/>
+										<p:outputLabel value="#{instanceController.currentInstance.name}"/>
+
+										<p:outputLabel value="#{msg['iw.instance.definitionid']} : "/>
+										<p:outputLabel
+											value="#{instanceController.currentInstance.processDefinitionId}"/>
+
+										<p:outputLabel value="#{msg['iw.instance.definitionname']} : "/>
+										<p:outputLabel
+											value="#{instanceController.currentInstance.processDefinitionName}"/>
+
+									</p:panelGrid>
+
+									<p:panelGrid columns="2" class="Wid100"
+												 rendered="#{instanceController.currentInstanceHist!=null}">
+
+
+										<p:outputLabel value="#{msg['iw.instance.numero']} : "/>
+										<p:outputLabel value="#{instanceController.instanceHistId}"/>
+
+										<p:outputLabel value="#{msg['iw.instance.nom']} : "/>
+										<p:outputLabel value="#{instanceController.currentInstanceHist.name}"/>
+
+										<p:outputLabel value="#{msg['iw.instance.definitionid']} : "/>
+										<p:outputLabel
+											value="#{instanceController.currentInstanceHist.processDefinitionId}"/>
+
+
+										<p:outputLabel value="#{msg['iw.instance.initiateur']} : "/>
+										<p:outputLabel value="#{instanceController.currentInstanceHist.startUserId}"/>
+
+										<p:outputLabel value="#{msg['iw.instance.datedebut']} : "/>
+
+										<p:outputLabel value="#{instanceController.currentInstanceHist.startTime}">
+											<f:converter binding="#{dateConverter}"/>
+											<f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+										</p:outputLabel>
+
+										<p:outputLabel value="#{msg['iw.instance.datefin']} : "/>
+										<p:outputLabel value="#{instanceController.currentInstanceHist.endTime}">
+											<f:converter binding="#{dateConverter}"/>
+											<f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+										</p:outputLabel>
+										<p:outputLabel value="#{msg['iw.instance.duree']} : "/>
+										<p:outputLabel
+											value="#{instanceController.getDuration(instanceController.currentInstanceHist.durationInMillis,instanceController.currentInstanceHist.startTime)}"/>
+
+									</p:panelGrid>
+								</p:tab>
+
+								<p:tab title="#{msg['iw.instance.cartouche']}"
+									   rendered="#{instanceController.currentInstance!=null}">
+									<ui:include src="../templates/component/cartridge.xhtml">
+										<ui:param name="cartridgeData" value="#{instanceController.globalFormList}"/>
+									</ui:include>
+								</p:tab>
+								<p:tab title="#{msg['iw.instance.cartouche']}"
+									   rendered="#{empty instanceController.currentInstance}">
+									<ui:include src="../templates/component/cartridge.xhtml">
+										<ui:param name="cartridgeData"
+												  value="#{instanceController.globalHistFormList}"/>
+									</ui:include>
+								</p:tab>
+							</p:tabView>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="Container100">
+				<div class="ContainerIndent">
+					<div class="Card ShadowEffect">
+						<h:form>
+							<p:panel toggleable="true">
+								<f:facet name="header">
+									#{msg['iw.instance.historique']}
+
+								</f:facet>
+								<p:dataTable value="#{instanceController.processInstanceHistory}" var="task">
+
+									<p:column width="6%">
+										<p:graphicImage
+											rendered="#{instanceController.activitiService.getUser(task.assignee).pictureSet}"
+											style="height: 40px;"
+											value="#{fileController.avatar}">
+											<f:param name="user"
+													 value="#{instanceController.activitiService.getUser(task.assignee).id}"/>
+										</p:graphicImage>
+										<p:graphicImage style="height: 40px;"
+														rendered="#{!instanceController.activitiService.getUser(task.assignee).pictureSet}"
+														url="/resources/img/avatar.png"/>
+									</p:column>
+
+
+									<p:column styleClass="ui-inputfield-ntask" width="8%"
+											  headerText="#{msg['iw.tache.numero']}" filterBy="#{task.id}"
+											  filterMatchMode="contains"
+											  sortBy="#{navigationController.taskController.convertLongToString(task.id)}">
+										<p:outputLabel value="#{task.id}"/>
+									</p:column>
+
+									<p:column width="30%" headerText="#{msg['iw.tache.nom']}" filterBy="#{task.id}"
+											  filterMatchMode="contains"
+											  sortBy="#{navigationController.taskController.convertLongToString(task.id)}">
+										<p:link rendered="#{not empty (task.endTime)}" outcome="processTaskDetails"
+												value="#{task.name}">
+											<f:param name="tacheHist" value="#{task.id}"></f:param>
+										</p:link>
+										<p:outputLabel rendered="#{empty (task.endTime)}" value="#{task.name}"/>
+									</p:column>
+
+									<p:column headerText="#{msg['iw.tache.assigne']}" filterBy="#{task.id}"
+											  filterMatchMode="contains"
+											  sortBy="#{navigationController.taskController.convertLongToString(task.id)}">
+										<p:outputLabel value="#{task.assignee}"/>
+									</p:column>
+									<ui:remove>
+										<p:column headerText="#{msg['iw.tache.proprietaire']}" filterBy="#{task.id}"
+												  filterMatchMode="contains"
+												  sortBy="#{navigationController.taskController.convertLongToString(task.id)}">
+											<p:outputLabel value="#{task.owner}"/>
+										</p:column>
+
+										<p:column headerText="#{msg['iw.tache.priorite']}" filterBy="#{task.id}"
+												  filterMatchMode="contains"
+												  sortBy="#{navigationController.taskController.convertLongToString(task.id)}">
+											<p:outputLabel value="#{task.priority}"/>
+										</p:column>
+									</ui:remove>
+									<p:column headerText="#{msg['iw.tache.dateajout']}" filterBy="#{task.id}"
+											  filterMatchMode="contains"
+											  sortBy="#{navigationController.taskController.convertLongToString(task.id)}">
+										<p:outputLabel value="#{task.createTime}">
+											<f:converter binding="#{dateConverter}"/>
+											<f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+										</p:outputLabel>
+									</p:column>
+									<ui:remove>
+										<p:column headerText="#{msg['iw.tache.dateecheance']}" filterBy="#{task.id}"
+												  filterMatchMode="contains"
+												  sortBy="#{navigationController.taskController.convertLongToString(task.id)}">
+											<p:outputLabel value="#{task.dueDate}">
+												<f:converter binding="#{dateConverter}"/>
+												<f:attribute name="format"
+															 value="#{navigationController.longDateFormat}"/>
+											</p:outputLabel>
+										</p:column>
+									</ui:remove>
+									<p:column headerText="#{msg['iw.tache.datefin']}" filterBy="#{task.id}"
+											  filterMatchMode="contains"
+											  sortBy="#{navigationController.taskController.convertLongToString(task.id)}">
+										<p:outputLabel value="#{task.endTime}">
+											<f:converter binding="#{dateConverter}"/>
+											<f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+										</p:outputLabel>
+									</p:column>
+
+									<p:column headerText="#{msg['iw.tache.durree']}" filterBy="#{task.id}"
+											  filterMatchMode="contains"
+											  sortBy="#{navigationController.taskController.convertLongToString(task.id)}">
+										<p:outputLabel
+											value="#{instanceController.getDuration(task.durationInMillis,task.createTime)}"/>
+									</p:column>
+									<ui:remove>
+										<p:column headerText="#{msg['iw.tache.daterecuperation']}" filterBy="#{task.id}"
+												  filterMatchMode="contains"
+												  sortBy="#{navigationController.taskController.convertLongToString(task.id)}">
+											<p:outputLabel value="#{task.claimTime}">
+												<f:converter binding="#{dateConverter}"/>
+												<f:attribute name="format"
+															 value="#{navigationController.longDateFormat}"/>
+											</p:outputLabel>
+										</p:column>
+										<p:column headerText="#{msg['iw.tache.tempstravail']}" filterBy="#{task.id}"
+												  filterMatchMode="contains"
+												  sortBy="#{navigationController.taskController.convertLongToString(task.id)}">
+											<p:outputLabel value="#{task.workTimeInMillis}"/>
+										</p:column>
+
+										<p:column headerText="#{msg['iw.tache.formulaire']}" filterBy="#{task.id}"
+												  filterMatchMode="contains"
+												  sortBy="#{navigationController.taskController.convertLongToString(task.id)}">
+											<p:outputLabel value="#{task.formKey}"/>
+										</p:column>
+									</ui:remove>
+								</p:dataTable>
+
+							</p:panel>
+						</h:form>
+					</div>
+				</div>
+			</div>
+
+			<div class="Container100">
+				<div class="ContainerIndent">
+					<div class="Card ShadowEffect">
+						<h:form>
+							<p:panel toggleable="true">
+								<f:facet name="header">
+									#{msg['iw.instance.documents']}
+								</f:facet>
+								<p:accordionPanel value="#{instanceController.uploadInputs}" var="uploadInput">
+									<p:tab title="#{uploadInput.label}">
+										<p:dataGrid id="filesList"
+													value="#{instanceController.getFormFileList(uploadInput)}"
+													var="iwFile" columns="1">
+
+											<div class="Container100 Responsive100">
+												<div class="ContainerIndent">
+													<div class="Container50 Fs50 FontRobotoLight Orange">
+
+														<p:graphicImage width="100" value="#{fileController.image}"
+																		rendered="#{ iwFile.iwMime.startsWith('image')}">
+															<f:param name="path" value="#{iwFile.iwPath}"/>
+															<f:param name="mime" value="#{iwFile.iwMime}"/>
+															<f:param name="fileName" value="#{iwFile.iwName}"/>
+														</p:graphicImage>
+														<!--<p:outputPanel-->
+														<!--rendered="#{not iwFile.iwMime.startsWith('image')}">-->
+														<!--<div class="fa fa-file-o"></div>-->
+														<!--</p:outputPanel>-->
+														<p:outputPanel
+															rendered="#{iwFile.iwName.contains('.ppt')}">
+															<div class="fa fa-file-powerpoint-o"></div>
+														</p:outputPanel>
+														<p:outputPanel
+															rendered="#{iwFile.iwName.contains('.doc')}">
+															<div class="fa fa-file-word-o"></div>
+														</p:outputPanel>
+														<p:outputPanel
+															rendered="#{iwFile.iwName.contains('.xls')}">
+															<div class="fa fa-file-excel-o"></div>
+														</p:outputPanel>
+														<p:outputPanel
+															rendered="#{iwFile.iwName.contains('.pdf')}">
+															<div class="fa fa-file-pdf-o"></div>
+														</p:outputPanel>
+														<p:outputPanel
+															rendered="#{iwFile.iwName.contains('.txt')}">
+															<div class="fa fa-file-text-o"></div>
+														</p:outputPanel>
+													</div>
+													<div class="Container50">
+
+														<p:commandButton id="previewBtn" value="aperçu"
+																		 icon="fa fa-search"
+																		 rendered="#{fn:contains(iwFile.iwName,'.pdf') || fn:contains(iwFile.iwName,'.png') || fn:contains(iwFile.iwName,'.jpeg') || fn:contains(iwFile.iwName,'.txt')}"
+																		 process="@this"
+																		 action="#{mediaController.setIwFile(iwFile)}"
+																		 update=":entityDialog"
+																		 oncomplete="PF('entityDialog').show()"
+														/>
+
+														<p:commandButton process="@this" value="aperçu"
+																		 rendered="#{fn:contains(iwFile.iwName,'.xls') || fn:contains(iwFile.iwName,'.doc')	|| fn:contains(iwFile.iwName,'.ppt') }"
+																		 icon="fa fa-search" ajax="false"
+																		 onclick="checkplugin(this)">
+															<p:fileDownload value="#{mediaController.getStreamedContent(iwFile)}"
+																			contentDisposition="inline"
+																			transient="true">
+
+															</p:fileDownload>
+														</p:commandButton>
+
+														<p:commandButton process="@this" value="#{iwFile.iwName}"
+																		 icon="fa fa-download" ajax="false">
+															<p:fileDownload value="#{fileController.getFile(iwFile)}"
+																			contentDisposition="attachement"
+																			transient="true">
+
+															</p:fileDownload>
+														</p:commandButton>
+													</div>
+												</div>
+											</div>
+
+										</p:dataGrid>
+									</p:tab>
+
+								</p:accordionPanel>
+
+							</p:panel>
+						</h:form>
+					</div>
+				</div>
+			</div>
+			<p:dialog id="entityDialog" widgetVar="entityDialog" modal="true" dynamic="false"
+					  width="80%" height="600"
+					  header="aperçu #{mediaController.iwFile.iwName}">
+				<p:media value="#{mediaController.preview}" width="100%" height="500" player="pdf" cache="false">
+					<f:param name="iwPath" value="#{mediaController.iwFile.iwPath}"/>
+				</p:media>
+			</p:dialog>
+
+			<div class="Container100">
+				<div class="ContainerIndent">
+					<div class="Card ShadowEffect">
+						<h:form>
+							<p:fieldset legend="#{msg['iw.instance.commentaires']}" toggleable="true">
+								<p:remoteCommand update="@form" name="submitProcInstComment"
+												 actionListener="#{commentController.submitProcInstComment()}"/>
+								<p:inputTextarea disabled="true" value="#{commentController.comment}"
+												 onkeypress="return submiComment(event)"/>
+								<p:dataTable emptyMessage="#{msg['iw.commentaire.aucuncommentaire']}"
+											 class="hide-column-names" value="#{commentController.procInstCommentList}"
+											 var="comment">
+									<p:column style="width:40px;">
+										<p:graphicImage rendered="#{navigationController.isPictureSet(comment.userId)}"
+														style="height: 40px;"
+														value="#{fileController.avatar}">
+											<f:param name="user" value="#{comment.userId}"/>
+										</p:graphicImage>
+										<p:graphicImage style="height: 40px;"
+														rendered="#{!navigationController.isPictureSet(comment.userId)}"
+														url="/resources/img/avatar.png"/>
+
+									</p:column>
+									<p:column style="width:10%">
+										#{comment.userId}
+									</p:column>
+									<p:column>
+										<p:outputPanel>
+											#{comment.fullMessage}
+										</p:outputPanel>
+									</p:column>
+								</p:dataTable>
+							</p:fieldset>
+
+						</h:form>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+		<script type="text/javascript">
+			function checkplugin(v) {
+				v.form.target = '_blank'
+			}
+		</script>
+		<ui:remove>
+			<div class="Container20 Responsive100">
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<div class="Card ShadowEffect HeiAutoOnMobile">
+							<ui:include src="../templates/processList.xhtml"/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</ui:remove>
+	</ui:define>
+</ui:composition>

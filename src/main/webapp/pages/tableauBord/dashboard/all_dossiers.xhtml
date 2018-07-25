@@ -1,0 +1,370 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core">
+
+
+	<f:metadata>
+		<f:metadata>
+			<f:viewParam name="compledInsatces" value="true"/>
+		</f:metadata>
+	</f:metadata>
+
+	 <div class="Container100 Responsive100">
+		<div class="Container100">
+			<div class="ContainerIndent">
+				<div class="Card ShadowEffect">
+					<p:accordionPanel multiple="true">
+					<p:tab title="Demandes D'achats">
+
+                    <p:accordionPanel multiple="true" activeIndex="null">
+                        <p:tab title="Nouvelles DA">
+                           <!-- <p:outputLabel value="#{keyList}"/> -->
+                            <p:dataTable
+                                value="#{dashAchatsController.getTasksbyName('achat','T01','T02','T03','T04')}"
+                                var="task" paginator="true"
+                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rowsPerPageTemplate="10,50,100">
+                                <p:column headerText="N° DA" width="15%" filterBy="#{task.processInstanceId}"
+                                          filterMatchMode="contains">
+                                    <p:outputLabel value="#{task.processInstanceId}"></p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Tache" width="15%">
+                                    <p:outputLabel value="#{task.name}"></p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Demandeur" width="15%">
+                                    <p:outputLabel
+                                        value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.demandeurKey)}"></p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Direction" width="15%">
+                                    <p:outputLabel
+                                        value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.directionKey)}"></p:outputLabel>
+
+                                </p:column>
+                                <p:column headerText="Description" width="15%">
+                                    <p:outputLabel
+                                        value="#{dashAchatsController.getVarProcessByExecuionId(task.processInstanceId,dashAchatsController.descriptionKey)}"></p:outputLabel>
+
+                                </p:column>
+                                <p:column headerText="Montant DA" width="15%">
+                                    <p:outputLabel
+                                        value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.montantDAKey)}"></p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Fournisseur " width="50%">
+
+                                    <p:dataTable
+                                        value="#{dashAchatsController.getVarProcessFournisseursByExecuionId(task.executionId,dashAchatsController.fournisseurKey)}"
+                                        var="fournisseur">
+                                        <p:column headerText="Raison Sociale">
+                                            <p:outputLabel value="#{fournisseur.raisonSocial}"></p:outputLabel>
+                                        </p:column>
+                                        <p:column headerText="tel">
+                                            <p:outputLabel value="#{fournisseur.tel}"></p:outputLabel>
+                                        </p:column>
+                                        <p:column headerText="Adress">
+                                            <p:outputLabel value="#{fournisseur.adresse}"></p:outputLabel>
+                                        </p:column>
+                                        <p:column headerText="mail">
+                                            <p:outputLabel value="#{fournisseur.email}"></p:outputLabel>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:column>
+                                <p:column headerText="Au niveau de" width="15%">
+                                    <p:outputLabel value="#{task.assignee}"></p:outputLabel>
+                                </p:column>
+                                <p:column headerText="Depuis le" width="15%">
+                                    <p:calendar
+                                        value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.dateDAKey)}"
+                                        pattern="dd-MM-yyyy"
+                                        locale="#{navigationController.locale}"
+                                        showButtonPanel="true"></p:calendar>
+                                </p:column>
+
+                            </p:dataTable>
+
+                        </p:tab>
+
+                    </p:accordionPanel>
+
+
+					<p:accordionPanel multiple="true" activeIndex="null">
+						<p:tab title="DA validées">
+							<p:dataTable
+								value="#{dashAchatsController.getTasksbyName('achat','T05','T07','T08')}"
+								var="task" paginator="true"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="10,50,100">
+								<p:column headerText="N° DA" width="15%" filterBy="#{task.processInstanceId}"
+										  filterMatchMode="contains">
+									<p:outputLabel value="#{task.processInstanceId}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Tache" width="15%">
+									<p:outputLabel value="#{task.name}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Demandeur" width="15%">
+									<p:outputLabel
+										value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.demandeurKey)}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Direction" width="15%">
+									<p:outputLabel
+										value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.directionKey)}"></p:outputLabel>
+
+								</p:column>
+								<p:column headerText="Description" width="15%">
+									<p:outputLabel
+										value="#{dashAchatsController.getVarProcessByExecuionId(task.processInstanceId,dashAchatsController.descriptionKey)}"></p:outputLabel>
+
+								</p:column>
+								<p:column headerText="Montant DA" width="15%">
+									<p:outputLabel
+										value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.montantDAKey)}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Fournisseur " width="50%">
+
+									<p:dataTable
+										value="#{dashAchatsController.getVarProcessFournisseursByExecuionId(task.executionId,dashAchatsController.fournisseurKey)}"
+										var="fournisseur">
+										<p:column headerText="Raison Sociale">
+											<p:outputLabel value="#{fournisseur.raisonSocial}"></p:outputLabel>
+										</p:column>
+										<p:column headerText="tel">
+											<p:outputLabel value="#{fournisseur.tel}"></p:outputLabel>
+										</p:column>
+										<p:column headerText="Adress">
+											<p:outputLabel value="#{fournisseur.adresse}"></p:outputLabel>
+										</p:column>
+										<p:column headerText="mail">
+											<p:outputLabel value="#{fournisseur.email}"></p:outputLabel>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+								<p:column headerText="Au niveau de" width="15%">
+									<p:outputLabel value="#{task.assignee}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Depuis le" width="15%">
+									<p:calendar
+										value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.dateDAKey)}"
+										pattern="dd-MM-yyyy"
+										locale="#{navigationController.locale}"
+										showButtonPanel="true"></p:calendar>
+								</p:column>
+
+							</p:dataTable>
+
+						</p:tab>
+
+					</p:accordionPanel>
+
+
+					<p:accordionPanel multiple="true" activeIndex="null">
+						<p:tab title="Bons de commandes émis">
+							<p:dataTable
+								value="#{dashAchatsController.getTasksbyName('achat','T10')}"
+								var="task" paginator="true"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="10,50,100">
+								<p:column headerText="N° DA" width="15%" filterBy="#{task.processInstanceId}"
+										  filterMatchMode="contains">
+									<p:outputLabel value="#{task.processInstanceId}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Tache" width="15%">
+									<p:outputLabel value="#{task.name}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Demandeur" width="15%">
+									<p:outputLabel
+										value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.demandeurKey)}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Direction" width="15%">
+									<p:outputLabel
+										value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.directionKey)}"></p:outputLabel>
+
+								</p:column>
+								<p:column headerText="Description" width="15%">
+									<p:outputLabel
+										value="#{dashAchatsController.getVarProcessByExecuionId(task.processInstanceId,dashAchatsController.descriptionKey)}"></p:outputLabel>
+
+								</p:column>
+								<p:column headerText="Montant DA" width="15%">
+									<p:outputLabel
+										value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.montantDAKey)}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Fournisseur " width="50%">
+
+									<p:dataTable
+										value="#{dashAchatsController.getVarProcessFournisseursByExecuionId(task.executionId,dashAchatsController.fournisseurKey)}"
+										var="fournisseur">
+										<p:column headerText="Raison Sociale">
+											<p:outputLabel value="#{fournisseur.raisonSocial}"></p:outputLabel>
+										</p:column>
+										<p:column headerText="tel">
+											<p:outputLabel value="#{fournisseur.tel}"></p:outputLabel>
+										</p:column>
+										<p:column headerText="Adress">
+											<p:outputLabel value="#{fournisseur.adresse}"></p:outputLabel>
+										</p:column>
+										<p:column headerText="mail">
+											<p:outputLabel value="#{fournisseur.email}"></p:outputLabel>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+								<p:column headerText="Au niveau de" width="15%">
+									<p:outputLabel value="#{task.assignee}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Depuis le" width="15%">
+									<p:calendar
+										value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.dateDAKey)}"
+										pattern="dd-MM-yyyy"
+										locale="#{navigationController.locale}"
+										showButtonPanel="true"></p:calendar>
+								</p:column>
+
+							</p:dataTable>
+
+						</p:tab>
+
+					</p:accordionPanel>
+					<p:accordionPanel multiple="true" activeIndex="null">
+						<p:tab title="Commandes livrées en attente de paiement">
+							<p:dataTable
+								value="#{dashAchatsController.getTasksbyName('achat','T11','T12','T13','T14','T15','T16')}"
+								var="task" paginator="true"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="10,50,100">
+								<p:column headerText="N° DA" width="15%" filterBy="#{task.processInstanceId}"
+										  filterMatchMode="contains">
+									<p:outputLabel value="#{task.processInstanceId}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Tache" width="15%">
+									<p:outputLabel value="#{task.name}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Demandeur" width="15%">
+									<p:outputLabel
+										value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.demandeurKey)}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Direction" width="15%">
+									<p:outputLabel
+										value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.directionKey)}"></p:outputLabel>
+
+								</p:column>
+								<p:column headerText="Description" width="15%">
+									<p:outputLabel
+										value="#{dashAchatsController.getVarProcessByExecuionId(task.processInstanceId,dashAchatsController.descriptionKey)}"></p:outputLabel>
+
+								</p:column>
+								<p:column headerText="Montant DA" width="15%">
+									<p:outputLabel
+										value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.montantDAKey)}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Fournisseur " width="50%">
+
+									<p:dataTable
+										value="#{dashAchatsController.getVarProcessFournisseursByExecuionId(task.executionId,dashAchatsController.fournisseurKey)}"
+										var="fournisseur">
+										<p:column headerText="Raison Sociale">
+											<p:outputLabel value="#{fournisseur.raisonSocial}"></p:outputLabel>
+										</p:column>
+										<p:column headerText="tel">
+											<p:outputLabel value="#{fournisseur.tel}"></p:outputLabel>
+										</p:column>
+										<p:column headerText="Adress">
+											<p:outputLabel value="#{fournisseur.adresse}"></p:outputLabel>
+										</p:column>
+										<p:column headerText="mail">
+											<p:outputLabel value="#{fournisseur.email}"></p:outputLabel>
+										</p:column>
+									</p:dataTable>
+								</p:column>
+								<p:column headerText="Au niveau de" width="15%">
+									<p:outputLabel value="#{task.assignee}"></p:outputLabel>
+								</p:column>
+								<p:column headerText="Depuis le" width="15%">
+									<p:calendar
+										value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.dateDAKey)}"
+										pattern="dd-MM-yyyy"
+										locale="#{navigationController.locale}"
+										showButtonPanel="true"></p:calendar>
+								</p:column>
+
+							</p:dataTable>
+
+						</p:tab>
+
+					</p:accordionPanel>
+
+
+						<p:accordionPanel multiple="true" activeIndex="null">
+							<p:tab title="Factures réglées">
+								<p:dataTable
+									value="#{dashAchatsController.getTasksbyName('achat','T17')}"
+									var="task" paginator="true"
+									paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									rowsPerPageTemplate="10,50,100">
+									<p:column headerText="N° DA" width="15%" filterBy="#{task.processInstanceId}"
+											  filterMatchMode="contains">
+										<p:outputLabel value="#{task.processInstanceId}"></p:outputLabel>
+									</p:column>
+									<p:column headerText="Tache" width="15%">
+										<p:outputLabel value="#{task.name}"></p:outputLabel>
+									</p:column>
+									<p:column headerText="Demandeur" width="15%">
+										<p:outputLabel
+											value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.demandeurKey)}"></p:outputLabel>
+									</p:column>
+									<p:column headerText="Direction" width="15%">
+										<p:outputLabel
+											value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.directionKey)}"></p:outputLabel>
+
+									</p:column>
+									<p:column headerText="Description" width="15%">
+										<p:outputLabel
+											value="#{dashAchatsController.getVarProcessByExecuionId(task.processInstanceId,dashAchatsController.descriptionKey)}"></p:outputLabel>
+
+									</p:column>
+									<p:column headerText="Montant DA" width="15%">
+										<p:outputLabel
+											value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.montantDAKey)}"></p:outputLabel>
+									</p:column>
+									<p:column headerText="Fournisseur " width="50%">
+
+										<p:dataTable
+											value="#{dashAchatsController.getVarProcessFournisseursByExecuionId(task.executionId,dashAchatsController.fournisseurKey)}"
+											var="fournisseur">
+											<p:column headerText="Raison Sociale">
+												<p:outputLabel value="#{fournisseur.raisonSocial}"></p:outputLabel>
+											</p:column>
+											<p:column headerText="tel">
+												<p:outputLabel value="#{fournisseur.tel}"></p:outputLabel>
+											</p:column>
+											<p:column headerText="Adress">
+												<p:outputLabel value="#{fournisseur.adresse}"></p:outputLabel>
+											</p:column>
+											<p:column headerText="mail">
+												<p:outputLabel value="#{fournisseur.email}"></p:outputLabel>
+											</p:column>
+										</p:dataTable>
+									</p:column>
+									<p:column headerText="Au niveau de" width="15%">
+										<p:outputLabel value="#{task.assignee}"></p:outputLabel>
+									</p:column>
+									<p:column headerText="Depuis le" width="15%">
+										<p:calendar
+											value="#{dashAchatsController.getVarProcessByExecuionId(task.executionId,dashAchatsController.dateDAKey)}"
+											pattern="dd-MM-yyyy"
+											locale="#{navigationController.locale}"
+											showButtonPanel="true"></p:calendar>
+									</p:column>
+
+								</p:dataTable>
+
+							</p:tab>
+
+						</p:accordionPanel>
+
+					</p:tab>
+					</p:accordionPanel>
+        </div>
+    </div>
+</div>
+</div>
+</ui:composition>

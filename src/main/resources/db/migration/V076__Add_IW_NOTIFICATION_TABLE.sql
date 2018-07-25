@@ -1,0 +1,14 @@
+CREATE TABLE `IW_NOTIFICATION` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `NAME` varchar(255) NOT NULL,
+  `FROM_NAME` varchar(255) DEFAULT NULL,
+  `TO_USER` text,
+  `TO_ROLE` text,
+  `TO_EMAIL` text,
+  `SUBJECT` varchar(255) DEFAULT NULL,
+  `BODY` text,
+  `ATTACHMENT` text,
+  `TASKS` text,
+  `ACTIVE` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;

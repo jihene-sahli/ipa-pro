@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.5.0.v201506092134 Build &lt;@BUILD@></property>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <parameters>
+        <scalar-parameter name="form_1442703537596" id="74">
+            <property name="hidden">true</property>
+            <text-property name="helpText">Nom</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="form_1442703534825" id="76">
+            <property name="hidden">true</property>
+            <text-property name="helpText">Prénom</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="form_1442703772592" id="78">
+            <property name="hidden">true</property>
+            <text-property name="helpText">Destination</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="form_1442703781218" id="79">
+            <property name="hidden">true</property>
+            <text-property name="helpText">Nombre de personnes</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">decimal</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="form_1442703693826" id="82">
+            <property name="hidden">true</property>
+            <text-property name="helpText">Date de Départ</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">dateTime</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="form_1442703786930" id="84">
+            <property name="hidden">true</property>
+            <text-property name="helpText">Date de Retour</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">dateTime</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="form_1442703846974" id="86">
+            <property name="hidden">true</property>
+            <text-property name="helpText">Véhicule</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="form_1442703811809" id="88">
+            <property name="hidden">true</property>
+            <text-property name="helpText">Motif de la mission</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="REF" id="98">
+            <property name="hidden">true</property>
+            <text-property name="helpText">REF</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="REFDRH" id="100">
+            <property name="hidden">true</property>
+            <text-property name="helpText">REFDRH</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Date_jour" id="102">
+            <property name="hidden">true</property>
+            <text-property name="helpText">Date</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">date</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="javascript">new Date()</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <page-footer>
+                <text id="3">
+                    <property name="contentType">html</property>
+                    <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
+                </text>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid id="104">
+            <column id="105"/>
+            <column id="106"/>
+            <column id="107"/>
+            <row id="108">
+                <cell id="109">
+                    <label id="205"/>
+                </cell>
+                <cell id="110">
+                    <image id="4">
+                        <property name="height">1.9791666666666667in</property>
+                        <property name="width">2.5416666666666665in</property>
+                        <property name="source">file</property>
+                        <expression name="uri" type="constant">Zhong20Guo20Jian20Zhu20Gong20Cheng20Zong20Gong20Si20.jpg</expression>
+                    </image>
+                    <label id="206"/>
+                </cell>
+                <cell id="111">
+                    <label id="207"/>
+                </cell>
+            </row>
+            <row id="112">
+                <cell id="113">
+                    <label id="208"/>
+                </cell>
+                <cell id="114">
+                    <label id="209"/>
+                </cell>
+                <cell id="115">
+                    <label id="210"/>
+                </cell>
+            </row>
+            <row id="116">
+                <cell id="117">
+                    <label id="211"/>
+                </cell>
+                <cell id="118">
+                    <label id="212"/>
+                </cell>
+                <cell id="119">
+                    <label id="213"/>
+                </cell>
+            </row>
+        </grid>
+        <label id="20">
+            <text-property name="text">                                                                                        Direction de l’administration </text-property>
+        </label>
+        <grid id="120">
+            <column id="121"/>
+            <column id="122"/>
+            <column id="123"/>
+            <row id="124">
+                <cell id="125">
+                    <label id="214"/>
+                </cell>
+                <cell id="126">
+                    <label id="215"/>
+                </cell>
+                <cell id="127">
+                    <label id="216"/>
+                </cell>
+            </row>
+            <row id="128">
+                <cell id="129">
+                    <label id="217"/>
+                </cell>
+                <cell id="130">
+                    <label id="219"/>
+                </cell>
+                <cell id="131">
+                    <label id="218"/>
+                </cell>
+            </row>
+            <row id="132">
+                <cell id="133">
+                    <label id="220"/>
+                </cell>
+                <cell id="134">
+                    <label id="221"/>
+                </cell>
+                <cell id="135">
+                    <label id="222"/>
+                </cell>
+            </row>
+        </grid>
+        <grid id="21">
+            <column id="22"/>
+            <column id="23"/>
+            <column id="24"/>
+            <column id="25"/>
+            <column id="26"/>
+            <column id="27"/>
+            <row id="28">
+                <cell id="29">
+                    <label id="35">
+                        <text-property name="text">REF :</text-property>
+                    </label>
+                </cell>
+                <cell id="30">
+                    <data id="99">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">REF</property>
+                                <expression name="expression" type="javascript">params["REF"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">REF</property>
+                    </data>
+                </cell>
+                <cell id="31">
+                    <label id="36">
+                        <text-property name="text">/DRH/2</text-property>
+                    </label>
+                </cell>
+                <cell id="32">
+                    <data id="101">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">REFDRH</property>
+                                <expression name="expression" type="javascript">params["REFDRH"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">REFDRH</property>
+                    </data>
+                </cell>
+                <cell id="33">
+                    <label id="37">
+                        <text-property name="text">Alger  le : </text-property>
+                    </label>
+                </cell>
+                <cell id="34">
+                    <data id="103">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">Date_jour</property>
+                                <expression name="expression" type="javascript">params["Date_jour"]</expression>
+                                <property name="dataType">date</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">Date_jour</property>
+                    </data>
+                </cell>
+            </row>
+        </grid>
+        <grid id="136">
+            <column id="137"/>
+            <column id="138"/>
+            <column id="139"/>
+            <row id="140">
+                <cell id="141">
+                    <label id="196"/>
+                </cell>
+                <cell id="142">
+                    <label id="197"/>
+                </cell>
+                <cell id="143">
+                    <label id="198"/>
+                </cell>
+            </row>
+            <row id="144">
+                <cell id="145">
+                    <label id="199"/>
+                </cell>
+                <cell id="146">
+                    <label id="200"/>
+                </cell>
+                <cell id="147">
+                    <label id="201"/>
+                </cell>
+            </row>
+            <row id="148">
+                <cell id="149">
+                    <label id="202"/>
+                </cell>
+                <cell id="150">
+                    <label id="203"/>
+                </cell>
+                <cell id="151">
+                    <label id="204"/>
+                </cell>
+            </row>
+        </grid>
+        <label id="38">
+            <text-property name="text">                                                                                      ORDRE DE MISSION</text-property>
+        </label>
+        <grid id="152">
+            <column id="153"/>
+            <column id="154"/>
+            <row id="155">
+                <cell id="156"/>
+                <cell id="157"/>
+            </row>
+            <row id="158">
+                <cell id="159"/>
+                <cell id="160"/>
+            </row>
+            <row id="161">
+                <cell id="162"/>
+                <cell id="163"/>
+            </row>
+        </grid>
+        <grid id="39">
+            <column id="40"/>
+            <column id="41"/>
+            <row id="42">
+                <cell id="43">
+                    <label id="66">
+                        <text-property name="text">Nom : </text-property>
+                    </label>
+                </cell>
+                <cell id="44">
+                    <data id="75">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">Nom</property>
+                                <expression name="expression" type="javascript">params["form_1442703537596"].value</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">false</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">Nom</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="45">
+                <cell id="46">
+                    <label id="67">
+                        <text-property name="text">Prénom : </text-property>
+                    </label>
+                </cell>
+                <cell id="47">
+                    <data id="77">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">Prénom</property>
+                                <expression name="expression" type="javascript">params["form_1442703534825"].value</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">Prénom</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="48">
+                <cell id="49">
+                    <label id="68">
+                        <text-property name="text">Destination :  </text-property>
+                    </label>
+                </cell>
+                <cell id="50">
+                    <data id="80">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">Destination</property>
+                                <expression name="expression" type="javascript">params["form_1442703772592"].value</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">Destination</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="51">
+                <cell id="52">
+                    <label id="69">
+                        <text-property name="text">Nombre de personnes : </text-property>
+                    </label>
+                </cell>
+                <cell id="53">
+                    <data id="81">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">Nombre de personnes</property>
+                                <expression name="expression" type="javascript">params["form_1442703781218"].value</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">Nombre de personnes</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="54">
+                <cell id="55">
+                    <label id="70">
+                        <text-property name="text">Date de Départ / Heure Départ : </text-property>
+                    </label>
+                </cell>
+                <cell id="56">
+                    <data id="83">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">Date de Départ</property>
+                                <expression name="expression" type="javascript">params["form_1442703693826"].value</expression>
+                                <property name="dataType">date-time</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">Date de Départ</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="57">
+                <cell id="58">
+                    <label id="71">
+                        <text-property name="text">Date deRetour / Heure Retour  : </text-property>
+                    </label>
+                </cell>
+                <cell id="59">
+                    <data id="85">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">Date de Retour</property>
+                                <expression name="expression" type="javascript">params["form_1442703786930"].value</expression>
+                                <property name="dataType">date-time</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">Date de Retour</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="60">
+                <cell id="61">
+                    <label id="72">
+                        <text-property name="text">Véhicule :  </text-property>
+                    </label>
+                </cell>
+                <cell id="62">
+                    <data id="87">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">Véhicule</property>
+                                <expression name="expression" type="javascript">params["form_1442703846974"].value</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">Véhicule</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="63">
+                <cell id="64">
+                    <label id="73">
+                        <text-property name="text">Motif de la mission: </text-property>
+                    </label>
+                </cell>
+                <cell id="65">
+                    <data id="89">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">Motif de la mission</property>
+                                <expression name="expression" type="javascript">params["form_1442703811809"].value</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">Motif de la mission</property>
+                    </data>
+                </cell>
+            </row>
+        </grid>
+        <grid id="164">
+            <column id="165"/>
+            <column id="166"/>
+            <column id="167"/>
+            <row id="168">
+                <cell id="169">
+                    <label id="224"/>
+                </cell>
+                <cell id="170">
+                    <label id="225"/>
+                </cell>
+                <cell id="171">
+                    <label id="226"/>
+                </cell>
+            </row>
+            <row id="172">
+                <cell id="173"/>
+                <cell id="174"/>
+                <cell id="175"/>
+            </row>
+            <row id="176">
+                <cell id="177">
+                    <label id="227"/>
+                </cell>
+                <cell id="178">
+                    <label id="228"/>
+                </cell>
+                <cell id="179">
+                    <label id="229"/>
+                </cell>
+            </row>
+        </grid>
+        <grid id="90">
+            <column id="91"/>
+            <row id="92">
+                <cell id="93">
+                    <label id="96">
+                        <text-property name="text">Direction de l’administration </text-property>
+                    </label>
+                </cell>
+            </row>
+            <row id="94">
+                <cell id="95">
+                    <grid id="180">
+                        <column id="181"/>
+                        <column id="182"/>
+                        <column id="183"/>
+                        <row id="184">
+                            <cell id="185">
+                                <label id="230"/>
+                            </cell>
+                            <cell id="186"/>
+                            <cell id="187"/>
+                        </row>
+                        <row id="188">
+                            <cell id="189"/>
+                            <cell id="190"/>
+                            <cell id="191"/>
+                        </row>
+                        <row id="192">
+                            <cell id="193">
+                                <label id="231"/>
+                            </cell>
+                            <cell id="194"/>
+                            <cell id="195"/>
+                        </row>
+                    </grid>
+                    <label id="97">
+                        <text-property name="text">(Mettre une signature )</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+        <grid id="232">
+            <column id="233"/>
+            <column id="234"/>
+            <column id="235"/>
+            <row id="236">
+                <cell id="237">
+                    <label id="248"/>
+                </cell>
+                <cell id="238"/>
+                <cell id="239"/>
+            </row>
+            <row id="240">
+                <cell id="241"/>
+                <cell id="242"/>
+                <cell id="243"/>
+            </row>
+            <row id="244">
+                <cell id="245">
+                    <label id="249"/>
+                </cell>
+                <cell id="246"/>
+                <cell id="247"/>
+            </row>
+        </grid>
+    </body>
+</report>

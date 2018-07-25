@@ -1,0 +1,86 @@
+<ui:composition
+
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <p:panelGrid id="processAnomalie" columns="1" layout="grid">
+
+        <c:forEach items="#{processAnomalie.slot.entrySet()}" var="entry" varStatus="status">
+
+            <p:selectOneMenu value="#{processAnomalie.selectedEntries[status.index]}"
+                             filter="true"
+                             filterMatchMode="contains"
+                             caseSensitive="false"
+                             disabled="#{!formWrapper.value.isWritable}"
+                             converter="#{iwTreeConverter}"
+                             >
+
+                <f:selectItems value="#{entry.value}"
+                               var="selectedItem"
+                               itemValue="#{selectedItem}"
+                               itemLabel="#{selectedItem.title}" />
+
+                <p:ajax event="change"
+                        listener="#{processAnomalie.onChange}"
+                        update="processAnomalie" process="@this">
+                    <f:param name="step" value="#{status.index}" />
+                </p:ajax>
+                <f:attribute name="converterItemsList" value="#{entry.value}" />
+            </p:selectOneMenu>
+
+        </c:forEach>
+        
+        
+        <p:pickList id="listGroupe" 
+                    value="#{processAnomalie.elements}" 
+                    var="element" 
+                    itemLabel="#{element.title} - #{element.description}" 
+                    itemValue="#{element}" 
+                    rendered="#{processAnomalie.showPickList}"
+                    converter="#{iwTreeConverter}"
+                    showSourceControls="true"
+                    showTargetControls="true"
+                    showCheckbox="true"
+                    responsive="true"
+                    showSourceFilter="true" 
+                    showTargetFilter="true" 
+                    filterMatchMode="contains"
+                    disabled="#{!formWrapper.value.isWritable}"
+                    >
+            
+            <p:ajax event="transfer" listener="#{processAnomalie.onTransfer}" update="@this,listUsers" />
+            <p:ajax event="select" listener="#{processAnomalie.onSelect}"  />
+            <p:ajax event="unselect" listener="#{processAnomalie.onUnselect}" />
+            <p:ajax event="reorder" listener="#{processAnomalie.onReorder}" update="@this,listUsers"  />
+            
+            <f:attribute name="converterItemsList" value="#{processAnomalie.pickListElements}" />
+        </p:pickList>
+        
+        <p:pickList id="listUsers" 
+                    value="#{processAnomalie.listUsers}" 
+                    var="user" 
+                    itemLabel="#{user.firstName}" 
+                    itemValue="#{user}" 
+                    rendered="#{processAnomalie.showPickList}"
+                    converter="#{userConverter}"
+                    showSourceControls="true"
+                    showTargetControls="true"
+                    showCheckbox="true"
+                    responsive="true"
+                    showSourceFilter="true" 
+                    showTargetFilter="true" 
+                    filterMatchMode="contains"
+                    disabled="true"
+                    >
+            
+            <f:attribute name="converterItemsList" value="#{processAnomalie.pickListUsers}" />
+        </p:pickList>
+        
+
+    </p:panelGrid>
+</ui:composition>

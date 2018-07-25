@@ -1,0 +1,415 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions" xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<p:dataTable rowIndexVar="index" rendered="#{displayIwForms}" value="#{formWraperList.entrySet()}" var="formWrapper" resizableColumns="true">
+		<p:column rendered="#{formWrapper.value.iwInput.component == 'addentity'}" colspan="2" >
+			<p:panel toggleable="true" header="#{formWrapper.value.iwInput.label}">
+				<p:dataTable value="#{formWrapper.value.iwInput.options}" var="option" resizableColumns="true">
+					<p:column>
+						<p:outputLabel value="#{option}" />
+					</p:column>
+					<p:column>
+						<p:calendar disabled="#{disableIwInputs}" value="#{formWrapper.value.entity[option]}" pattern="dd/MM/yyyy" locale="#{navigationController.locale}" showButtonPanel="true" rendered="#{taskController.isDateInput(formWrapper.value.iwInput.value,option)}" required="#{formWrapper.value.iwInput.required==true}" >
+							<p:ajax event="dateSelect" process="@this"></p:ajax>
+						</p:calendar>
+						<p:selectOneMenu value="#{formWrapper.value.entity[option]}" rendered="#{taskController.isBooleanSelectInput(formWrapper.value.iwInput.value,option)}" disabled="#{not formWrapper.value.isWritable or disableIwInputs}" required="#{formWrapper.value.iwInput.required}">
+							<p:ajax event="change" process="@this"></p:ajax>
+							<f:selectItem itemValue="#{null}" itemLabel="#{msg[iw.selectionner]}" noSelectionOption="true" />
+							<f:selectItem itemValue="#{true}" itemLabel="Oui" />
+							<f:selectItem itemValue="#{false}" itemLabel="Non" />
+						</p:selectOneMenu>
+						<p:inputText value="#{formWrapper.value.entity[option]}" disabled="#{disableIwInputs}" rendered="#{not taskController.isBooleanSelectInput(formWrapper.value.iwInput.value,option) and not taskController.isDateInput(formWrapper.value.iwInput.value,option)}" >
+							<f:validateLength maximum="#{taskController.getAttributeMaxSize(formWrapper.value.iwInput.value, option)}" />
+							<p:ajax process="@this"></p:ajax>
+						</p:inputText>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</p:column>
+		<!-- DISPLAY TEMPLATES -->
+		<ui:include src="template.xhtml" />
+		<!-- MULTI-LINE ENTITIES -->
+		<ui:include src="multilineEntity.xhtml" />
+		<ui:include src="multilineEntityConfig.xhtml" />
+		<!-- END MULTI-LINE ENTITIES -->
+		<!-- MULTI-LINE -->
+		<p:column rendered="#{formWrapper.value.iwInput.component=='multiline'}" colspan="2">
+			<p:panel id="entityTable">
+				<div class="table-scroll-wrapper">
+					<table class="table-scroll" border="2">
+						<ui:repeat value="#{formWrapper.value.value.rows}" var="row" rendered="#{formWrapper.value.iwInput.component=='multiline'}">
+							<tr>
+								<ui:repeat rendered="#{formWrapper.value.iwInput.component=='multiline'}" value="#{row.cells}" var="cell" varStatus="varStatus">
+									<td rowspan="#{cell.rowSpan}" colspan="#{cell.colSpan}" style="width:#{cell.colWidth}px">
+										<p:inputText disabled="#{!formWrapper.value.isWritable or disableIwInputs}" rendered="#{not row.isHeader and cell.isEditable!=false and cell.colType=='text'}" value="#{cell.value}" style="width: 100%;"/>
+										<p:colorPicker rendered="#{not row.isHeader and cell.isEditable!=false and cell.colType=='color' and formWrapper.value.isWritable}" value="#{cell.value}" />
+										<p:outputPanel rendered="#{not row.isHeader and cell.isEditable!=false and cell.colType=='color' and not formWrapper.value.isWritable}" style="width:25px;height:25px;background-color:##{cell.value};border:black solid 1px;" />
+										<p:selectOneRadio disabled="#{!formWrapper.value.isWritable or disableIwInputs}" rendered="#{not row.isHeader and cell.isEditable!=false and cell.colType=='radio'}" value="#{cell.value}">
+											<f:selectItem itemValue="true" />
+										</p:selectOneRadio>
+										<p:selectBooleanCheckbox disabled="#{!formWrapper.value.isWritable or disableIwInputs}" rendered="#{not row.isHeader and cell.isEditable!=false and cell.colType=='checkbox'}" value="#{cell.value}">
+										</p:selectBooleanCheckbox >
+										<p:outputLabel rendered="#{row.isHeader or cell.isEditable==false}" value="#{cell.value}" />
+									</td>
+								</ui:repeat>
+							</tr>
+						</ui:repeat>
+					</table>
+				</div>
+			</p:panel>
+			<p:commandButton update="entityTable" action="#{taskController.addRow(formWrapper.value.value)}" process="@this,entityTable" ajax="true" icon="fa fa-plus" class="Fright" />
+		</p:column>
+		<!-- END MULTI-LINE-->
+		<!-- Column for form label -->
+		<p:column width="256" rendered="#{formWrapper.value.iwInput.component != 'addentity' and formWrapper.value.iwInput.component != 'template' and formWrapper.value.iwInput.component!='multiline' and formWrapper.value.iwInput.component != 'multilineentity' and formWrapper.value.iwInput.component != 'header' and formWrapper.value.iwInput.component != 'message' and formWrapper.value.iwInput.component != 'multilineentityconfig'}" styleClass="line_wrap">
+			<p:outputLabel value="#{formWrapper.value.iwInput.label} : " />
+			<p:outputLabel class="red" value="*" rendered="#{formWrapper.value.iwInput.required==true}" />
+		</p:column>
+		<!-- End column for form label -->
+		<p:column rendered="#{formWrapper.value.iwInput.component != 'addentity' and formWrapper.value.iwInput.component != 'template' and formWrapper.value.iwInput.component!='multiline' and formWrapper.value.iwInput.component != 'multilineentity' and formWrapper.value.iwInput.component != 'header' and formWrapper.value.iwInput.component != 'message' and formWrapper.value.iwInput.component != 'multilineentityconfig'}" >
+			<p:outputLabel rendered="#{formWrapper.value.iwInput.component == 'registre'}">
+				#{formWrapper.value.value}
+			</p:outputLabel>
+			<p:selectManyCheckbox rendered="#{formWrapper.value.iwInput.component == 'list' and formWrapper.value.iwInput.options[1]=='Checkbox'}"
+								  layout="pageDirection"
+								  value="#{formWrapper.value.value}"
+								  disabled="#{not formWrapper.value.isWritable or disableIwInputs}"
+								  class="radio-check">
+				<f:selectItems value="#{taskController.getListOptions(formWrapper.value.iwInput.options[0])}"
+							   var="iwOption"
+							   itemValue="#{iwOption.iwName}"
+							   itemLabel="#{iwOption.iwName}" />
+			</p:selectManyCheckbox>
+			<p:selectOneMenu rendered="#{formWrapper.value.iwInput.component == 'list' and (formWrapper.value.iwInput.options[1]=='Select' or formWrapper.value.iwInput.options[1]=='Auto Suggest')}"
+							 value="#{formWrapper.value.value}"
+							 filter="true"
+							 disabled="#{not formWrapper.value.isWritable or disableIwInputs}"
+							 filterMatchMode="contains">
+				<f:selectItems value="#{taskController.getListOptions(formWrapper.value.iwInput.options[0])}"
+							   var="iwOption"
+							   itemValue="#{iwOption.iwName}"
+							   itemLabel="#{iwOption.iwName}" />
+			</p:selectOneMenu>
+			<p:autoComplete rendered="#{formWrapper.value.iwInput.component == 'entity'}"
+							value="#{formWrapper.value.value}"
+							multiple="true"
+							converter="#{entityConverter}"
+							disabled="#{not formWrapper.value.isWritable or disableIwInputs}"
+							forceSelection="true"
+							completeMethod="#{suggestionController.completeEntity}"
+							var="entity"
+							dropdown="true"
+							itemLabel="#{entity[formWrapper.value.iwInput.options[1]]}"
+							itemValue="#{suggestionController.getEntityIdValue(entity,formWrapper.value.iwInput.options[0])}">
+				<f:param name="entity" value="#{formWrapper.value.iwInput.options[0]}" />
+				<f:param name="field" value="#{formWrapper.value.iwInput.options[1]}" />
+				<f:param name="inputId" value="#{formWrapper.value.iwInput.id}" />
+				<f:attribute name="entity" value="#{formWrapper.value.iwInput.options[0]}" />
+				<f:attribute name="field" value="#{formWrapper.value.iwInput.options[1]}" />
+				<f:attribute name="converterItemsList"
+							 value="#{suggestionController.createEntryFortSuggestedEntityMap(formWrapper.value.iwInput.id).value}" />
+				<p:ajax event="query" process="@this" />
+			</p:autoComplete>
+			<p:panelGrid rendered="#{formWrapper.value.iwInput.component == 'imagezone'}" columns="1" >
+				<p:outputLabel value="#{formWrapper.value.iwInput.options[0]} - #{formWrapper.value.iwInput.options[0]}" />
+				<p:outputPanel>
+					<p:fileUpload disabled="#{!formWrapper.value.isWritable or disableIwInputs}"
+								  label="#{formWrapper.value.iwInput.label}"
+								  process="@this"
+								  required="#{formWrapper.value.iwInput.required==true}"
+								  dragDropSupport="true"
+								  mode="advanced"
+								  fileUploadListener="#{taskController.handleUploadedFiles}"
+								  multiple="true"
+								  update="filesList_2">
+						<f:attribute name="formWrapper" value="#{formWrapper.value}" />
+					</p:fileUpload>
+					<p:dataGrid id="filesList_2" value="#{taskController.getFormFileList(formWrapper.value)}" var="iwFile" columns="1">
+						<div class="Container100 Responsive100">
+							<div class="ContainerIndent">
+								<div class="Container50 Fs50 FontRobotoLight Orange">
+									<p:graphicImage width="100" value="#{fileController.image}" rendered="#{ iwFile.iwMime.startsWith('image')}">
+										<f:param name="path" value="#{iwFile.iwPath}" />
+										<f:param name="mime" value="#{iwFile.iwMime}" />
+										<f:param name="fileName" value="#{iwFile.iwName}" />
+									</p:graphicImage>
+									<p:outputPanel rendered="#{not iwFile.iwMime.startsWith('image')}" >
+										<div class="fa fa-file-o"></div>
+									</p:outputPanel>
+								</div>
+								<div class="Container50">
+									<p:commandButton process="@this" value="#{iwFile.iwName}" icon="fa fa-download" ajax="false">
+										<p:fileDownload value="#{fileController.getFile(iwFile)}" contentDisposition="attachment" transient="true" >
+
+										</p:fileDownload>
+									</p:commandButton>
+									<div class="EmptyBox5"></div>
+									<p:commandButton process="@this" update="filesList_2" action="#{taskController.removeFile(formWrapper.value, iwFile)}" value="#{msg['iw.button.supprimer']}" icon="fa fa-remove " ajax="true" />
+								</div>
+							</div>
+						</div>
+					</p:dataGrid>
+				</p:outputPanel>
+			</p:panelGrid>
+			<p:tree animate="true"
+					showUnselectableCheckbox="true"
+					selection="#{formWrapper.value.selection[0]}"
+					selectionMode="single"
+					value="#{formWrapper.value.treeCheckList}"
+					var="node"
+					rendered="#{formWrapper.value.iwInput.component eq 'treechecklist' and formWrapper.value.iwInput.multple eq false}" >
+				<p:treeNode>
+					<h:outputText value="#{node}" />
+				</p:treeNode>
+			</p:tree>
+			<p:tree animate="true"
+					selection="#{formWrapper.value.selection}"
+					selectionMode="checkbox"
+					value="#{formWrapper.value.treeCheckList}"
+					var="node"
+					rendered="#{formWrapper.value.iwInput.component eq 'treechecklist' and formWrapper.value.iwInput.multple eq true}" >
+				<p:treeNode>
+					<h:outputText value="#{node}" />
+				</p:treeNode>
+			</p:tree>
+			<p:panel id="conditionalselect" rendered="#{formWrapper.value.iwInput.component == 'conditionalselect'}">
+				<p:selectBooleanCheckbox
+					class="radio-check"
+					value="#{formWrapper.value.conditionalSelectDefaultValue}"
+					disabled="#{not formWrapper.value.isWritable or disableIwInputs}"
+					label="#{formWrapper.value.iwInput.options[0]}">
+					<p:ajax update="conditionalselect" />
+				</p:selectBooleanCheckbox>
+				<p:selectOneMenu required="true"
+								 rendered="#{not formWrapper.value.conditionalSelectDefaultValue}"
+								 disabled="#{formWrapper.value.conditionalSelectDefaultValue or not formWrapper.value.isWritable or disableIwInputs}"
+
+								 value="#{formWrapper.value.value}">
+					<f:selectItems value="#{formWrapper.value.iwInput.options}"
+								   var="option"
+								   itemLabel="#{option}"
+								   itemValue="#{option}" />
+				</p:selectOneMenu>
+				<h:outputText value="#{formWrapper.value.iwInput.options2.get(0)}" rendered="#{formWrapper.value.conditionalSelectDefaultValue}" disabled="#{disableIwInputs}"/>
+			</p:panel>
+			<p:outputPanel rendered="#{formWrapper.value.iwInput.component == 'dynamicText'}" styleClass="dynamicText">
+				<p:outputLabel value="#{formWrapper.value.value}" rendered="#{not formWrapper.value.isNumeric()}" />
+				<h:outputText value="#{formWrapper.value.formatedValue}" rendered="#{formWrapper.value.isNumeric() eq true}">
+				</h:outputText>
+			</p:outputPanel>
+			<p:autoComplete rendered="#{formWrapper.value.iwInput.component == 'user'}"
+							multiple="true"
+							value="#{formWrapper.value.users}"
+							disabled="#{not formWrapper.value.isWritable or disableIwInputs}"
+							completeMethod="#{suggestionController.completeUsers}"
+							var="user"
+							itemLabel="#{user.id}"
+							itemValue="#{user}"
+							converter="#{userConverter}">
+				<p:column style="width:10%">
+					<p:graphicImage rendered="#{user.pictureSet}" style="height: 40px;"
+									value="#{fileController.avatar}">
+						<f:param name="user" value="#{user.id}" />
+					</p:graphicImage>
+					<p:graphicImage style="height: 40px;"
+									rendered="#{!user.pictureSet}"
+									url="/resources/img/avatar.png" />
+				</p:column>
+				<p:column>
+					<h:outputText value="#{user.id}" />
+				</p:column>
+			</p:autoComplete>
+			<p:autoComplete rendered="#{formWrapper.value.iwInput.component == 'group'}"
+							multiple="true"
+							value="#{formWrapper.value.groups}"
+							disabled="#{not formWrapper.value.isWritable or disableIwInputs}"
+							completeMethod="#{suggestionController.completeGroups}"
+							var="group"
+							itemLabel="#{group.name}"
+							itemValue="#{group}"
+							converter="#{groupConverter}">
+			</p:autoComplete>
+			<p:tabView rendered="#{formWrapper.value.iwInput.component == 'doublechecklist'}">
+				<p:tab title="#{formWrapper.value.iwInput.onglet1}">
+					<p:selectManyCheckbox disabled="#{!formWrapper.value.isWritable or disableIwInputs}"
+										  class="radio-check"
+										  layout="pageDirection"
+										  value="#{formWrapper.value.doublCheckList1}">
+						<f:selectItems value="#{formWrapper.value.iwInput.options}" />
+					</p:selectManyCheckbox>
+				</p:tab>
+				<p:tab title="#{formWrapper.value.iwInput.onglet2}">
+					<p:selectManyCheckbox disabled="#{!formWrapper.value.isWritable or disableIwInputs}"
+										  class="radio-check"
+										  layout="pageDirection"
+										  value="#{formWrapper.value.doublCheckList2}">
+						<f:selectItems value="#{formWrapper.value.iwInput.options2}" />
+					</p:selectManyCheckbox>
+				</p:tab>
+			</p:tabView>
+			<p:pickList disabled="#{!formWrapper.value.isWritable or disableIwInputs}"
+						rendered="#{formWrapper.value.iwInput.component == 'picklist'}"
+						value="#{formWrapper.value.dualList}"
+						var="option"
+						itemLabel="#{option}"
+						itemValue="#{option}" required="#{formWrapper.value.iwInput.required==true}">
+				<p:ajax event="transfer" listener="#{pickListController.handlePickListTransfer}" update="@this"/>
+			</p:pickList>
+			<p:pickList disabled="#{!formWrapper.value.isWritable or disableIwInputs}"
+						rendered="#{formWrapper.value.iwInput.component == 'picklistidentity' and formWrapper.value.iwInput.value == 'group'}"
+						value="#{formWrapper.value.dualList}"
+						var="option"
+						itemLabel="#{option.name}"
+						itemValue="#{option}" required="#{formWrapper.value.iwInput.required==true}"
+						converter="#{groupConverter}">
+				<p:ajax event="transfer" listener="#{pickListController.handlePickListTransfer}" update="@this"/>
+			</p:pickList>
+			<p:pickList disabled="#{!formWrapper.value.isWritable or disableIwInputs}"
+						rendered="#{formWrapper.value.iwInput.component == 'picklistidentity' and formWrapper.value.iwInput.value != 'group'}"
+						value="#{formWrapper.value.dualList}"
+						var="option"
+						itemLabel="#{option.lastName} #{option.firstName}"
+						itemValue="#{option}" required="#{formWrapper.value.iwInput.required==true}"
+						converter="#{userConverter}">
+				<p:ajax event="transfer" listener="#{pickListController.handlePickListTransfer}" update="@this"/>
+			</p:pickList>
+			<!-- Static text -->
+			<p:outputLabel escape="false" value="#{navigationController.formatTextareaOutput(formWrapper.value.iwInput.placeholder)}" rendered="#{formWrapper.value.iwInput.component=='staticText'}" />
+			<!-- Slider -->
+			<p:outputLabel id="displaySlider" value="#{formWrapper.value.value}%" rendered="#{formWrapper.value.iwInput.component=='percentage'}" />
+			<h:inputHidden rendered="#{formWrapper.value.iwInput.component=='percentage'}" id="hiddenForSlider" value="#{formWrapper.value.value}" />
+			<p:slider disabled="#{!formWrapper.value.isWritable or disableIwInputs}" for="hiddenForSlider" rendered="#{formWrapper.value.iwInput.component=='percentage'}" displayTemplate="{value}%" display="displaySlider" />
+			<!-- Multi checkbox -->
+			<p:selectManyCheckbox disabled="#{!formWrapper.value.isWritable or disableIwInputs}"
+								  class="radio-check" layout="pageDirection"
+								  rendered="#{formWrapper.value.iwInput.component=='checklist'}"
+								  value="#{formWrapper.value.value}"
+								  required="#{formWrapper.value.iwInput.required}">
+				<f:selectItems value="#{formWrapper.value.iwInput.options}" />
+			</p:selectManyCheckbox>
+			<p:selectOneRadio disabled="#{!formWrapper.value.isWritable or disableIwInputs}"
+							  class="radio-check" layout="pageDirection"
+							  rendered="#{formWrapper.value.iwInput.component=='radio'}"
+							  value="#{formWrapper.value.value}"
+							  required="#{formWrapper.value.iwInput.required}">
+				<f:selectItems value="#{formWrapper.value.iwInput.options}" />
+			</p:selectOneRadio>
+			<p:inputText validatorMessage="#{formWrapper.value.iwInput.errorMessage}"
+						 maxlength="#{formWrapper.value.iwInput.maxInputSize}"
+						 disabled="#{!formWrapper.value.isWritable or disableIwInputs}"
+						 label="#{formWrapper.value.iwInput.label}"
+						 rendered="#{formWrapper.value.iwInput.component=='textInput' and formWrapper.value.iwInput.validation=='string'}"
+						 value="#{formWrapper.value.value}"
+						 required="#{formWrapper.value.iwInput.required==true}" >
+				<p:ajax update="@(.dynamicText)" />
+				<f:attribute name="pattern" value="#{formWrapper.value.iwInput.regex}" />
+				<f:validator validatorId="extendedRegexValidator" />
+			</p:inputText>
+			<p:inputText label="#{formWrapper.value.iwInput.label}" rendered="#{formWrapper.value.iwInput.component=='textInput' and formWrapper.value.iwInput.validation=='long'}" value="#{formWrapper.value.value}" required="#{formWrapper.value.iwInput.required==true}" disabled="#{formWrapper.value.isWritable==false or disableIwInputs}">
+				<f:convertNumber integerOnly="true" />
+				<p:ajax update="@(.dynamicText)" />
+			</p:inputText>
+			<p:calendar disabled="#{!formWrapper.value.isWritable or disableIwInputs}" pattern="#{navigationController.longDateFormat}" label="#{formWrapper.value.iwInput.label}" rendered="#{formWrapper.value.iwInput.component=='textInput' and formWrapper.value.iwInput.validation=='date'}" value="#{formWrapper.value.value}" required="#{formWrapper.value.iwInput.required==true}" />
+			<p:inputTextarea disabled="#{!formWrapper.value.isWritable or disableIwInputs}" label="#{formWrapper.value.iwInput.label}" rendered="#{formWrapper.value.iwInput.component=='textArea'}" value="#{formWrapper.value.value}" required="#{formWrapper.value.iwInput.required==true}" />
+			<p:selectBooleanCheckbox disabled="#{!formWrapper.value.isWritable or disableIwInputs}" label="#{formWrapper.value.iwInput.label}" rendered="#{formWrapper.value.iwInput.component=='checkbox'}" value="#{formWrapper.value.value}" required="#{formWrapper.value.iwInput.required==true}" />
+			<p:selectOneMenu disabled="#{!formWrapper.value.isWritable or disableIwInputs}"
+							 label="#{formWrapper.value.iwInput.label}"
+							 rendered="#{formWrapper.value.iwInput.component=='select' and formWrapper.value.iwInput.required==true}"
+							 value="#{formWrapper.value.value}">
+				<f:selectItems value="#{formWrapper.value.iwInput.options}" var="selectItem" itemLabel="#{selectItem}" itemValue="#{selectItem}" />
+				<p:ajax update="@(.dynamicText)" process="@this"/>
+			</p:selectOneMenu>
+			<p:selectOneMenu disabled="#{!formWrapper.value.isWritable or disableIwInputs}" label="#{formWrapper.value.iwInput.label}" rendered="#{formWrapper.value.iwInput.component=='select' and formWrapper.value.iwInput.required==false}" value="#{formWrapper.value.value}">
+				<f:selectItem itemLabel="#{formWrapper.value.iwInput.value}" itemValue="#{null}" noSelectionOption="true" />
+				<f:selectItems value="#{formWrapper.value.iwInput.options}" var="selectItem" itemLabel="#{selectItem}" itemValue="#{selectItem}" />
+				<p:ajax update="@(.dynamicText)" process="@this"/>
+			</p:selectOneMenu>
+			<p:calendar disabled="#{!formWrapper.value.isWritable or disableIwInputs}" rendered="#{formWrapper.value.iwInput.component=='date' and formWrapper.value.iwInput.dateformat=='DateTime'}" value="#{formWrapper.value.value}" pattern="#{formWrapper.value.iwInput.datePattern}" mask="true" required="#{formWrapper.value.iwInput.required==true}"  locale="#{navigationController.locale}" />
+			<p:calendar disabled="#{!formWrapper.value.isWritable or disableIwInputs}" rendered="#{formWrapper.value.iwInput.component=='date' and formWrapper.value.iwInput.dateformat=='Date'}"  value="#{formWrapper.value.value}" pattern="#{formWrapper.value.iwInput.datePattern}" mask="true"    required="#{formWrapper.value.iwInput.required==true}"  locale="#{navigationController.locale}" />
+			<p:calendar disabled="#{!formWrapper.value.isWritable or disableIwInputs}" rendered="#{formWrapper.value.iwInput.component=='date' and formWrapper.value.iwInput.dateformat=='Time' and formWrapper.value.iwInput.datePattern=='HH:mm'}"  value="#{formWrapper.value.value}" pattern="HH:mm" mask="true" timeOnly="true" required="#{formWrapper.value.iwInput.required==true}"  locale="#{navigationController.locale}" />
+			<p:calendar disabled="#{!formWrapper.value.isWritable or disableIwInputs}" rendered="#{formWrapper.value.iwInput.component=='date' and formWrapper.value.iwInput.dateformat=='Time' and formWrapper.value.iwInput.datePattern=='HH:mm:ss'}"  value="#{formWrapper.value.value}" pattern="HH:mm:ss" mask="true" timeOnly="true" required="#{formWrapper.value.iwInput.required==true}"  locale="#{navigationController.locale}" />
+			<p:inputText disabled="#{!formWrapper.value.isWritable or disableIwInputs}" label="#{formWrapper.value.iwInput.label}" rendered="#{formWrapper.value.iwInput.component=='textInput' and formWrapper.value.iwInput.validation=='money'}" value="#{formWrapper.value.value}" required="#{formWrapper.value.iwInput.required==true}">
+				<f:converter converterId="javax.faces.BigDecimal" />
+				<p:ajax update="@(.dynamicText)" />
+			</p:inputText>
+			<p:outputPanel rendered="#{formWrapper.value.iwInput.component=='fileInput'}" >
+				<p:fileUpload disabled="#{!formWrapper.value.isWritable or disableIwInputs}"
+							  label="#{formWrapper.value.iwInput.label}"
+							  process="@this"
+							  required="#{formWrapper.value.iwInput.required==true}"
+							  dragDropSupport="true"
+							  mode="advanced"
+							  fileUploadListener="#{taskController.handleUploadedFiles}"
+							  multiple="true"
+							  update="filesList"
+							  uploadLabel="#{msg['iw.bouton.upload']}"
+							  cancelLabel="#{msg['iw.bouton.annuler']}"
+				>
+					<f:attribute name="formWrapper" value="#{formWrapper.value}" />
+					<style>
+						/* Select the last element of the table rendered and reduce its width and center it */
+						td:nth-child(5) {
+							width: 6% !important;
+							text-align: center !important;
+						}
+					</style>
+				</p:fileUpload>
+				<p:dataGrid id="filesList" value="#{taskController.getFormFileList(formWrapper.value)}" var="iwFile" columns="1">
+					<div class="Container100 Responsive100">
+						<div class="ContainerIndent">
+							<div class="Container50 Fs50 FontRobotoLight Orange">
+								<p:graphicImage width="100" value="#{fileController.image}" rendered="#{iwFile.iwMime.startsWith('image')}">
+									<f:param name="path" value="#{iwFile.iwPath}" />
+									<f:param name="mime" value="#{iwFile.iwMime}" />
+									<f:param name="fileName" value="#{iwFile.iwName}" />
+								</p:graphicImage>
+								<p:outputPanel rendered="#{not iwFile.iwMime.startsWith('image')}" >
+									<div class="fa fa-file-o"></div>
+								</p:outputPanel>
+							</div>
+							<div>
+								<p:commandButton process="@this" value="#{iwFile.iwName}" icon="fa fa-download" ajax="false">
+									<p:fileDownload value="#{fileController.getFile(iwFile)}" contentDisposition="attachment" transient="true" >
+
+									</p:fileDownload>
+								</p:commandButton>
+								<p:commandButton process="@this" update="filesList" action="#{taskController.removeFile(formWrapper.value, iwFile)}" value="#{msg['iw.button.supprimer']}" icon="fa fa-remove " ajax="true" />
+							</div>
+						</div>
+					</div>
+				</p:dataGrid>
+			</p:outputPanel>
+			<p:commandButton icon="fa fa-download" rendered="#{formWrapper.value.iwInput.component=='document' }" process="@this" value="#{msg['iw.tache.genererdocument']}" ajax="false" >
+				<p:fileDownload value="#{fileController.downloadPDFReport(formWrapper.value.iwInput.value,formWrapper.value.iwInput.options,taskController.varMapReport)}" contentDisposition="attachment" transient="true" >
+				</p:fileDownload>
+			</p:commandButton>
+		</p:column>
+		<p:column rendered="#{formWrapper.value.iwInput.component == 'header'}" colspan="2" style="border:0;background-color: white;height:50px">
+			<p:outputLabel rendered="#{!formWrapper.value.iwInput.multple}" value="#{formWrapper.value.iwInput.value}" />
+			<p:outputLabel rendered="#{formWrapper.value.iwInput.multple}" value="#{formWrapper.value.iwInput.value}" style="font-size: 20px!important;" />
+			<h:panelGroup layout="block" rendered="#{!formWrapper.value.iwInput.multple}" style="border-top: 1px solid;" />
+			<h:panelGroup layout="block" rendered="#{formWrapper.value.iwInput.multple}" style="border-top: 2px solid;" />
+		</p:column>
+		<p:column rendered="#{formWrapper.value.iwInput.component == 'message'}" colspan="2">
+			<div class="ui-messages ui-widget">
+				<div class="ui-messages-#{formWrapper.value.iwInput.value} ui-corner-all">
+					<span class="ui-messages-#{formWrapper.value.iwInput.value}-icon"></span>
+					<ul><li><span class="ui-messages-#{formWrapper.value.iwInput.value}-detail">#{formWrapper.value.iwInput.description}</span></li></ul>
+				</div>
+			</div>
+		</p:column>
+		<f:facet name="footer" >
+			<style>
+				.ui-datatable-footer {
+					text-align: left !important;
+				}
+			</style>
+			<p:commandButton action="#{taskController.completeTask()}" icon="fa fa-check" rendered="#{!disableIwInputs}" value="#{msg['iw.tache.completer']}" ajax="false" />
+		</f:facet>
+	</p:dataTable>
+</ui:composition>

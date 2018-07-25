@@ -1,0 +1,20 @@
+{
+	"name": "workflow",
+	"version": "1.0.0",
+	"ignore": [
+		".jshintrc",
+		"**/*.txt"
+	],
+	"dependencies": {
+		"angular": "latest",
+		"angular-animate": "latest",
+		"angular-bootstrap": "latest",
+		"angular-datepicker": "latest",
+		"angular-route": "latest",
+		"angular-resource": "latest",
+		"angular-sanitize": "latest",
+		"bootstrap": "latest",
+		"font-awesome": "latest",
+		"ui-router": "latest"
+	}
+}

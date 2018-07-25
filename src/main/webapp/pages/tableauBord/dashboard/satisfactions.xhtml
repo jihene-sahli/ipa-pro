@@ -1,0 +1,112 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core">
+
+
+	<h:form id="satF">
+		<p:panelGrid columns="7" class="Wid100">
+			<p:outputLabel for="dmin" value="Date Début:"/>
+			<p:calendar id="dmin" value="#{dashController.dateMin}">
+				<p:ajax event="change" update="satF"/>
+			</p:calendar>
+
+			<p:outputLabel for="dmax" value="Date Fin:"/>
+			<p:calendar id="dmax" value="#{dashController.dateMax}"/>
+
+			<p:outputLabel for="taux" value="Taux Minimal:"/>
+
+			<p:spinner id="taux" value="#{dashController.taux}" min="0" max="100" prefix="%" />
+			<p:commandButton value="Valider" update="satF" action="#{dashController.getTauxSatisfactionAsJson()}"
+							 oncomplete="satisfactionTauxFuntion()"/>
+		</p:panelGrid>
+
+		<p:panel rendered="#{dashController.taux !=null}">
+			<div id="buttons4"></div>
+			<br/><br/>
+			<div id="satisfactionTaux">
+				<div id="chart_satisfactionTaux" style="width: 100%; height: 400px;"></div>
+				<h:outputText value="Moyenne des Eavaluations à Chaud : " style="text-decoration: underline; color: blue; font-size: 17px !important;" />
+				<h:outputText id="idMoyen" value="#{dashController.moyenEvalchaud}" style="text-decoration: underline; color: blue; font-size: 17px !important;" />
+			</div>
+		</p:panel>
+		<script type="text/javascript">
+			/*<![CDATA[*/
+			var satisfactionTauxFuntion = function () {
+				var dateDebut = '#{dashController.getFormatedDate(dashController.dateMin)}';
+				var dateFin = '#{dashController.getFormatedDate(dashController.dateMax)}';
+				var resDebut = dateDebut.split("-");
+				var resFin = dateFin.split("-");
+
+				function AddNamespaceHandlerTaux() {
+					var svg = jQuery('#chart_satisfactionTaux svg');
+					svg.attr("xmlns", "http://www.w3.org/2000/svg");
+					svg.css('overflow', 'visible');
+				}
+
+				var click = "return xepOnline.Formatter.Format('satisfactionTaux', {render:'download', srctype:'svg'})";
+				jQuery('#buttons4').append('<button onclick="' + click + '">PDF</button>');
+
+				////ligne
+
+				google.charts.load('current', {'packages': ['line', 'corechart']});
+				google.charts.setOnLoadCallback(drawTauxSatisfactions);
+
+				function drawTauxSatisfactions() {
+					var mydata = JSON.parse('#{dashController.getTauxSatisfactionAsJson()}');
+					var data = new google.visualization.DataTable();
+					data.addColumn('date', 'DATE FORMATION');
+					data.addColumn('number', 'NOMBRE FORMATION');
+
+					mydata.sort(function(f1,f2){
+						// Turn your strings into dates, and then subtract them
+						// to get a value that is either negative, positive, or zero.
+						return new Date(f2.year, f2.month - 1, f2.day) - new Date(f1.year, f1.month - 1, f1.day);
+					});
+					console.log("************: " + JSON.stringify(mydata));
+
+					for (var formation of mydata) {
+						data.addRows([
+							[new Date(formation.year, formation.month - 1, formation.day), formation.nbFormations]
+						]);
+					}
+
+					var options = {
+						chart: {
+							title: ' Taux de satisfactions à chaud des formations'
+						},
+						series: {
+							// Gives each series an axis name that matches the Y-axis below.
+							0: {axis: 'Formation'},
+
+						},
+						pointSize: 10,
+						axes: {
+							// Adds labels to each axis; they don't have to match the axis names.
+							x: {
+								Formation : {label : 'Date Formation'},
+								viewWindow: {
+									min: new Date(resDebut[0],resDebut[1]-1,resDebut[2]),
+									max: new Date(resFin[0],resFin[1]-1,resFin[2])
+								}
+							}
+							,
+							y: {
+								Formation: {label: 'Taux Satisfaction'},
+							}
+						}
+					};
+
+					var satisfactionTauxChart = new google.visualization.LineChart(document.getElementById('chart_satisfactionTaux'));
+					google.visualization.events.addListener(satisfactionTauxChart, 'ready', AddNamespaceHandlerTaux);
+					satisfactionTauxChart.draw(data, options);
+				}
+			}
+
+			/*]]>*/
+		</script>
+
+
+	</h:form>
+</ui:composition>

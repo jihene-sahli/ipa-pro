@@ -1,0 +1,263 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core">
+
+	<h:form id="nbFormation">
+		<h:panelGrid columns="2"  styleClass="ui-grid" style="margin-bottom:10px" cellpadding="5">
+			<p:outputLabel for="dy" value="Granularité:"/>
+			<p:selectOneRadio id="dy" value="#{dashController.dayOrYear}">
+				<f:selectItem itemLabel="Année" itemValue="Année"/>
+				<f:selectItem itemLabel="Jour" itemValue="Jour"/>
+			</p:selectOneRadio>
+
+		</h:panelGrid>
+
+		<p:panelGrid columns="5" class="Wid100">
+			<p:outputLabel for="dmin" value="Date Début:"/>
+			<p:calendar id="dmin" value="#{dashController.dateMin}"/>
+
+			<p:outputLabel for="dmax" value="Date Fin:"/>
+			<p:calendar id="dmax" value="#{dashController.dateMax}"/>
+			<p:commandButton value="Valider" update="nbFormation"
+							 oncomplete="dayOrYearFuntion()"/>
+		</p:panelGrid>
+
+		<p:panel rendered="#{dashController.dayOrYear.toLowerCase()=='jour'}">
+			<div id="buttons5"></div>
+
+			<br/><br/>
+			<div id="dayF">
+                 <h:outputText value="NB : une option zoom est valable" />
+				<div id="chart_dayF" style="width: 100%; height: 300px;" ></div>
+			</div>
+		</p:panel>
+		<p:panelGrid rendered="#{dashController.dayOrYear.toLowerCase()=='année'}" styleClass="Wid100">
+			<p:row>
+
+				<p:column style="width: 50%">
+					<p:panel styleClass="Wid100">
+						<div id="buttons6"></div>
+
+						<br/><br/>
+						<div id="yearF">
+							<div id="chart_yearF" style="width: 100%; height: 400px;"></div>
+						</div>
+					</p:panel>
+
+				</p:column>
+				<p:column style="width: 50%">
+					<p:panel styleClass="Wid100">
+						<div id="buttons7"></div>
+						<br/><br/>
+						<div id="yearPie">
+							<div id="chart_yearPie" style="width: 100%; height: 400px;"></div>
+						</div>
+					</p:panel>
+				</p:column>
+			</p:row>
+
+
+		</p:panelGrid>
+		<script type="text/javascript">
+			/*<![CDATA[*/
+
+
+			var dayOrYearFuntion = function () {
+				var dateDebut = '#{dashController.getFormatedDate(dashController.dateMin)}';
+				var dateFin = '#{dashController.getFormatedDate(dashController.dateMax)}';
+				var resDebut = dateDebut.split("-");
+				var resFin = dateFin.split("-");
+				var choice = '#{dashController.dayOrYear.toLowerCase()}';
+				console.log("choice***:" + choice);
+				if (choice == 'jour') {
+					dayFormationFuntion(resDebut, resFin);
+				} else {
+					yearFormationFuntion(resDebut, resFin);
+					yearFormationPieFuntion();
+				}
+			};
+			var dayFormationFuntion = function (resDebut, resFin) {
+
+				function AddNamespaceHandlerDay() {
+					var svg = jQuery('#chart_dayF svg');
+					svg.attr("xmlns", "http://www.w3.org/2000/svg");
+					svg.css('overflow', 'visible');
+				}
+
+				var click = "return xepOnline.Formatter.Format('dayF', {render:'download', srctype:'svg'})";
+				jQuery('#buttons5').append('<button onclick="' + click + '">PDF</button>');
+				google.charts.load('current', {packages: ['corechart', 'bar']});
+				google.charts.setOnLoadCallback(drawDayFormation);
+				function drawDayFormation() {
+					var mydata = JSON.parse('#{dashController.getFormationDayYearAsJson()}');
+					console.log("************: " + JSON.stringify(mydata));
+					var data = new google.visualization.DataTable();
+					data.addColumn('date', 'Date Formation');
+					data.addColumn('number', 'Formations');
+					data.addColumn({type: 'string', role: 'annotation'});
+					var x1 =0;
+					for (var formation of mydata) {
+						data.addRows([[new Date(formation.year, formation.month - 1, formation.day), formation.nbFormations, formation.nbFormations + " Formation(s)"]]);
+						if(formation.nbFormations >2){
+							x1 = 1;
+						}
+					}
+
+					if(x1){
+						var options = {
+							title: 'Nombre de formations éffectuées par jour',
+							bar: {groupWidth: "10%"},
+
+							hAxis: {
+								title: 'Day',
+								viewWindow: {
+									min: new Date(resDebut[0], resDebut[1] - 1, resDebut[2]),
+									max: new Date(resFin[0], resFin[1] - 1, resFin[2])
+								}
+							},
+							vAxis: {
+								title: 'NB Formations'
+							},
+							explorer: {
+								axis: 'horizontal',
+								keepInBounds: true,
+								maxZoomIn: 4.0
+							}
+						};
+					}else {
+						var options = {
+							title: 'Nombre de formations éffectuées par jour',
+							bar: {groupWidth: "10%"},
+
+							hAxis: {
+								title: 'Day',
+								viewWindow: {
+									min: new Date(resDebut[0], resDebut[1] - 1, resDebut[2]),
+									max: new Date(resFin[0], resFin[1] - 1, resFin[2])
+								}
+							},
+							vAxis: {
+								title: 'NB Formations',
+								ticks: [0, 1, 2, 3 ]
+							},
+							explorer: {
+								axis: 'horizontal',
+								keepInBounds: true,
+								maxZoomIn: 4.0
+							}
+						};
+					}
+
+
+					var dayFormationChart = new google.visualization.ColumnChart(document.getElementById('chart_dayF'));
+					google.visualization.events.addListener(dayFormationChart, 'ready', AddNamespaceHandlerDay);
+					dayFormationChart.draw(data, options);
+				}
+			}
+
+
+			var yearFormationFuntion = function (resDebut, resFin) {
+
+				function AddNamespaceHandlerYear() {
+					var svg = jQuery('#chart_yearF svg');
+					svg.attr("xmlns", "http://www.w3.org/2000/svg");
+					svg.css('overflow', 'visible');
+				}
+
+				var click = "return xepOnline.Formatter.Format('yearF', {render:'download', srctype:'svg'})";
+				jQuery('#buttons6').append('<button onclick="' + click + '">PDF</button>');
+				google.charts.load('current', {packages: ['corechart', 'bar']});
+				google.charts.setOnLoadCallback(drawYearFormation);
+				function drawYearFormation() {
+					var mydata = JSON.parse('#{dashController.getFormationDayYearAsJson()}');
+					console.log("************: " + JSON.stringify(mydata));
+					var data = new google.visualization.DataTable();
+					data.addColumn('string', 'Year Formation');
+					data.addColumn('number', 'Formations');
+					data.addColumn({type: 'string', role: 'annotation'});
+					var x2 = 0;
+					for (var formation of mydata) {
+						data.addRows([[formation.year, formation.nbFormations, formation.nbFormations + " Formation(s)"]]);
+						if(formation.nbFormations >2){
+							x2 = 1;
+						}
+					}
+
+
+					if(x2){
+						var options = {
+							title: 'Nombre de formations éffectuées par an',
+							bar: {groupWidth: "30%"},
+							legend: {position: "right"},
+							hAxis: {
+								title: 'NB Formations',
+								minValue: 0,
+							},
+							vAxis: {
+								title: 'Année'
+							}
+						};
+					}else{
+						var options = {
+							title: 'Nombre de formations éffectuées par an',
+							bar: {groupWidth: "30%"},
+							legend: {position: "right"},
+							hAxis: {
+								title: 'NB Formations',
+								ticks: [0, 1, 2, 3 ]
+							},
+							vAxis: {
+								title: 'Année'
+							}
+						};
+					}
+
+					var yearFormationChart = new google.visualization.BarChart(document.getElementById('chart_yearF'));
+					google.visualization.events.addListener(yearFormationChart, 'ready', AddNamespaceHandlerYear);
+					yearFormationChart.draw(data, options);
+
+				}
+			}
+
+			var yearFormationPieFuntion = function () {
+
+				function AddNamespaceHandlerYearPie() {
+					var svg = jQuery('#chart_yearPie svg');
+					svg.attr("xmlns", "http://www.w3.org/2000/svg");
+					svg.css('overflow', 'visible');
+				}
+
+				var click = "return xepOnline.Formatter.Format('yearPie', {render:'download', srctype:'svg'})";
+				jQuery('#buttons7').append('<button onclick="' + click + '">PDF</button>');
+
+				google.charts.load('current', {packages: ['corechart']});
+				google.charts.setOnLoadCallback(drawYearPie);
+
+				function drawYearPie() {
+					var mydata = JSON.parse('#{dashController.getFormationDayYearAsJson()}');
+
+					var data = new google.visualization.DataTable();
+					data.addColumn('string', 'Année');
+					data.addColumn('number', 'Formations');
+
+					for (var formation of mydata) {
+						data.addRows([["Année" + formation.year, formation.nbFormations]]);
+					}
+
+					var options = {
+						title: 'Nombre de formations éffectuées par an',
+						pieHole: 0.4
+					};
+					var pieYearChart = new google.visualization.PieChart(document.getElementById('chart_yearPie'));
+					google.visualization.events.addListener(pieYearChart, 'ready', AddNamespaceHandlerYearPie);
+					pieYearChart.draw(data, options);
+				}
+			}
+
+			/*]]>*/
+		</script>
+
+	</h:form>
+</ui:composition>

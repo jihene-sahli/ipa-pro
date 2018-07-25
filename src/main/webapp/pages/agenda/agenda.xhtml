@@ -1,0 +1,120 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+
+    <ui:define name="title">#{msg['iw.agenda']}</ui:define>
+    <ui:define name="subheader">
+        #{msg['iw.agenda']}
+    </ui:define>
+    <ui:define name="head">
+        <f:verbatim>
+            <style type="text/css">
+                .backgroundorange{
+                    background-color: orange;
+                }
+                .backgroundorchid{
+                    background-color: orchid;
+                }
+                .backgroundyellowgreen{
+                    background-color: yellowgreen;
+                }
+                .backgroundorangered{
+                    background-color: orangered ;
+                }
+				.backgroundBleu1{
+					background-color: #26A69A !important;
+					border: solid 1px #26A69A !important;
+				}
+				.backgroundBleu2{
+					background-color: #00897B !important;
+					border: solid 1px #00897B !important;
+				}
+
+
+            </style>
+            <script type="text/javascript">
+                cahngeColorDateSelected = function (xhr, status, args) {
+                    var cellSelected = "td[data-date='" + args.dateCellSelected + "']";
+                    $(cellSelected).css("background-color", "#AAAAAA");
+                }
+            </script>
+        </f:verbatim>
+    </ui:define>
+
+
+    <ui:define name="content">
+
+        <h:form id="formAg" >
+
+
+            <div class="Container20 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect HeiAutoOnMobile ">
+                            <p:commandButton value="#{msg['iw.agenda.nouveleevenement']}"  action="#{agendaController.createEvent()}" update="eventDetails" oncomplete="PF('eventDialog').show();"   ></p:commandButton>
+                            <div class="EmptyBox20"></div>
+                            <p:calendar navigator="true" showWeek="true" value="#{agendaController.navigationDate}" styleClass="calendarNavigation" pattern="#{navigationController.shortDateFormat}" locale="fr"  >
+                                <p:ajax event="dateSelect" listener="#{agendaController.calendarSelect}" oncomplete="cahngeColorDateSelected(xhr, status, args);" update="schedule" />
+                            </p:calendar>
+                            <div class="EmptyBox20"></div>
+                            <p:inputText value="#{agendaController.searchFilter}" placeholder="Recherche" >
+                                <p:ajax event="keyup" update="events"/>
+                            </p:inputText>
+                            <div class="EmptyBox20"></div>
+                            <p:selectManyMenu id="events"  value="#{agendaController.eventSelected}"    >
+                                <f:selectItems  value="#{agendaController.listEvents}" var="evenement"  itemLabel="#{agendaController.getHourFormat(evenement.startDate)} #{evenement.title}" itemValue="#{evenement.id}" />
+                                <p:ajax   listener="#{agendaController.changeSelectList}"  oncomplete="cahngeColorDateSelected(xhr, status, args);" update="schedule"/>
+                            </p:selectManyMenu>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="Container80 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect">
+                            <p:messages id="messages" showDetail="true" closable="true" />
+                            <p:schedule    id="schedule" styleClass="btvAgenda"   value="#{agendaController.eventModel}" initialDate="#{agendaController.navigationDate}" widgetVar="myschedule"  locale="fr"  aspectRatio="2"  allDaySlot="true"  timeFormat="HH:mm" axisFormat="HH:mm" slotMinutes="60"   >
+                                <p:ajax event="dateSelect" listener="#{agendaController.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                                <p:ajax event="eventSelect" listener="#{agendaController.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                                <p:ajax event="eventMove" listener="#{agendaController.onEventMove}" update="events" oncomplete="PF('myschedule').update();"/>
+                                <p:ajax event="eventResize"  listener="#{agendaController.onEventResize}" update="events" />
+                            </p:schedule>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <p:dialog  widgetVar="eventDialog" header="#{msg['iw.agenda.nouvelevenement']}" resizable="false" >
+                <h:panelGrid id="eventDetails" columns="2"      >
+
+                    <h:outputLabel for="title" value="#{msg['iw.agenda.titre']}"/>
+                    <p:inputText id="title" value="#{agendaController.event.title}" disabled="#{agendaController.event.editable==false}"  style="width:70%"  />
+
+                    <h:outputLabel for="from" value="#{msg['iw.agenda.de']}" />
+                    <p:calendar id="from" value="#{agendaController.event.startDate}"   disabled="#{agendaController.event.editable==false}"  pattern="#{navigationController.longDateFormat}" locale="#{navigationController.locale}" showButtonPanel="true"   />
+
+                    <h:outputLabel for="to" value="#{msg['iw.agenda.a']}"  />
+                    <p:calendar id="to" value="#{agendaController.event.endDate}" pattern="#{navigationController.longDateFormat}" locale="#{navigationController.locale}"   disabled="#{agendaController.event.editable==false}" showButtonPanel="true"   />
+
+                    <h:outputLabel for="allDay" value="#{msg['iw.agenda.toutlejour']}"  />
+                    <h:selectBooleanCheckbox id="allDay" value="#{agendaController.event.data.iwAllDay}"   disabled="#{agendaController.event.editable==false}" style="width:16px;height:16px" />
+
+                    <h:outputLabel for="desc" value="#{msg['iw.agenda.description']}"  />
+                    <p:inputTextarea id="desc"   rows="10" cols="30"  autoResize="false"  value="#{agendaController.event.data.iwDescription}"   />
+
+                    <p:commandButton id="addButton"   value="#{msg['iw.button.enregistrer']}"   actionListener="#{agendaController.addEvent}"  oncomplete="PF('eventDialog').hide();PF('myschedule').update();" update="messages,events"/>
+                    <p:commandButton id="removeButton" value="#{msg['iw.button.supprimer']}"     actionListener="#{agendaController.removeEvent}"  oncomplete="PF('eventDialog').hide();PF('myschedule').update();" update="events"/>
+
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
+
+    </ui:define>
+</ui:composition>

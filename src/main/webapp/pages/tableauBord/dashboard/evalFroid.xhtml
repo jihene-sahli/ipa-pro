@@ -1,0 +1,166 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core">
+
+	<h:form id="evalFroid">
+
+
+		<p:panelGrid columns="5" styleClass="ui-grid Wid100" style="margin-bottom:10px" cellpadding="5">
+			<p:outputLabel for="dmin" value="Date Début:"/>
+			<p:calendar id="dmin" value="#{dashController.dateMin}"/>
+
+			<p:outputLabel for="dmax" value="Date Fin:"/>
+			<p:calendar id="dmax" value="#{dashController.dateMax}"/>
+			<p:commandButton value="Valider" update="evalFroid" actionListener="#{dashController.getFormationAFroidAsJson}"
+							 oncomplete="froidFuntion()"/>
+		</p:panelGrid>
+
+		<p:panelGrid rendered="#{dashController.dateMax !=null and dashController.dateMin !=null}" styleClass="Wid100">
+			<p:row>
+				<p:column style="width: 50%">
+					<p:panel styleClass="Wid100" >
+						<div id="buttons11"></div>
+
+						<br/><br/>
+						<div id="froidBarF">
+
+							<div id="chart_froidBarF" style="width: 100%; height: 400px;"></div>
+							<!----><h:outputText value="Moyenne des Eavaluations à Froid: " style="text-decoration: underline; color: blue; font-size: 17px !important;" />
+							<h:outputText id="idMoyen" value="#{dashController.moyen}" style="text-decoration: underline; color: blue; font-size: 17px !important;" />
+
+						</div>
+					</p:panel>
+
+				</p:column>
+				<p:column style="width: 50%">
+					<p:panel styleClass="Wid100">
+						<div id="buttons12"></div>
+						<br/><br/>
+						<div id="froidPieF">
+							<div id="chart_froidPieF" style="width: 100%; height: 400px;"></div>
+						</div>
+					</p:panel>
+				</p:column>
+			</p:row>
+
+
+		</p:panelGrid>
+		<script type="text/javascript">
+			/*<![CDATA[*/
+
+			var froidFuntion = function () {
+				froidBarFuntion();
+				froidPieFuntion();
+				var mydata = JSON.parse('#{dashController.getFormationAFroidAsJson()}');
+				console.log("************: " + JSON.stringify(mydata));
+			};
+
+			var froidBarFuntion = function () {
+
+				function AddNamespaceHandlerFroidBar() {
+					var svg = jQuery('#chart_froidBarF svg');
+					svg.attr("xmlns", "http://www.w3.org/2000/svg");
+					svg.css('overflow', 'visible');
+				}
+
+				var click = "return xepOnline.Formatter.Format('froidBarF', {render:'download', srctype:'svg'})";
+				jQuery('#buttons11').append('<button onclick="' + click + '">PDF</button>');
+				google.charts.load('current', {packages: ['corechart', 'bar']});
+				google.charts.setOnLoadCallback(drawFroidBarFormation);
+				function drawFroidBarFormation() {
+					var mydata = JSON.parse('#{dashController.getFormationAFroidAsJson()}');
+					console.log("************: " + JSON.stringify(mydata));
+					var data = new google.visualization.DataTable();
+					data.addColumn('string', 'Eval Froid');
+					data.addColumn('number', 'Formations');
+					//data.addColumn('number', 'moyen');
+					data.addColumn({type: 'string', role: 'annotation'});
+					var x1 = 0 ;
+					for (var formation of mydata) {
+						data.addRows([[formation.evalFroid, formation.nbFormations, formation.nbFormations + " Formation(s)"]]);
+						if(formation.nbFormations >2){
+							x1 = 1;
+						}
+					}
+
+					if(x1){
+						var options = {
+							title: 'Taux de satisfactions à froid des formations',
+							bar: {groupWidth: "30%"},
+							legend: {position: "right"},
+							hAxis: {
+								title: 'NB Formations',
+								minValue: 0,
+							},
+							vAxis: {
+								title: 'Evaluation à froid'
+							}
+						};
+					}else {
+						var options = {
+							title: 'Taux de satisfactions à froid des formations',
+							bar: {groupWidth: "30%"},
+							legend: {position: "right"},
+							hAxis: {
+								title: 'NB Formations',
+								minValue: 0,
+								ticks: [0, 1, 2, 3 ]
+							},
+							vAxis: {
+								title: 'Evaluation à froid'
+							}
+						};
+					}
+
+					var froidBarFormationChart = new google.visualization.BarChart(document.getElementById('chart_froidBarF'));
+					google.visualization.events.addListener(froidBarFormationChart, 'ready', AddNamespaceHandlerFroidBar);
+					froidBarFormationChart.draw(data, options);
+
+				}
+			}
+
+			var froidPieFuntion = function () {
+
+				function AddNamespaceHandlerFroidPie() {
+					var svg = jQuery('#chart_froidPieF svg');
+					svg.attr("xmlns", "http://www.w3.org/2000/svg");
+					svg.css('overflow', 'visible');
+				}
+
+				var click = "return xepOnline.Formatter.Format('froidPieF', {render:'download', srctype:'svg'})";
+				jQuery('#buttons12').append('<button onclick="' + click + '">PDF</button>');
+
+				google.charts.load('current', {packages: ['corechart']});
+				google.charts.setOnLoadCallback(drawFroidPie);
+
+				function drawFroidPie() {
+					var mydata = JSON.parse('#{dashController.getFormationAFroidAsJson()}');
+
+					var data = new google.visualization.DataTable();
+					data.addColumn('string', 'Eval Froid');
+					data.addColumn('number', 'Formations');
+
+					for (var formation of mydata) {
+						//data.addRows([[ formation.evalFroid, formation.nbFormations]]);
+						data.addRows([["de 0 à 3", formation.de0A3]]);
+						data.addRows([["de 4 à 7", formation.de4A7]]);
+						data.addRows([["de 8 à 10", formation.de8A10]]);
+					}
+
+
+					var options = {
+						title: ' Taux de satisfactions à froid des formations',
+						pieHole: 0.4
+					};
+					var froidPieChart = new google.visualization.PieChart(document.getElementById('chart_froidPieF'));
+					google.visualization.events.addListener(froidPieChart, 'ready', AddNamespaceHandlerFroidPie);
+					froidPieChart.draw(data, options);
+				}
+			}
+
+			/*]]>*/
+		</script>
+	</h:form>
+</ui:composition>

@@ -1,0 +1,139 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core"
+				template="../templates/modena/template.xhtml">
+	<!--Title of the page-->
+	<ui:define name="title" rendered="#{not empty userController.userId}">#{msg['iw.action.modification']} #{userController.user.id}</ui:define>
+	<!--Title of the content: "Ajouter un utilisateur"-->
+	<ui:define name="subheader" rendered="#{empty userController.userId}">#{msg['iw.utilisateur.ajoututilisateur']}</ui:define>
+	<ui:define name="content">
+		<div class="Container100 Responsive100">
+			<div class="ContainerIndent">
+				<div class="iw2-center-block">
+					<p:panel styleClass="iw2-center-block iw2-width-80">
+						<!--The actual form-->
+						<h:form enctype="multipart/form-data">
+							<div class="Card ShadowEffect ui-fluid">
+								<div class="ui-panelgrid ui-widget ui-panelgrid-blank" style="border:0px !important; background:none;">
+									<div class="ui-panelgrid-content ui-widget-content ui-grid ui-grid-responsive">
+										<!--Upload a photo-->
+										<div class="ui-grid-row">
+											<div class="iw2-center-block" style="text-align: center !important;">
+												<p:graphicImage style="height: 100px;" rendered="#{!userController.user.pictureSet}" url="/resources/img/avatar.png" />
+												<p:graphicImage cache="false" style="height: 65px;" rendered="#{userController.user.pictureSet}" value="#{fileController.avatar}">
+													<f:param name="user" value="#{userController.userId}" />
+												</p:graphicImage>
+												<p:fileUpload value="#{userController.avatarFile}"
+															  dragDropSupport="true"
+															  sizeLimit="512000"
+															  mode="simple"
+															  skinSimple="true"
+															  fileLimit="1"
+															  allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+															  label="Choisir une photo"/>
+											</div>
+										</div>
+										<!--Identifiant-->
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="#{msg['iw.utilisateur.identifiant']}" />
+												<p:outputLabel value=" *" class="Red"/>
+												<p:inputText disabled="#{not empty userController.userId}" value="#{userController.user.id}" required="true" label="#{msg['iw.utilisateur.identifiant']}" />
+											</div>
+										</div>
+										<!--Nom-->
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="#{msg['iw.utilisateur.nom']}" />
+												<p:inputText value="#{userController.user.lastName}" label="#{msg['iw.utilisateur.nom']}" />
+											</div>
+										</div>
+										<!--Prénom-->
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="#{msg['iw.utilisateur.prenom']}" />
+												<p:inputText value="#{userController.user.firstName}" label="#{msg['iw.utilisateur.prenom']}" />
+											</div>
+										</div>
+										<!--Email-->
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="#{msg['iw.utilisateur.email']}"  />
+												<p:outputLabel value=" *" class="Red"/>
+												<p:inputText required="true" value="#{userController.user.email}" validatorMessage="#{msg['iw.input.emailvalidationerror']}" label="#{msg['iw.utilisateur.email']}">
+													<f:validateRegex pattern="#{navigationController.emailRegExp}" />
+												</p:inputText>
+											</div>
+										</div>
+										<!--Mot de passe-->
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="#{msg['iw.utilisateur.motpasse']}"  />
+												<p:password match="passwordConfirmation" value="#{userController.iwUserDetails.iwGeneratedPasswordPlain}" label="#{msg['iw.utilisateur.motpasse']}" />
+											</div>
+										</div>
+										<!--Confirmation mot de passe-->
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="#{msg['iw.utilisateur.confirmationmotpasse']}"  />
+												<p:password id="passwordConfirmation" value="#{userController.passwordConfirmation}" label="#{msg['iw.utilisateur.confirmationmotpasse']}" />
+											</div>
+										</div>
+										<!--Utilisateur actif ou pas-->
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="#{msg['iw.utilisateur.actif']}"  />
+												<p:selectOneRadio value="#{userController.iwUserDetails.iwActive}">
+													<f:selectItem itemLabel="#{msg['iw.boolean.oui']}" itemValue="true" />
+													<f:selectItem itemLabel="#{msg['iw.boolean.non']}" itemValue="false" />
+												</p:selectOneRadio>
+											</div>
+										</div>
+										<!--Ajouter des groupes-->
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="#{msg['iw.utilisateur.groupescandidats']}" />
+
+												<p:autoComplete multiple="true"
+																forceSelection="true"
+																value="#{userController.userGroupList}"
+																completeMethod="#{suggestionController.completeGroups}"
+																var="group"
+																itemLabel="#{group.name}"
+																itemValue="#{group}"
+																converter="#{groupConverter}">
+													<f:attribute name="converterItemsList" value="#{suggestionController.completeGroups(group.id)}" />
+												</p:autoComplete>
+											</div>
+										</div>
+										<!--Mode d'authentification-->
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" rendered="#{navigationController.authenticationMode=='mixte'}" value="#{msg['iw.utilisateur.modeauthentification']}" />
+												<p:selectOneMenu rendered="#{navigationController.authenticationMode=='mixte'}" value="#{userController.iwUserDetails.iwTypeAuthentification}" >
+													<f:selectItem itemValue="db" itemLabel="#{msg['iw.authentication.mode.normal']}" />
+													<f:selectItem itemValue="ad" itemLabel="#{msg['iw.authentication.mode.ldap']}" />
+												</p:selectOneMenu>
+											</div>
+										</div>
+										<!--Validation-->
+										<div class="ui-grid-row" style="margin-top: 30px !important;">
+											<div class="ui-grid-col-3 iw2-center-block" style="margin-right: -10% !important;">
+												<p:commandButton action="#{userController.saveUser(true)}" value="#{msg['iw.bouton.enregistrernouveau']}" ajax="false"/>
+											</div>
+											<div class="ui-grid-col-3 iw2-center-block">
+												<p:commandButton styleClass="CyanButton" action="#{userController.saveUser(false)}" value="Valider" ajax="false"/>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</h:form>
+					</p:panel>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

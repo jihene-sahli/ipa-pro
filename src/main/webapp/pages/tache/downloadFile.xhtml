@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:head>
+        <title>Liste des fichiers téléchargés</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 90%;
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+        <h:form>
+            <p:fileUpload label="#{fileController.formWrapperSelected.iwInput.label}"
+                          process="@this"
+                          required="#{fileController.formWrapperSelected.iwInput.required==true}"
+                          dragDropSupport="true"
+                          mode="advanced"
+                          fileUploadListener="#{fileController.handleEntityUploadedFiles}"
+                          multiple="true"
+                          update="filesListEntity"
+                          accept="true"
+                          >
+
+
+                <f:attribute name="formWrapper" value="#{fileController.formWrapperSelected}" />
+                <f:attribute name="columnName" value="#{fileController.columnSelected}" />
+                <f:attribute name="iwuploadView" value="#{fileController.entitySelected}" />
+                <f:attribute name="calssName" value="#{fileController.formWrapperSelected.iwInput.value}" />
+                <f:attribute name="fieldName" value="#{fileController.columnSelected}" />
+                <f:attribute name="currentTask" value="#{fileController.currentTask}" />
+                <f:attribute name="functionId" value="#{fileController.functionId}" />
+                <f:attribute name="standalonetaskId" value="#{fileController.standalonetaskId}" />
+
+            </p:fileUpload>
+
+
+            <p:dataTable id="filesListEntity"
+                         value="#{fileController.iwUploadSelected.iwFileList}"
+                         var="iwFile"
+                         rowIndexVar="FileIndex">
+
+                <p:column  headerText="Icone">
+                    <div class="Container100 Responsive100">
+                        <div class="ContainerIndent">
+                            <div class="Container50 Fs50 FontRobotoLight Orange">
+
+
+                                <p:graphicImage width="100" value="#{fileController.image}" rendered="#{ iwFile.iwMime.startsWith('image')}" >
+                                    <f:param name="path" value="#{iwFile.iwPath}" />
+                                    <f:param name="mime" value="#{iwFile.iwMime}" />
+                                    <f:param name="fileName" value="#{iwFile.iwName}" />
+                                </p:graphicImage>
+
+                                <ui:remove>
+                                    <p:graphicImage width="100" value="#{fileController.iconFile}"  >
+
+                                    </p:graphicImage>
+                                </ui:remove>
+                                <p:outputPanel rendered="#{not iwFile.iwMime.startsWith('image')}" >
+                                    <div class="fa fa-file-o" style="font-size:35px;"></div>
+                                </p:outputPanel>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                </p:column>
+                <p:column headerText="Nom du fichier">
+                    <p:commandLink  value="#{iwFile.iwName}" ajax="false"  >
+                        <p:fileDownload   value="#{fileController.getFile(iwFile)}" >
+
+                        </p:fileDownload>
+                    </p:commandLink>
+                </p:column>
+                <p:column headerText="Supprimer">
+                    <p:commandButton process="@this" update="filesListEntity"  action="#{fileController.removeEntityFile(FileIndex)}"   icon="fa fa-remove " ajax="true"  class="Fright">
+
+                    </p:commandButton>
+
+
+                </p:column>
+            </p:dataTable>
+
+        </h:form>
+    </h:body>
+
+</html>

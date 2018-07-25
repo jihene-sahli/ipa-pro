@@ -1,0 +1,107 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core"
+				template="../templates/modena/template.xhtml">
+	<ui:define name="title" >#{msg['iw.avence.details']}</ui:define>
+	<ui:define name="subheader">#{msg['iw.avence.details']}</ui:define>
+	<ui:define name="content">
+		<div class="Container100 Responsive100">
+			<div class="Container100">
+				<div class="ContainerIndent">
+					<div class="Card ShadowEffect">
+						<p:panelGrid columns="2" class="Wid100">
+							<p:outputLabel value="Nom" />
+							<p:outputLabel value="#{advencedController.multiLineEntity.iwName}" />
+							<p:outputLabel value="Classe" />
+							<p:outputLabel value="#{advencedController.multiLineEntity.iwClass}" />
+						</p:panelGrid>
+					</div>
+				</div>
+			</div>
+			<h:form id="formDetail">
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<div class="Card ShadowEffect">
+							<p:commandButton value="#{empty advencedController.multilineEntityFieldList ? msg['iw.initialiser'] : msg['iw.mettreajour']}" process="@this" ajax="true" immediate="true" actionListener="#{advencedController.updateEntityFields()}"  update="formDetail" />
+						</div>
+					</div>
+				</div>
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<div class="Card ShadowEffect">
+							<p:dataTable id="entityList" styleClass="entityList" value="#{advencedController.multilineEntityFieldList}" var="entityField"  editable="true" emptyMessage="#{msg['iw.avence.aucunattributtrouve']}"  rowIndexVar="entityIndex"  >
+								<p:ajax event="rowEdit" listener="#{advencedController.saveMultiLineEntityField(entityField)}" update="entityList" />
+								<p:column style="width:4%;">
+									<p:rowEditor />
+								</p:column>
+								<p:column headerText="Name" style="width:32%;">
+									<p:cellEditor>
+										<f:facet name="input">
+											<p:inputText value="#{entityField.iwMultilineEntityFieldName}" disabled="true" >
+											</p:inputText>
+										</f:facet>
+										<f:facet name="output">
+											<h:outputText  value="#{entityField.iwMultilineEntityFieldName}" />
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+								<p:column headerText="Déscription">
+									<p:cellEditor>
+										<f:facet name="input">
+											<p:inputText value="#{entityField.iwMultilineEntityFieldDescription}" >
+											</p:inputText>
+										</f:facet>
+										<f:facet name="output">
+											<h:outputText  value="#{entityField.iwMultilineEntityFieldDescription}" />
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+								<p:column headerText="Type du champ">
+									<p:cellEditor>
+										<f:facet name="input">
+											<h:outputText  value="#{advencedController.getEntityFieldType(advencedController.multiLineEntity.iwClass,entityField.iwMultilineEntityFieldName)}" />
+										</f:facet>
+										<f:facet name="output">
+											<h:inputText  disabled="true" value="#{advencedController.getEntityFieldType(advencedController.multiLineEntity.iwClass,entityField.iwMultilineEntityFieldName)}"   />
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+								<p:column headerText="Associer l'entitée a une liste">
+									<p:cellEditor>
+										<f:facet name="input">
+											<p:selectOneMenu converter="#{iwListConverter}" id="city" value="#{entityField.iwList}"   >
+												<f:selectItem itemLabel="#{msg['iw.selectionner']}"  noSelectionOption="true"  />
+												<f:selectItems value="#{advencedController.allLists}"  var="list"  itemLabel="#{list.iwName}" itemValue="#{list}" />
+												<f:attribute name="converterItemsList" value="#{advencedController.allLists}" />
+											</p:selectOneMenu>
+										</f:facet>
+										<f:facet name="output">
+											<p:outputLabel value="#{entityField.iwList.iwName}" />
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+								<p:column headerText="Afficher dans la table de jointure ?">
+									<p:cellEditor>
+										<f:facet name="input">
+											<p:selectOneMenu value="#{entityField.displayInJointable}" >
+												<p:ajax event="change" process="@this"></p:ajax>
+												<f:selectItem itemValue="#{null}" itemLabel="#{msg['iw.selectionner']}" noSelectionOption="true" />
+												<f:selectItem itemValue="#{true}" itemLabel="Oui"  />
+												<f:selectItem itemValue="#{false}" itemLabel="Non"  />
+											</p:selectOneMenu>
+										</f:facet>
+										<f:facet name="output">
+											<p:outputLabel value="#{entityField.displayInJointable==true  ? 'Oui': 'Non'}" />
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+							</p:dataTable>
+						</div>
+					</div>
+				</div>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core" xmlns:bp="http://java.sun.com/jsf/html"
+>
+	#{taskController.registerTemplate('congeController','CongeController',fn:split('dateDebTemplateConge,dateFinTemplateConge,soldAntTemplateConge,soldRestTemplateConge',','))}
+
+	<f:verbatim>
+		<style>
+
+		</style>
+	</f:verbatim>
+
+	<p:panelGrid id="donnee_conge"   >
+<p:row styleClass="ui-datatable-even"><p:column style="width: 243px;"><p:outputLabel value="Date Début Souhaitée :" /></p:column>
+	<!-- <p:calendar pattern="#{navigationController.longDateFormat}" label="#{formWrapper.form.name}" rendered="#{formWrapper.form.type.name=='date' and formWrapper.form.readable==true}" value="#{formWrapper.value}" disabled="#{formWrapper.form.writable==false}"  required="#{formWrapper.form.required==true}" /> -->
+	<p:column>	<p:calendar pattern="#{navigationController.longDateFormat}" maxdate="#{congeController.dateFin}" mode="Popup" value="#{congeController.dateDeb}"  disabled="false"  required="true" >
+		<p:ajax event="dateSelect" listener="#{congeController.updateSoldeRest}" update="soldRest dateFinTemplateConge" />
+	</p:calendar>
+	</p:column></p:row>
+		<p:row styleClass="ui-datatable-odd">
+			<p:column style="width: 243px;"><p:outputLabel value="Date de reprise :" /></p:column>
+			<!-- <p:calendar pattern="#{navigationController.longDateFormat}" label="#{formWrapper.form.name}" rendered="#{formWrapper.form.type.name=='date' and formWrapper.form.readable==true}" value="#{formWrapper.value}" disabled="#{formWrapper.form.writable==false}"  required="#{formWrapper.form.required==true}" /> -->
+			<p:column>	<p:calendar id="dateFinTemplateConge" pattern="#{navigationController.longDateFormat}" mindate="#{congeController.dateDeb}" maxdate="#{congeController.dateFinLimit}" mode="Popup" value="#{congeController.dateFin}"  disabled="false"  required="true">
+				<p:ajax event="dateSelect" listener="#{congeController.updateSoldeRest}" update="soldRest" />
+			</p:calendar>
+			</p:column></p:row>
+
+		<p:row styleClass="ui-datatable-even" >
+			<p:column style="width: 243px;"><p:outputLabel value="Solde CP antérieur :" /></p:column>
+			<!-- <p:calendar pattern="#{navigationController.longDateFormat}" label="#{formWrapper.form.name}" rendered="#{formWrapper.form.type.name=='date' and formWrapper.form.readable==true}" value="#{formWrapper.value}" disabled="#{formWrapper.form.writable==false}"  required="#{formWrapper.form.required==true}" /> -->
+			<p:column>	<p:inputText style="opacity: 100 !important;" disabled="true" value="#{congeController.soldeAnterieur}" />
+			</p:column></p:row>
+
+
+		<p:row styleClass="ui-datatable-odd">
+			<p:column style="width: 243px;"><p:outputLabel value="Nouveau Solde CP :" /></p:column>
+			<!-- <p:calendar pattern="#{navigationController.longDateFormat}" label="#{formWrapper.form.name}" rendered="#{formWrapper.form.type.name=='date' and formWrapper.form.readable==true}" value="#{formWrapper.value}" disabled="#{formWrapper.form.writable==false}"  required="#{formWrapper.form.required==true}" /> -->
+			<p:column>	<p:inputText style="opacity: 100 !important;" disabled="true" value="#{congeController.soldeRest}" id="soldRest" />
+			</p:column></p:row>
+
+
+
+
+
+
+	</p:panelGrid>
+</ui:composition>

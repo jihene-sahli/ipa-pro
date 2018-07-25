@@ -1,0 +1,261 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+    <ui:define name="content" id="loadArea">
+        <h:form>
+            <div class="Container100 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect">
+                            
+                            <p:wizard flowListener="#{handleUploads.onFlowProcess}" 
+                                      nextLabel="suivant" backLabel="arriere" showNavBar="false"
+                                      step="process" >
+                                
+                                <!--select process instance--> 
+                                <p:tab id="process" title="process" >
+                                    <h:panelGrid columns="2">
+                                        
+                                        <p:outputLabel value="#{msg['iw.droit.process']}"/>
+                                        <p:selectOneMenu id="modelList" value="#{handleUploads.selectedProcDef}"
+                                                         converter="#{processDefinitionByKeyConverter}"
+                                                         required="true">
+                                            <f:selectItem noSelectionOption="true"
+                                                          itemValue="#{null}"
+                                                          itemLabel="#{msg['iw.droit.selectionnerprocess']}"
+                                                          />
+                                            <f:selectItems value="#{handleUploads.lastProcessDefinitions}" var="procDef"
+                                                           itemLabel="#{procDef.name}" itemValue="#{procDef}"/>
+                                            <f:attribute name="converterItemsList"
+                                                         value="#{handleUploads.lastProcessDefinitions}"/>
+                                            <p:ajax event="change" listener="#{handleUploads.onModelChange}"
+                                                    update="formKeyList"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="#{msg['iw.formulaires']}"/>
+                                        <p:selectOneMenu id="formKeyList" value="#{handleUploads.selectedForm}"
+                                                         converter="#{formConverter}" required="true">
+                                            <f:selectItem noSelectionOption="false"
+                                                          itemValue="#{null}"
+                                                          itemLabel="#{msg['iw.droit.selectionnerprocess']}"
+                                                          />
+                                            <f:selectItems value="#{handleUploads.forms}" var="form" itemLabel="#{form.iwName}"
+                                                           itemValue="#{form}"/>
+                                            <f:attribute name="converterItemsList" value="#{handleUploads.forms}"/>
+                                            <p:ajax event="change" listener="#{handleUploads.onSelectedForm}"
+                                                    update="@form"/>
+                                        </p:selectOneMenu>
+                                        
+                                    </h:panelGrid>
+                                </p:tab>
+                                
+                                <!--upload file-->
+                                <p:tab id="fichier" title="fichier" >
+                                    <h:panelGrid columns="2" width="1024">
+                                        
+                                        <!--file upload-->
+                                        <p:outputLabel value="#{msg['iw.file.upload']}"/>
+                                        <p:fileUpload
+                                            fileUploadListener="#{handleUploads.handleFileUpload}"
+                                            mode="advanced"
+                                            dragDropSupport="false"
+                                            sizeLimit="2000000"
+                                            fileLimit="3"
+                                            allowTypes="/(\.|\/)(xls?x|xls)$/"
+                                            process="@this"
+                                            update="@form"
+                                            required="true"
+                                            />
+
+                                        <!--password-->
+                                        <p:outputLabel id="filePasslabel" 
+                                                       value="#{msg['iw.pass.uploaded.file']}"
+                                                       rendered="#{!handleUploads.disablePasswordInput}"
+                                                       />
+                                        <p:inputText id="inputPass" 
+                                                     value="#{handleUploads.filePassword}" 
+                                                     type="password"
+                                                     disabled="#{handleUploads.disablePasswordInput}" 
+                                                     required="#{!handleUploads.disablePasswordInput}"
+                                                     rendered="#{!handleUploads.disablePasswordInput}">
+                                            <p:ajax listener="#{handleUploads.onSetpassword()}" update="@form" />
+                                        </p:inputText>
+
+                                        <!--line number-->
+                                        <p:outputLabel value="#{msg['iw.file.en.tete']}" 
+                                                       rendered="#{handleUploads.fileReady}"
+                                                       />
+                                        <p:selectOneMenu id="selectOneMenu" 
+                                                         value="#{handleUploads.headerRowNumber}"
+                                                         title="#{msg['iw.file.upload.selectionner.en.tete']}" 
+                                                         rendered="#{handleUploads.fileReady}">
+                                            <f:selectItem itemValue="#{-1}" itemLabel="select one"/>
+                                            <f:selectItems value="#{handleUploads.rows}" var="row" itemLabel="#{row}"
+                                                           itemValue="#{row}"/>
+                                            <p:ajax listener="#{handleUploads.onChange}" event="change" update="@form"/>
+                                        </p:selectOneMenu>
+                                        
+                                    </h:panelGrid>
+                                </p:tab>
+                                
+                                <!--rendering xlsx file-->
+                                <p:tab id="xlsx" title="xlsx">
+                                    <p:scrollPanel id="dataTable" mode="native" style="height: 256px">
+                                        <ui:remove>
+                                            <p:dataTable var="obj" value="#{handleUploads.objs}" resizableColumns="true">
+
+                                                <p:columns var="field"
+                                                           value="#{handleUploads.columns}"
+                                                           resizable="true"
+                                                           rendered="#{!field.fieldName.contains('Attribute_')}"
+                                                           columnIndexVar="columnIndex"
+                                                           footerText="footer"
+                                                           selectRow="true"
+                                                           >
+
+                                                    <f:facet name="header">
+                                                        <p:selectBooleanCheckbox value="#{handleUploads.checkBox}"
+                                                                                 itemLabel="#{field.fieldName}"
+                                                                                 label="la colonne #{field.fieldName}"
+                                                                                 >
+                                                            <p:ajax listener="#{handleUploads.onCheckBox(obj, field, columnIndex)}"
+                                                                    update="@(.mappingPanel)"/>
+                                                        </p:selectBooleanCheckbox>
+                                                    </f:facet>
+
+                                                    <f:facet name="footer">
+                                                        <h:outputText value="#{field.fieldName}"/>
+                                                    </f:facet>
+
+                                                    <h:outputText value="#{obj[field.fieldName]}"/>
+
+                                                </p:columns>
+
+                                                <f:facet name="header" >
+                                                    <p:commandButton id="launchProcessButton" value="Submit" process="@this" ajax="true" styleClass="launchProcessButton"
+                                                                     actionListener="#{handleUploads.launchInstances()}" onclick="PF('bui').show()"/>
+                                                </f:facet>
+
+
+
+                                            </p:dataTable>
+                                        </ui:remove>
+                                        
+                                        
+                                        <p:dataTable var="map" value="#{handleUploads.entries}" resizableColumns="true">
+                                            <p:columns var="field" 
+                                                       value="#{handleUploads.columns}"
+                                                       resizable="true"
+                                                       columnIndexVar="columnIndex"
+                                                       selectRow="true"
+                                                       >
+                                                
+                                                     <f:facet name="header">
+                                                        <p:selectBooleanCheckbox value="#{handleUploads.checkBox}"
+                                                                                 itemLabel="#{field.fieldName}"
+                                                                                 label="la colonne #{field.fieldName}"
+                                                                                 >
+                                                            <p:ajax listener="#{handleUploads.onCheckBox(field, columnIndex)}"
+                                                                    update="@(.mappingPanel)"/>
+                                                        </p:selectBooleanCheckbox>
+                                                    </f:facet>
+                                                
+                                                
+                                                <p:outputLabel value="#{map[field.fieldName]}" />
+                                            </p:columns>
+                                            
+                                            <f:facet name="header" >
+                                                    <p:commandButton id="launchProcessButton" value="Submit" process="@this" ajax="true" styleClass="launchProcessButton"
+                                                                     actionListener="#{handleUploads.launchInstances()}" onclick="PF('bui').show()"/>
+                                            </f:facet>
+                                            
+                                        </p:dataTable>
+                                        
+                                    </p:scrollPanel>
+                                </p:tab>
+                                
+                                <!--select task--> 
+                                <ui:remove>
+                                    <p:tab title="task" id="task">
+                                        <p:panelGrid columns="2" >
+
+                                            <p:outputLabel value="quelle taches:" />
+                                            <p:selectOneMenu value="#{handleUploads.selectedTaskStep}" style="width: 360px">
+                                                <f:selectItem itemValue="#{null}" itemLabel="select one"/>
+                                                <f:selectItems value="#{handleUploads.tasks}" var="task" itemLabel="#{task}"
+                                                               itemValue="#{task}"/>
+                                                <p:ajax listener="#{handleUploads.onTaskChange}" event="change" update="@parent"/>
+                                            </p:selectOneMenu>
+
+                                        </p:panelGrid>
+                                        <p:panelGrid columns="1" styleClass="Fright">
+                                            <p:commandButton value="lancement" 
+                                                             actionListener="#{handleUploads.onValidate}" 
+                                                             ajax="true" 
+                                                             title="valider les choix"
+                                                             process="@this" update="@this" />
+                                        </p:panelGrid>
+                                    </p:tab>
+                                </ui:remove>
+                            </p:wizard>
+                            
+                            <p:panel id="mappingPanel"
+                                     styleClass="mappingPanel"
+                                     header="mapping"
+                                     toggleable="true"
+                                     collapsed="false"
+                                     closable="false"
+                                     toggleSpeed="500"
+                                     closeSpeed="500"
+                                     widgetVar="panel"
+                                     style="margin-bottom:20px"
+                                     rendered="#{handleUploads.showDiagram}">
+
+                                <p:diagram value="#{handleUploads.diagramModel}" style="height:1024px"
+                                           styleClass="ui-widget-content" var="el">
+                                    <f:facet name="element">
+                                        <p:panelGrid columns="2" rendered="#{el.type}" layout="grid">
+                                            <h:outputText value="#{el.label}"
+                                                          style="display:block;margin-top:1em; width: 128px "/>
+                                            <h:outputText value="#{el.validation}"
+                                                          style="display:block;margin-top:1em; width: 128px "/>
+                                        </p:panelGrid>
+                                        <p:panelGrid columns="2" rendered="#{!el.type}">
+                                            <h:outputText value="#{el.fieldName}"
+                                                          style="display:block;margin-top:1em; width: 256px"/>
+                                        </p:panelGrid>
+                                    </f:facet>
+                                    <p:ajax event="connect" listener="#{handleUploads.onConnect}" update="@this"/>
+                                    <p:ajax event="disconnect" listener="#{handleUploads.onDisconnect}" update="@this"/>
+                                    <p:ajax event="connectionChange" listener="#{handleUploads.onConnectionChange}" update="@this"/>
+                                </p:diagram>
+
+                            </p:panel>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            
+            <script>
+                function hideBackOnLastTab() {
+                            if(PF('wiz').getStepIndex(PF('wiz').currentStep) > 0) {
+                                PF('wiz').backNav.css("visibility", "hidden")
+                            }
+                        }
+            </script>
+            
+        </h:form>
+    </ui:define>
+
+
+</ui:composition>
+

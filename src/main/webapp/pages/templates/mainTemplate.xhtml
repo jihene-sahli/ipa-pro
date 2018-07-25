@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:sec="http://www.springframework.org/security/tags">
+    <f:view locale="#{navigationController.currentLocale}" >
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        </f:facet>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/img/favicon.png"/>
+        <link rel="icon" type="image/png" href="#{request.contextPath}/resources/img/favicon.png" />
+        <h:outputStylesheet library="css" name="main.css" />
+        <title><ui:insert name="title">#{msg['iw.accueil']}</ui:insert> | #{navigationController.imagineworkflowTitle} </title>
+        <f:event listener="#{navigationController.updateMessages(true)}" type="preRenderView" />
+        <h:outputScript library="js" name="imagineworkflow.js" />
+    </h:head>
+    <h:body>
+        <p:layout fullPage="true">
+            <p:layoutUnit position="north" size="45" styleClass="no-border panel-top">
+                <p:panelGrid columns="3">
+                    <p:link href="/">
+                        <p:graphicImage style="height: 30px;" url="/resources/img/logo.png" />
+                    </p:link>
+                    <h:form>
+                        <p:menubar styleClass="menu-bar-border app-main-menu">
+                            <p:menuitem value="#{msg['iw.taches']}" icon="fa fa-tasks" outcome="taskList" />
+                            <p:submenu label="#{msg['iw.instances']}" icon="fa fa-copy">
+                                <p:menuitem value="#{msg['iw.instancescours']}"  outcome="procInstanceList" />
+                                <p:menuitem value="#{msg['iw.instancescomplete']}"  outcome="procInstanceCompletedList" />
+                            </p:submenu>
+
+                            <p:menuitem value="#{msg['iw.definitions']}" icon="fa fa-clipboard" outcome="processDefinitionList" />
+                            <p:menuitem value="#{msg['iw.modeles']}" icon="fa fa-pencil-square-o" outcome="modeleList" />
+                            <p:menuitem value="#{msg['iw.formulaires']}" icon="fa fa-list-alt" outcome="formList" />
+
+                            <p:submenu label="#{msg['iw.agenda']}" icon="fa fa-calendar">
+                            </p:submenu>
+                            <p:submenu label="#{msg['iw.rapports']}" icon="fa fa-area-chart">
+                            </p:submenu>
+                            <p:submenu rendered="#{sec:areAnyGranted('ROLE_ADMIN,ROLE_SUPER_ADMIN')}" label="#{msg['iw.administration']}" icon="fa fa-gear">
+                                <p:submenu label="#{msg['iw.utilisateurs']}">
+                                    <p:menuitem value="#{msg['iw.listeutilisateurs']}"  outcome="userList" />
+                                    <p:menuitem value="#{msg['iw.ajouterutilisateur']}"  outcome="userForm" />
+                                </p:submenu>
+
+                                <p:submenu label="#{msg['iw.groups']}">
+                                    <p:menuitem value="#{msg['iw.listegroups']}"  outcome="groupList" />
+                                    <p:menuitem value="#{msg['iw.ajoutergroup']}"  outcome="groupForm" />
+                                    <p:menuitem value="#{msg['iw.hierarchie']}"  outcome="groupHierarchy" />
+                                </p:submenu>
+
+                            </p:submenu>
+
+                            <f:facet name="options">
+                                <p:button id="logoutButton" href="/logout" value="#{msg['iw.authentification.deconnexion']}" icon="fa fa-power-off" />
+                            </f:facet>
+                        </p:menubar>
+                    </h:form>
+                    <p:graphicImage  style="height: 30px;"  rendered="#{!navigationController.loggedInUser.pictureSet}" url="/resources/img/avatar.png" />
+                    <p:graphicImage  style="height: 30px;"  rendered="#{navigationController.loggedInUser.pictureSet}" value="#{fileController.avatar}">
+                        <f:param name="user" value="#{navigationController.loggedInUser.id}" />
+                    </p:graphicImage>
+                </p:panelGrid>
+            </p:layoutUnit>
+            <p:layoutUnit position="west">
+                <h:form id="processListForm">
+                    <p:dataGrid id="processListPanel" emptyMessage="#{msg['iw.message.aucunprocess']}"  value="#{navigationController.lastProcDefList}" var="procDef" columns="1">
+                        <f:facet name="header">
+                            #{msg['iw.process']}
+                        </f:facet>
+
+                        <h:outputLink  value="#{request.contextPath}/pages/tache/liste.xhtml?process=#{procDef.key}">
+                            <p:outputLabel value="#{procDef.name}" />
+                            <p:outputLabel rendered="#{empty procDef.name}" value="#{procDef.id}" />
+                        </h:outputLink>
+                    </p:dataGrid>
+                </h:form>
+            </p:layoutUnit>
+            <p:layoutUnit position="center">
+                <p:growl id="globalGrowlMsg" autoUpdate="true"  escape="false" showDetail="true" />
+                <p:confirmDialog global="true" >
+                    <p:commandButton value="#{msg['iw.button.oui']}" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+                    <p:commandButton value="#{msg['iw.button.non']}" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-times" />
+                </p:confirmDialog>
+                <p:breadCrumb model="#{navigationController.breadCrumb}"></p:breadCrumb>
+                <ui:insert name="body" />
+            </p:layoutUnit>
+        </p:layout>
+
+    </h:body>
+    </f:view>
+</html>
+

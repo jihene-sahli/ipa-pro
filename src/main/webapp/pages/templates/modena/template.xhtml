@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+	  xmlns:p="http://primefaces.org/ui">
+<f:view locale="#{navigationController.currentLocale}">
+	<h:head>
+		<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+			<meta name="apple-mobile-web-app-capable" content="yes"/>
+		</f:facet>
+		<ui:include src="../component/favicon.xhtml"/>
+		<title><ui:insert name="title">#{msg['iw.accueil']}</ui:insert> | #{navigationController.imagineworkflowTitle}</title>
+		<f:event listener="#{navigationController.updateMessages(true)}" type="preRenderView"/>
+		<h:outputScript library="js" name="imagineworkflow.js"/>
+		<h:outputScript name="js/ripple-effect.js" library="modena-layout"/>
+		<h:outputScript name="js/perfect-scrollbar.js" library="modena-layout"/>
+		<h:outputScript name="js/layout.js" library="modena-layout"/>
+		<h:outputStylesheet name="main.css" library="css"/>
+		<h:outputStylesheet library="css" name="css-corrections.css"/>
+		<h:outputScript library="js" name="gcharts.loader.js"/>
+		<h:outputScript library="js" name="xepOnline.jqPlugin.js"/>
+
+		<ui:insert name="head"/>
+		#{navigationController.controlNavigation()}
+	</h:head>
+	<h:body class="#{navigationController.companyTheme} Geometry">
+		<p:growl id="globalGrowlMsg" autoUpdate="true" escape="false" showDetail="true"/>
+		<p:confirmDialog global="true">
+			<p:commandButton value="#{msg['iw.button.oui']}" type="button" styleClass="ui-confirmdialog-yes"
+							 icon="fa fa-check"/>
+			<p:commandButton value="#{msg['iw.button.non']}" type="button" styleClass="ui-confirmdialog-no"
+							 icon="fa fa-times"/>
+		</p:confirmDialog>
+		<ui:include src="topbar.xhtml"/>
+		<div id="wrapper">
+			<div id="wrapperIndent">
+				<ui:include src="layoutmenu.xhtml"/>
+				<div id="layout-portlets-cover">
+					<div class="Container96 Fnone MarAuto">
+						<div class="Container100 UserLinks">
+							<div class="ContainerIndent TexAlRight">
+								<h:form id="templateForm">
+									<p:link id="dynaButton" href="#"
+											class="DispInlBlock Fright BoldGray MarRight10 HoverEffect">
+                                            <span class="Fs22 FontRobotoLight">
+                                                #{msg['iw.welcome']}, #{navigationController.getLoggedInUser().id}
+                                            </span>
+										<p:graphicImage class="round-img Fright Fs30" style="height: 40px;"
+														rendered="#{!navigationController.loggedInUser.pictureSet}"
+														url="/resources/img/avatar.png"/>
+										<p:graphicImage id="profilAvatar" class="round-img Fright Fs30"
+														style="margin-top: -5px;margin-left: 10px;height: 40px;"
+														rendered="#{navigationController.loggedInUser.pictureSet}"
+														value="#{fileController.avatar}">
+											<f:param name="user" value="#{navigationController.loggedInUser.id}"/>
+										</p:graphicImage>
+									</p:link>
+									<p:slideMenu overlay="true" trigger="dynaButton" my="ritgh top" at="ritgh bottom"
+												 styleClass="ui-slidemenu-application">
+										<p:menuitem value="#{msg['iw.profil.modifierprofil']}" outcome="profilForm"></p:menuitem>
+										<p:menuitem value="#{msg['iw.profil.changermotpasse']}" outcome="changePassword"/>
+									</p:slideMenu>
+								</h:form>
+							</div>
+						</div>
+						<div class="Container100 UserLinks">
+							<div class="ContainerIndent">
+								<p:outputPanel id="stickyTitle"
+											   class="#{navigationController.companyTheme} Fs18 FontRobotoLight Fleft ShowOnDesktop White">
+									<i class="icon-arrow-right"></i>
+									<ui:insert name="subheader"/>
+								</p:outputPanel>
+								<p:sticky target="stickyTitle" rendered="#{navigationController.displayStickyTitle}"/>
+							</div>
+						</div>
+						<ui:insert name="content"></ui:insert>
+						<div class="Container100">
+							<div class="ContainerIndent TexAlCenter Fs14 BoldGray">
+								<span>Version <strong>#{msg['iw.version']}</strong> Build <strong>#{msg['iw.commit.hash']}</strong>, #{msg['iw.build.date']}</span>
+								<br/>
+								<p:outputLabel escape="false" value="#{navigationController.copyright}"/>
+							</div>
+						</div>
+					</div>
+				</div>
+				<p:ajaxStatus style="width:32px;height:32px;position:fixed;right:7px;bottom:7px">
+					<f:facet name="start">
+						<p:graphicImage name="images/preloader.gif" library="modena-layout"/>
+					</f:facet>
+					<f:facet name="complete">
+						<h:outputText value=""/>
+					</f:facet>
+				</p:ajaxStatus>
+			</div>
+		</div>
+		<h:outputStylesheet name="css/core-layout.css" library="modena-layout"/>
+		<h:outputStylesheet name="css/animate.css" library="modena-layout"/>
+		<h:outputStylesheet name="css/modena-font.css" library="modena-layout"/>
+		<h:outputStylesheet name="css/ripple-effect.css" library="modena-layout"/>
+		<h:outputStylesheet name="css/perfect-scrollbar.css" library="modena-layout"/>
+		<h:outputStylesheet name="css/font-awesome.css" library="modena-layout"/>
+		<h:outputStylesheet name="css/modena-layout.css" library="modena-layout"/>
+		<h:outputScript name="primefaces-overrides.js" library="js"/>
+		<h:outputScript name="primeFacesLocales.js" library="js"/>
+	</h:body>
+</f:view>
+</html>

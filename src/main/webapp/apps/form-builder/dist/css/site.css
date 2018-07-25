@@ -1,0 +1,237 @@
+body{padding:10px}.footer{height:50px}
+
+
+.btn {
+    margin-right: 8px;
+}
+
+.angular-ui-tree-handle {
+    background: #f8faff;
+    border: 1px solid #dae2ea;
+    color: #7c9eb2;
+    padding: 10px 10px;
+}
+
+.angular-ui-tree-handle:hover {
+    color: #438eb9;
+    background: #f4f6f7;
+    border-color: #dce2e8;
+}
+
+.angular-ui-tree-placeholder {
+    background: #f0f9ff;
+    border: 2px dashed #bed2db;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.group-title {
+    background-color: #687074 !important;
+    color: #FFF !important;
+}
+
+
+/* --- Tree --- */
+.tree-node {
+    border: 1px solid #dae2ea;
+    background: #f8faff;
+    color: #7c9eb2;
+}
+
+.nodrop {
+    background-color: #f2dede;
+}
+
+.tree-node-content {
+    margin: 1px 5px 1px 5px;
+}
+.tree-handle {
+    padding: 10px;
+    background: #428bca;
+    color: #FFF;
+    margin-right: 10px;
+}
+
+.angular-ui-tree-handle:hover {
+}
+
+.angular-ui-tree-placeholder {
+    background: #f0f9ff;
+    border: 2px dashed #bed2db;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.tree-input {width: 50%;}
+
+.angular-ui-tree-empty {
+    background-color: #fff !important;
+    border: 0px !important;
+    min-height: 0px !important;
+}
+
+.tree-col-multiline input {
+    line-height: normal;
+}
+
+.tree-col-multiline .operations {
+    width: 40%;
+}
+
+.tree-col-multiline .tree-input {
+    width: 100%;
+}
+
+.navbutton {
+    margin: 10px !important;
+}
+
+.navbarup{
+    background: #ddd;
+}
+
+.navbardown {
+    background: #444;
+}
+
+.form-contner {
+    overflow: auto;
+    height: 696px;
+    border-right: 1px solid #c7cacd;
+}
+
+.popover-contner {
+    overflow: auto;
+    height: 696px;
+    border-right: 1px solid #c7cacd;
+}
+
+.cell-center {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.container {
+    width: 100% !important;
+}
+
+.accordion-contner{
+    border-right: 1px solid #c7cacd;
+    padding-top:20px;
+    overflow: auto;
+    height: 696px;
+}
+
+.accordion-contner a{
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+}
+
+.accordion-contner .accordion-inner div{
+    
+    background: none;
+}
+
+.fb-builder {
+    min-height: 100% !important;
+}
+
+.popover {
+    width: 100%;
+    max-width: 100%;
+}
+
+.popover form {
+    width: 100% !important;
+}
+
+#div-contner {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+}
+
+.componant-checked {
+    background-color: #6B6C73 !important;
+    color: #FFF !important;
+}
+
+.componant-checked .help-block {
+    color: #05FFFF !important;
+}
+
+.componant-checked .list-group-item {
+    background: transparent !important;
+}
+
+.multiline {
+    overflow: auto;
+}
+
+.no-template {
+    width: 100%;
+    text-align: center;
+    color: #666;
+    font-size: 40px;
+    font-family: initial;
+    border: 1px solid;
+    margin-bottom: 15px;
+}
+
+.componant-checked .no-template {
+    color: #fff;
+}
+ 
+.image-load {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.info {
+    color: #3a87ad;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+
+.warn {
+    color: #c09853;
+    background-color: #fcf8e3;
+    border-color: #fbeed5;
+}
+
+.error {
+    color: #b94a48;
+    background-color: #f2dede;
+    border-color: #eed3d7;
+}
+
+.modall {
+    position: fixed;
+    top: 94px;
+    right: 0;
+    background-color: rgb(255, 255, 255);
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    padding: 15px 15px 90px 15px;
+    
+}
+
+.modall .glyphicon-remove-circle{
+    float: right;
+    cursor: pointer;
+    margin-top: -5px;
+    margin-right: 5px;
+}
+
+.modall table th{
+    background-color: #F3EAEA;
+}
+
+
+.modall table tr:nth-child(odd){
+   background: #FFF9CF;
+}

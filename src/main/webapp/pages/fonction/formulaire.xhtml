@@ -1,0 +1,86 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:sec="http://www.springframework.org/security/tags"
+				xmlns:c="http://java.sun.com/jsp/jstl/core"
+				template="../templates/modena/template.xhtml">
+
+	<f:metadata>
+	</f:metadata>
+
+	<ui:define name="title">#{msg['iw.tacheautonome.nouvelletacheautonome']}</ui:define>
+	<ui:define name="subheader">
+		#{msg['iw.tacheautonome.nouvelletacheautonome']}
+	</ui:define>
+	<ui:define name="head">
+
+
+	</ui:define>
+	<ui:define name="content">
+
+		<div class="Container100 Responsive100">
+
+			<div class="Container100 Responsive100">
+				<div  class="Container100">
+					<div class="ContainerIndent">
+						<div class="Card ShadowEffect">
+							<h:form enctype="multipart/form-data" id="fonctionToLinkId">
+								<p:panelGrid class="Wid100" columns="3" columnClasses=",,col10percent"  >
+
+									<p:outputLabel value="#{msg['iw.tacheautonome.nom']}"  />
+									<p:inputText value="#{standaloneTaskController.iwStandAloneTask.iwName}"  required="true"  requiredMessage="#{msg['iw.standalonetask.nomfonctionvide']}" />
+									<p:outputLabel />
+
+
+									<p:outputLabel value="#{msg['iw.tacheautonome.description']}" />
+									<p:inputText value="#{standaloneTaskController.iwStandAloneTask.iwDescription}" />
+									<p:outputLabel />
+
+									<p:outputLabel value="Selectionner une option" />
+									<p:selectOneMenu value="#{standaloneTaskController.iwStandAloneTask.iwIsForm}" >
+										<f:selectItem itemValue="#{null}" itemLabel="Selectionne"/>
+										<f:selectItem itemValue="#{true}" itemLabel="Formulaire"/>
+										<f:selectItem itemValue="#{false}" itemLabel="Lien"/>
+										<p:ajax  update="fonctionToLinkId" />
+									</p:selectOneMenu>
+									<p:outputLabel />
+
+									<p:outputLabel value="#{msg['iw.tacheautonome.link']}" styleClass="fonctionToLink" rendered="#{not standaloneTaskController.iwStandAloneTask.iwIsForm}"/>
+									<p:inputText value="#{standaloneTaskController.iwStandAloneTask.iwLink}" rendered="#{not standaloneTaskController.iwStandAloneTask.iwIsForm}" styleClass="fonctionToLink"  />
+
+									<p:outputLabel value="#{msg['iw.tacheautonome.formulaire']}"  rendered="#{standaloneTaskController.iwStandAloneTask.iwIsForm}" styleClass="fonctionToLink" />
+									<p:selectOneMenu  styleClass="fonctionToLink"   rendered="#{standaloneTaskController.iwStandAloneTask.iwIsForm}" value="#{standaloneTaskController.iwStandAloneTask.iwFormId}"   required="true"  requiredMessage="#{msg['iw.tache.formulairenontrouve']}">
+										<f:selectItem itemLabel="#{msg['iw.standalonetask.selectionnerformulaire']}" itemValue="#{null}"/>
+										<f:selectItems value="#{standaloneTaskController.formList}"
+													   var="form"
+													   itemLabel="#{form.iwName}"
+													   itemValue="#{form.iwFormId}" />
+
+									</p:selectOneMenu>
+									<p:outputLabel  />
+
+									<p:outputLabel value="#{msg['iw.standalonetask.application']}" />
+									<p:selectOneMenu value="#{standaloneTaskController.iwStandAloneTask.iwApplicationKey}">
+										<f:selectItem itemLabel="#{msg['iw.standalonetask.selectionnerapplication']}" itemValue="#{null}"/>
+										<f:selectItems value="#{standaloneTaskController.applicationList}" var="app" itemLabel="#{app.iwName}" itemValue="#{app.iwKey}"/>
+									</p:selectOneMenu>
+									<p:outputLabel />
+									<p:commandButton value="#{msg['iw.button.valider']}" action="#{standaloneTaskController.save()}" ajax="false" />
+
+								</p:panelGrid>
+							</h:form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+		</div>
+
+	</ui:define>
+</ui:composition>
+

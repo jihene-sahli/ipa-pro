@@ -1,0 +1,83 @@
+<ui:composition
+
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <p:panelGrid id="processAnomaly" columns="1" layout="grid">
+
+		<p:treeTable id="treeTable"
+					 nodeVar="iwTreeNode"
+					 selection="#{processAnomaly.selectedIwTree}"
+					 selectionMode="single"
+					 showUnselectableCheckbox="true"
+					 value="#{processAnomaly.root}" var="iwTree" nativeElements="true"
+					 skipChildren="true"
+					 liveResize="true"
+					 resizableColumns="true">
+
+			<p:ajax listener="#{processAnomaly.onNodeSelectEvent}" event="select" update="@this"/>
+
+			<p:column headerText="Title" >
+                <p:outputLabel value="#{iwTree.title}" />
+            </p:column>
+
+            <p:column headerText="Description" >
+                <p:outputLabel value="#{iwTree.description}" />
+            </p:column>
+
+            <p:column headerText="sélectionner" width="64">
+
+				<p:selectBooleanCheckbox value="#{iwTreeNode.type}"
+										 rendered="#{iwTreeNode.leaf}"
+                                         disabled="#{iwTree.description.length()==0}">
+                    <p:ajax update="@(.users)" listener="#{processAnomaly.onToggleValue(iwTreeNode)}" />
+                </p:selectBooleanCheckbox>
+
+				<ui:remove>
+					<p:inputSwitch value="#{iwTreeNode.type}"
+								   onLabel="yes"
+								   offLabel="no"
+								   rendered="#{iwTreeNode.leaf}"
+                                   >
+                        <p:ajax listener="#{processAnomaly.onToggleValue(iwTreeNode)}" update="@(.users)" />
+                    </p:inputSwitch>
+                </ui:remove>
+
+				<ui:remove>
+					<p:selectBooleanButton value="#{processAnomaly.stringToBoolean(iwTreeNode.type)}"
+										   onLabel="Yes" offLabel="No" style="width:60px" />
+                </ui:remove>
+
+			</p:column>
+
+		</p:treeTable>
+
+		<p:panelGrid id="users" columns="1" class="Wid500"  styleClass="users">
+
+            <p:outputLabel value="#{msg['iw.droit.utilisateurs']}" />
+
+			<p:autoComplete multiple="true"
+                                value="#{processAnomaly.listUsers}"
+                                completeMethod="#{processAnomaly.listUsers}"
+                                var="user"
+                                itemLabel="#{user.id}"
+                                itemValue="#{user}"
+                                converter="#{userConverter}"
+                                disabled="true">
+
+				<p:ajax event="itemSelect" listener="#{processAnomaly.onSelectEvent}" update="@this" />
+                    <p:ajax event="itemUnselect" listener="#{processAnomaly.onUnselectEvent}" update="@this" />
+
+			</p:autoComplete>
+
+			<p:outputLabel />
+
+		</p:panelGrid>
+
+	</p:panelGrid>
+</ui:composition>

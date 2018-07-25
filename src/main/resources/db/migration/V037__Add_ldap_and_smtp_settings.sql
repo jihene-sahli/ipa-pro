@@ -1,0 +1,11 @@
+LOCK TABLES `IW_CONFIG` WRITE;
+INSERT INTO `IW_CONFIG` (`CONFIG_NAME`, `CONFIG_DESCRIPTION`, `CONFIG_EDITABLE`, `CONFIG_VALUE`, `DEFAULT_VALUE`) VALUES ('ldap_sync_ad_groups', 'Synchroniser les groups', 0x01, 'false', '1');
+INSERT INTO `IW_CONFIG` (`CONFIG_NAME`, `CONFIG_DESCRIPTION`, `CONFIG_EDITABLE`, `CONFIG_VALUE`, `DEFAULT_VALUE`) VALUES ('ldap_sync_ad_membership', 'Synchroniser les appartenance au groups', 0x01, 'true', '1');
+INSERT INTO `IW_CONFIG` (`CONFIG_NAME`, `CONFIG_DESCRIPTION`, `CONFIG_EDITABLE`, `CONFIG_VALUE`, `DEFAULT_VALUE`) VALUES ('smtp_mail_server_default_from', 'L''email utilisé par defaut pour l''envoi des email', 0x01, NULL, NULL);
+INSERT INTO `IW_CONFIG` (`CONFIG_NAME`, `CONFIG_DESCRIPTION`, `CONFIG_EDITABLE`, `CONFIG_VALUE`, `DEFAULT_VALUE`) VALUES ('smtp_mail_server_username', 'Nom d''utilisateur SMTP', 0x01, NULL, NULL);
+INSERT INTO `IW_CONFIG` (`CONFIG_NAME`, `CONFIG_DESCRIPTION`, `CONFIG_EDITABLE`, `CONFIG_VALUE`, `DEFAULT_VALUE`) VALUES ('smtp_mail_server_password', 'Mot de passe de l''utilisateur SMTP', 0x01, NULL, NULL);
+INSERT INTO `IW_CONFIG` (`CONFIG_NAME`, `CONFIG_DESCRIPTION`, `CONFIG_EDITABLE`, `CONFIG_VALUE`, `DEFAULT_VALUE`) VALUES ('smtp_mail_server_use_ssl', 'Utiliser le cryptage SSL dans le serveur SMTP', 0x01, NULL, NULL);
+INSERT INTO `IW_CONFIG` (`CONFIG_NAME`, `CONFIG_DESCRIPTION`, `CONFIG_EDITABLE`, `CONFIG_VALUE`, `DEFAULT_VALUE`) VALUES ('smtp_mail_server_use_tls', 'Utiliser le cryptage tls dans le serveur SMTP', 0x01, 'true', '1');
+INSERT INTO `IW_CONFIG` (`CONFIG_NAME`, `CONFIG_DESCRIPTION`, `CONFIG_EDITABLE`, `CONFIG_VALUE`, `DEFAULT_VALUE`) VALUES ('smtp_mail_server_host', 'Url du serveur SMTP', 0x01, NULL, NULL);
+INSERT INTO `IW_CONFIG` (`CONFIG_NAME`, `CONFIG_DESCRIPTION`, `CONFIG_EDITABLE`, `CONFIG_VALUE`, `DEFAULT_VALUE`) VALUES ('smtp_mail_server_port', 'Port du serveur SMTP', 0x01, NULL, NULL);
+UNLOCK TABLES;

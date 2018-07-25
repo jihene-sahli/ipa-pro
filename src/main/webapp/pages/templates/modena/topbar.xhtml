@@ -1,0 +1,163 @@
+<ui:composition
+
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+	<f:verbatim>
+		<style>
+			.applicationList .ui-state-hover .ui-menuitem-text {
+				color: black;
+				font-size: 18px;
+				width: 100%;
+			}
+			.applicationList .ui-menuitem-text {
+				color: white;
+				font-size: 18px;
+				width: 100%;
+			}
+			.applicationList .ui-state-hover .ui-menuitem-text {
+				color: black;
+				width: 100%;
+				font-size: 18px;
+			}
+
+			.applicationList  .processLabel .ui-menuitem-text {
+				color: black;
+				width: 100%;
+				font-size: 16px;
+			}
+
+			.ui-menu .ui-menuitem .ui-menuitem-link .ui-icon-triangle-1-s {
+				background-color: white;
+				opacity: 0;
+			}
+		</style>
+	</f:verbatim>
+
+	<!-- TOPBAR START -->
+
+	<div id="layout-topbar">
+
+        <span>
+            <a id="mobile-menu-button">
+                <span class="ButtonLine" id="ButtonLine1"></span>
+                <span class="ButtonLine" id="ButtonLine2"></span>
+                <span class="ButtonLine" id="ButtonLine3"></span>
+            </a>
+            <a href="#{request.contextPath}" style="display: inline;" id="logo">
+                <h:graphicImage rendered="#{empty fileController.companyLogo}"  name="#{navigationController.companyLogo}" styleClass="Fleft" library="img" />
+                <p:graphicImage rendered="#{not empty fileController.companyLogo}" value="#{fileController.companyLogo}" styleClass="Fleft" library="img" />
+            </a>
+        </span>
+
+		<div class="Container80" style="margin-left: 2%;">
+            <span>
+                <h:form >
+                    <p:menubar id="topAppBar" styleClass="applicationList" style="display: inline;" >
+                        <c:forEach items="#{navigationController.userApplicationList}" var="app">
+                            <c:set var="listProcessApp" value="#{navigationController.getLastProcDefListByAppKey(app.iwKey)}" />
+                            <c:set var="listFonctionApp" value="#{navigationController.getFonctionsByAppKey(app.iwKey)}" />
+                            <p:submenu   label="#{app.iwName}"
+										 rendered="#{(not empty listProcessApp and navigationController.showSubMenu(app.iwKey)  ) or (not empty listFonctionApp and navigationController.showSubMenu(app.iwKey)) }"
+										 style="font-size: 30px;">
+                                <c:forEach items="#{listProcessApp}" var="prcDef"   >
+                                    <p:menuitem styleClass="processLabel" value="#{(empty prcDef.name) ? prcDef.id : prcDef.name}" action="#{taskController.startProcess(prcDef.id)}"
+												process="@this"  rendered="#{navigationController.showMenuItem(app.iwKey, prcDef.key)}" >
+                                        <f:param name="process" value="#{prcDef.key}" />
+                                    </p:menuitem>
+                                </c:forEach>
+                                <p:separator/>
+                                <c:forEach items="#{listFonctionApp}" var="fonc"   >
+                                    <p:menuitem rendered="#{fonc.iwIsForm}" styleClass="processLabel" value="#{(empty fonc.iwName) ?fonc.iwStandAloneTaskId : fonc.iwName}" outcome="standaloneTaskList">
+                                        <f:param name="fonctionId" value="#{fonc.iwStandAloneTaskId}" />
+                                    </p:menuitem>
+
+									<p:menuitem rendered="#{not fonc.iwIsForm}" url="#{fonc.iwLink}" styleClass="processLabel" value="#{(empty fonc.iwName) ?fonc.iwStandAloneTaskId : fonc.iwName}" >
+                                        <f:param name="fonctionId" value="#{fonc.iwStandAloneTaskId}" />
+                                    </p:menuitem>
+
+                                </c:forEach>
+                            </p:submenu>
+                        </c:forEach>
+                    </p:menubar>
+                </h:form>
+
+                <ui:remove>
+                    <form styleClass="topbarApp" style="display: inline">
+
+                        <p:outputPanel styleClass="topbarApp" style="display: inline" >
+                            <ui:repeat value="#{navigationController.userApplicationList}" var="app" >
+                                <p:link  outcome="taskList">
+                                    <span style="color: white;font-size: 20px;">#{app.iwName}</span>
+                                    <f:param value="#{app.iwKey}" name="applicationKey" />
+                                </p:link>
+                                <p:spacer width="15" />
+                            </ui:repeat>
+                        </p:outputPanel>
+
+                    </form>
+                </ui:remove>
+            </span>
+		</div>
+
+		<a id="show-top-menu" class="ShowOnMobile ripplelink"><i class="icon-more_vert" id="active"></i><i class="icon-close DispNone" id="passive"></i> </a>
+
+		<ul id="top-menu">
+			<ui:remove>
+				<li>
+					<a class="ripplelink"><i class="icon-search"></i> <span class="ShowOnMobile">Search Here</span></a>
+					<ul>
+						<li>
+							<a href="#"><i class="icon-search"></i><input type="text"/> </a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a class="ripplelink"><i class="icon-archive"></i> <span class="ShowOnMobile">Task Manager</span></a>
+					<ul>
+						<li><a href="#"><i class="icon-alarm_on"></i> Completed Tasks</a></li>
+						<li><a href="#"><i class="icon-alarm_add"></i> New Tasks</a></li>
+						<li><a href="#"><i class="icon-event_available"></i> Clear All Tasks</a></li>
+					</ul>
+				</li>
+				<li>
+					<a class="ripplelink"><i class="icon-notifications_none"></i> <span class="ShowOnMobile">Notifications</span></a>
+					<ul>
+						<li><a href="#"><span class="Orange">Meeting With John</span><br/><span class="Gray Fs14 FontRobotoLight">Today - 13:40 <br/>At Creme Cafe - NYC</span></a></li>
+						<li><a href="#"><span class="Blue">Send Reports</span><br/><span class="Gray Fs14 FontRobotoLight">Today - 17:10 <br/>To Brian Carpenter</span></a></li>
+						<li><a href="#"><span class="Blue">Test Week</span><br/><span class="Gray Fs14 FontRobotoLight">Today - 18:30 <br/>Testing New Modules</span></a></li>
+						<li class="TexAlCenter"><i class="icon-keyboard_control Gray Fs30"></i></li>
+						<li><a href="#"><span class="Red"><i class="icon-alarm_add Fs20 Fleft"></i> Set New Reminder</span></a></li>
+					</ul>
+				</li>
+				<li>
+					<a class="ripplelink"><i class="icon-cog"></i> <span class="ShowOnMobile">Settings</span></a>
+					<ul>
+						<li><a href="#"><i class="icon-flag2"></i> Language Settings</a></li>
+						<li><a href="#"><i class="icon-settings"></i> System Settings</a></li>
+						<li><a href="#"><i class="icon-verified_user"></i> Security Settings</a></li>
+						<li><a href="#"><i class="icon-assignment_ind"></i> Users Settings</a></li>
+					</ul>
+				</li>
+			</ui:remove>
+			<li>
+				<a class="ripplelink"><i class="icon-power"></i> <span class="ShowOnMobile">System</span></a>
+				<ul>
+					<ui:remove>
+						<li><a href="#"><span class="Blue"><i class="icon-airline_seat_individual_suite Fs30 DispBlock"></i> Sleep Mode</span></a></li>
+						<li><a href="#"><span class="Orange"><i class="icon-track_changes Fs30 DispBlock"></i> Restart System</span></a></li>
+					</ui:remove>
+					<li><a href="#{request.contextPath}/logout"><span class="Red"><i class="icon-vpn_key Fs30 DispBlock"></i> #{msg['iw.authentification.deconnexion']}</span></a></li>
+				</ul>
+			</li>
+		</ul>
+
+	</div>
+
+	<!-- TOPBAR END -->
+
+</ui:composition>

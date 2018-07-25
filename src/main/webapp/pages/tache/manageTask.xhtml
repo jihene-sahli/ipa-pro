@@ -1,0 +1,182 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+    <f:metadata>
+    </f:metadata>
+
+    <ui:define name="title">Exploitation</ui:define>
+    <ui:define name="subheader"> Taches courants</ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+
+            <div class="Container100 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect">
+
+
+							<h:panelGrid columns="4" style="margin-bottom:10px" cellpadding="15">
+							<p:outputLabel for="proc" value="Définition: "  />
+							<p:selectOneMenu id="proc"  panelStyle="width:100px" value="#{procController.procDefId}"
+											  effect="fade" var="def" style="width:160px" filter="true" filterMatchMode="startsWith">
+								<f:selectItem itemValue="#{null}" itemLabel="sélectionnez définition" />
+								<f:selectItems value="#{procController.procDefList}" var="p" itemValue="#{p.id}" itemLabel="#{p.id}" />
+
+								<p:column>
+									<h:outputText value="#{def.name}" />
+								</p:column>
+							</p:selectOneMenu>
+								<p:outputLabel/>
+
+							<p:commandButton value="Récupérer tâche" update="formList" action="#{procController.getSelectedProcDef()}" />
+							</h:panelGrid>
+						</div>
+                    </div>
+                </div>
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect">
+
+							<p:dataTable value="#{procController.tasksByDefList}"
+                                         var="task"
+                                         id="formList"
+                                         paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10,50,100"
+                                         draggableRows="true"
+										 selection="#{procController.selectedTask}"
+										 rowKey="#{task.id}">
+								<p:ajax event="rowSelectRadio" listener="#{procController.onRowSelect}" update=":form:dlg2" />
+								<p:column selectionMode="single" style="width:16px;text-align:center"/>
+                                <p:column  width="15%" headerText="Définition" filterBy="#{procController.procDef.name}" filterMatchMode="contains">
+									<h:outputText value="#{procController.procDef.name}" />
+                                </p:column>
+                                <p:column width="30%" headerText="Nom Tache" filterBy="#{task.name}" filterMatchMode="contains">
+									<h:outputText value="#{task.name}" />
+								</p:column>
+								<p:column headerText="Responsable" filterBy="#{task.assignee}" filterMatchMode="contains">
+									<h:outputText value="#{task.assignee}" />
+								</p:column>
+                                <p:column headerText="#{msg['iw.formulaire.datecreation']}" filterBy="#{task.createTime}" filterMatchMode="contains">
+                                    <h:outputText value="#{task.createTime}">
+                                        <f:converter binding="#{dateConverter}" />
+                                        <f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+                                    </h:outputText>
+                                </p:column>
+								<p:column width="25%">
+									<h:panelGroup style="white-space: nowrap">
+										<p:commandButton value="Forcer"  styleClass="ui-priority-primary" onclick="PF('dlg2').show();"/>
+										<p:commandButton value="Réaffecter"  onclick="PF('dlg').show();"  styleClass="ui-priority-primary" />
+										<p:commandButton value="Renvoyer"  styleClass="ui-priority-primary" action="#{procController.doRenvoyerTache()}" disabled="true"/>
+									</h:panelGroup>
+								</p:column>
+								<f:facet name="footer">
+									Le nombre totale des tâches courantes est #{procController.tasksByDefList.size()}.
+								</f:facet>
+
+                            </p:dataTable>
+
+
+
+							<p:dialog id="dlg" widgetVar="dlg" header="Réaffecter une tâche" resizable="false" showEffect="clip" hideEffect="clip" width="600" height="300">
+
+								<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+									<p:outputLabel for="assignee" value="Assignee:" />
+									<p:selectOneRadio id="assignee" value="#{procController.userOrGroup}">
+										<f:selectItem itemLabel="Utilisateur" itemValue="Utilisateur" />
+										<f:selectItem itemLabel="Groupe" itemValue="Groupe" />
+										<p:ajax update="panelList" />
+									</p:selectOneRadio>
+								</h:panelGrid>
+
+								<h:panelGroup  layout="block" id="panelList">
+								<h:panelGrid columns="1"  cellpadding="5" rendered="#{procController.userOrGroup eq 'Utilisateur'}" id="a" style="margin: 0 auto;">
+
+									<p:autoComplete id="userList"
+													multiple="false"
+													value="#{procController.newAssignee}"
+													completeMethod="#{suggestionController.completeUsers}"
+													var="user"
+													itemLabel="#{user.id}"
+													itemValue="#{user}"
+													converter="#{userConverter}"
+									                size="50">
+
+										<p:column style="width:10%">
+											<p:graphicImage rendered="#{user.pictureSet}" style="height: 40px;"
+															value="#{fileController.avatar}">
+												<f:param name="user" value="#{user.id}" />
+											</p:graphicImage>
+											<p:graphicImage style="height: 40px;"
+															rendered="#{!user.pictureSet}"
+															url="/resources/img/avatar.png" />
+										</p:column>
+
+										<p:column>
+											<h:outputText value="#{user.id}" />
+										</p:column>
+									</p:autoComplete>
+
+
+								</h:panelGrid>
+								<h:panelGrid columns="1"  cellpadding="5" rendered="#{procController.userOrGroup eq 'Groupe'}" style="margin: 0 auto;">
+
+											<p:autoComplete id="lg"
+												            multiple="true"
+															forceSelection="true"
+															value="#{procController.newGroupsList}"
+															completeMethod="#{suggestionController.completeGroups}"
+															var="group"
+															itemLabel="#{group.name}"
+															itemValue="#{group}"
+															converter="#{groupConverter}">
+												<f:attribute name="converterItemsList" value="#{suggestionController.completeGroups(group.id)}" />
+											</p:autoComplete>
+								</h:panelGrid>
+
+									<h:panelGrid columns="2"  cellpadding="5" rendered="#{!empty procController.userOrGroup}"  style="margin: 0 auto;">
+									<p:commandButton value="Submit" action="#{procController.doReaffecterTache()}" oncomplete="PF('dlg').hide();" update="formList"/>
+									<p:commandButton value="Annuler"  >
+										<p:ajax update="panelList" resetValues="true" />
+									</p:commandButton>
+									</h:panelGrid>
+								</h:panelGroup>
+							</p:dialog>
+
+							<p:dialog id="dlg2" widgetVar="dlg2" header="Forcer une tâche" resizable="false" showEffect="clip" hideEffect="clip" width="600" height="300">
+
+								<p:panel id="panel" header="Liste des variables" style="margin-bottom:10px;">
+									<h:panelGrid columns="2" cellpadding="5" id="panelList2"  >
+
+										<p:outputLabel for="var1" value="Variable :" />
+										<p:inputText id="var1" value="#{procController.maVariable}"  placeholder="Saisir le nom de la variable" size="30" disabled="#{empty procController.filtredVariablesTaskList}"/>
+
+
+										<p:outputLabel for="val1" value="Valeur :" />
+										<p:inputText id="val1" value="#{procController.newValue}"  placeholder="Saisir la valeur de la variable" size="30" disabled="#{empty procController.filtredVariablesTaskList}"/>
+
+									</h:panelGrid>
+									<h:panelGrid columns="2" cellpadding="5" id="btns" >
+										<p:commandButton value="Submit" action="#{procController.doFrocerTache()}" oncomplete="PF('dlg2').hide();" update="formList" />
+										<p:commandButton value="Annuler"  >
+											<p:ajax update="panelList2" resetValues="true" />
+										</p:commandButton>
+									</h:panelGrid>
+								</p:panel>
+							</p:dialog>
+
+						</div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+    </ui:define>
+</ui:composition>

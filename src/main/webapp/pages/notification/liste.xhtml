@@ -1,0 +1,68 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+    <f:metadata>
+    </f:metadata>
+
+    <ui:define name="title" >Liste des notifications</ui:define>
+    <ui:define name="subheader" >Liste des notifications</ui:define>
+    <ui:define name="content">
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <h:form>
+                            <p:dataTable emptyMessage="Aucune notification trouvée" value="#{notificationController.notificationList}" var="notification" id="notificationList" paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10,50,100"
+                                         rows="10"
+                                         draggableRows="true">
+
+                                <f:facet name="header">
+                                    <p:button value="#{msg['iw.button.ajouter']}" outcome="notificationForm" />
+                                </f:facet>
+
+                                <p:column headerText="Nom"  >
+                                    <p:link  outcome="notificationDetails" value="#{notification.name}">
+                                        <f:param name="notificationId" value="#{notification.id}" />
+                                    </p:link>
+                                </p:column>
+
+                                <p:column headerText="Active"  >
+                                    <p:outputLabel value="#{msg['iw.boolean.oui']}" rendered="#{notification.active}" />
+                                    <p:outputLabel value="#{msg['iw.boolean.non']}" rendered="#{!notification.active}" />
+                                </p:column>
+								<p:column style="width: 60px !important; margin: 0 auto !important;">
+									<p:menuButton value="#{msg['iw.button.actions']}"
+												  styleClass="ui-button-icon-only">
+										<p:menuitem  value="Modifier" outcome="notificationForm">
+											<f:param name="notificationId" value="#{notification.id}" />
+										</p:menuitem>
+										<p:menuitem rendered="#{notification.active}" value="Désactiver" actionListener="#{notificationController.disable()}" update="notificationList">
+											<f:param name="notificationId" value="#{notification.id}" />
+											<p:confirm   header="#{msg['iw.confirmation.titre']}" message="#{msg['iw.message.voulezvouscontinuer']}" icon="fa fa-warning" />
+										</p:menuitem>
+										<p:menuitem rendered="#{!notification.active}"  value="Activer" actionListener="#{notificationController.enable()}" update="notificationList">
+											<f:param name="notificationId" value="#{notification.id}" />
+										</p:menuitem>
+										<p:menuitem  value="Supprimer" actionListener="#{notificationController.remove()}" update="notificationList">
+											<f:param name="notificationId" value="#{notification.id}" />
+											<p:confirm   header="#{msg['iw.confirmation.titre']}" message="#{msg['iw.message.voulezvouscontinuer']}" icon="fa fa-warning" />
+										</p:menuitem>
+									</p:menuButton>
+								</p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

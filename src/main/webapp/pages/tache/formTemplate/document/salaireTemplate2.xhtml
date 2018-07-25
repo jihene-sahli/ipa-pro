@@ -1,0 +1,61 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core" xmlns:bp="http://java.sun.com/jsf/html"
+>
+	#{taskController.registerTemplate('salaireController2','SalaireController2',fn:split('FMNTP2,FANTP2,PVA2,EAT2',','))}
+
+	<!--<div class="Container100 Responsive100">
+		<div class="Container100">
+			<div class="ContainerIndent">
+				<div class="Card ShadowEffect">-->
+	<h3>salaire</h3>
+
+					<p:panelGrid id="donnee_salaire2" columns="2">
+
+						<p:outputLabel value="Fixe Mensuel net à Temps plein :" />
+						<p:inputText
+                            value="#{salaireController2.mensuel}"
+                        >
+							<p:ajax event="blur" listener="#{salaireController2.calculeFixeAnnuelEtEnveloppeTotale()}"
+										update = "donnee_salaire2"/>
+						</p:inputText>
+
+
+						<p:outputLabel value="Fixe annuel net à temps plein :"/>
+							<p:inputText  id="annuel"
+								value="#{salaireController2.annuel}"
+										  disabled="true"
+								>
+
+							</p:inputText>
+
+
+						<p:outputLabel value="Part variable annuelle (à 100% des objectifs atteins) :"  />
+							<p:inputText id="part"
+								value="#{salaireController2.part}"
+							>
+								<p:ajax event="blur" listener="#{salaireController2.calculeEnveloppeTotale()}"
+										update = "donnee_salaire2"/>
+							</p:inputText>
+
+
+						<p:outputLabel value="Enveloppe Totale Annuelle :" />
+							<p:inputText id="ETAnnuel"
+								value="#{salaireController2.ETAnnuel}"
+										 disabled="true"
+							>
+							</p:inputText>
+
+
+
+					</p:panelGrid>
+
+	<!--	</div>
+    </div>
+</div>
+</div>-->
+
+
+</ui:composition>

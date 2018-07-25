@@ -1,0 +1,262 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:c="http://java.sun.com/jsp/jstl/core"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:sec="http://www.springframework.org/security/tags"
+				template="../templates/modena/template.xhtml">
+	<f:metadata>
+
+	</f:metadata>
+	<ui:define name="title"> #{msg['iw.collab.add']}</ui:define>
+	<ui:define name="subheader"> #{msg['iw.collab.add']}</ui:define>
+	<ui:define name="content">
+		<div class="Container100 Responsive100">
+			<div class="ContainerIndent">
+				<div class="iw2-center-block" style="background-color: white;">
+					<h:form>
+						<p:tabView id="tabCol">
+							<p:tab title="#{msg['iw.collab.information']}">
+								<h:panelGrid columns="5" cellpadding="10" style="margin: 10px 50px;">
+									<p:outputLabel for="usersL" value="Liste des utilisateurs:"/>
+									<p:selectOneMenu id="usersL" value="#{collaboratorController.userId}"
+													 filter="true" filterMatchMode="contains">
+										<f:selectItem itemValue="#{null}" itemLabel="sélectionnez User"/>
+										<f:selectItems value="#{collaboratorController.users}" var="user"
+													   itemLabel="#{user.firstName.concat(' ').concat(user.lastName)}"
+													   itemValue="#{user.id}"/>
+										<p:ajax event="valueChange"
+												listener="#{collaboratorController.onChangeCollaborator}"
+												update="tabCol"/>
+									</p:selectOneMenu>
+								</h:panelGrid>
+								<p:separator/>
+								<h:panelGrid columns="1" cellpadding="10" style="margin: 0 auto;">
+									<p:outputPanel>
+										<p:graphicImage style="height: 65px;"
+														rendered="#{!collaboratorController.user.pictureSet}"
+														url="/resources/img/avatar.png"/>
+										<p:graphicImage cache="false" style="height: 65px;"
+														rendered="#{collaboratorController.user.pictureSet}"
+														value="#{fileController.avatar}">
+											<f:param name="user" value="#{collaboratorController.userId}"/>
+										</p:graphicImage>
+									</p:outputPanel>
+								</h:panelGrid>
+								<h:panelGrid columns="8" cellpadding="10" id="info" style="margin: 0 auto;">
+									<p:outputLabel for="sexe" value=" Sexe:"/>
+									<p:selectOneRadio id="sexe" value="#{collaboratorController.collaborateur.sexe}">
+										<f:selectItem itemLabel="M" itemValue="M"/>
+										<f:selectItem itemLabel="F" itemValue="F"/>
+									</p:selectOneRadio>
+
+									<p:outputLabel for="fname" value=" Prénom:"/>
+									<p:inputText id="fname" value="#{collaboratorController.collaborateur.prenom}"/>
+
+									<p:outputLabel for="lname" value="Nom:"/>
+									<p:inputText id="lname" value="#{collaboratorController.collaborateur.nom}"/>
+
+									<p:outputLabel for="email" value="Email:"/>
+									<p:inputText id="email" value="#{collaboratorController.collaborateur.email}"/>
+
+									<p:outputLabel for="mat" value="Matricule:"/>
+									<p:spinner id="mat" value="#{collaboratorController.collaborateur.matricule}"/>
+
+									<p:outputLabel for="dem" value="Date Embauche:"/>
+									<p:calendar id="dem" mode="Popup"
+												value="#{collaboratorController.collaborateur.dateEmbauche}"/>
+
+
+									<p:outputLabel for="dn" value="Date de naissance:"/>
+									<p:calendar id="dn" mode="Popup"
+												value="#{collaboratorController.collaborateur.dateNaissance}"/>
+
+									<p:outputLabel for="ln" value="Lieu de naissance:"/>
+									<p:inputText id="ln" value="#{collaboratorController.collaborateur.lieuNaissance}"/>
+
+									<p:outputLabel for="adr" value="Adresse:"/>
+									<p:inputText id="adr" value="#{collaboratorController.collaborateur.adresse}"/>
+
+									<p:outputLabel for="phone" value="Phone:"/>
+									<p:inputMask id="phone" value="#{collaboratorController.collaborateur.telephone}"
+												 mask="(+999) 999-999-999"/>
+
+									<p:outputLabel for="rib" value="RIB:"/>
+									<p:inputText id="rib" value="#{collaboratorController.collaborateur.rib}"/>
+
+									<p:outputLabel for="numPass" value="Numéro Passeport:"/>
+									<p:inputText id="numPass" value="#{collaboratorController.collaborateur.numPassport}"/>
+
+
+
+									<p:outputLabel for="NivEtud" value="Niveau d'étude:"/>
+									<p:inputText id="NivEtud" value="#{collaboratorController.collaborateur.niveauEtude}"/>
+
+
+
+									<p:outputLabel for="pe" value="Promesse Embauche:"/>
+									<p:fileUpload id="pe"
+												  fileUploadListener="#{collaboratorController.handleUploadedPromesse}"
+												  mode="advanced"
+												  fileLimit="1"/>
+
+									<p:outputLabel for="fp" value="Fiche Poste:"/>
+									<p:fileUpload id="fp"
+												  fileUploadListener="#{collaboratorController.handleUploadedFichePoste}"
+												  mode="advanced"
+												  fileLimit="1"/>
+
+								</h:panelGrid>
+
+							</p:tab>
+
+							<p:tab title="#{msg['iw.collab.poste']}"
+								   rendered="#{collaboratorController.collaborateur != null}" id="poste">
+
+								<h:panelGrid columns="7" cellpadding="10" style="margin: 0 auto;">
+									<p:outputLabel for="postes" value="Liste des postes:"/>
+									<p:selectOneMenu id="postes" value="#{collaboratorController.posteId}"
+													 filter="true" filterMatchMode="contains" >
+										<f:selectItem itemValue="#{null}" itemLabel="sélectionnez Poste"/>
+										<f:selectItems value="#{collaboratorController.postes}" var="poste"
+													   itemLabel="#{poste.description}"
+													   itemValue="#{poste.idPosteOccupe}"/>
+										<p:ajax event="valueChange"
+												listener="#{collaboratorController.onChangePoste}"
+												update="desc"/>
+									</p:selectOneMenu>
+									<p:spacer width="20" />
+									<p:outputLabel for="desc" value="Description:"/>
+									<p:inputText id="desc" value="#{collaboratorController.posteOccupe.description}"
+												 required="true"/>
+
+									<p:outputLabel for="deb" value="Date Début:"/>
+									<p:calendar id="deb" mode="Popup"
+												value="#{collaboratorController.posteOccupe.dateDebut}"
+												required="true"/>
+									<p:outputLabel for="classInter" value="Classification Interne:"/>
+									<p:inputTextarea rows="10" cols="55" id="classInter" value="#{collaboratorController.collaborateur.classificationInterne}"/>
+
+									<p:spacer width="20" />
+									<p:spacer width="20" />
+									<p:spacer width="20" />
+									<p:spacer width="20" />
+									<p:spacer width="20" />
+									<p:outputLabel for="Contrat" value="Contrat:"/>
+									<p:fileUpload id="Contrat"
+												  fileUploadListener="#{collaboratorController.handleUploadedContrat}"
+												  mode="advanced"
+												  fileLimit="1"/>
+
+
+								</h:panelGrid>
+
+
+
+
+
+
+
+							</p:tab>
+
+							<p:tab title="#{msg['iw.collab.formation']}"
+								   rendered="#{collaboratorController.collaborateur != null}" id="formation">
+
+								<p:dataTable id="formationTemplate" rowIndexVar="rowId" var="formation"
+											 value="#{collaboratorController.formations}" styleClass="entityList">
+
+									<f:facet name="header">
+										<div class="ui-grid-row">
+											<div class="ui-grid-col center">
+												<p:commandButton style="width: 225px"
+																 actionListener="#{collaboratorController.addRhFormation}"
+																 value="Ajouter une formation"
+																 ajax="true"
+																 label="Ajouter une formation"
+																 update="formationTemplate"
+																 icon="ui-icon-plusthick"/>
+											</div>
+										</div>
+									</f:facet>
+
+									<p:column width="4%">
+										<p:commandButton
+											actionListener="#{collaboratorController.deleteRhFormation(rowId)}"
+											update="formationTemplate"
+											icon="fa fa-times"
+											title="Delete"/>
+
+									</p:column>
+
+									<p:column headerText="Intitulé" width="100">
+										<p:inputText label="#{formation.intituleFormation}"
+													 value="#{formation.intituleFormation}"/>
+
+									</p:column>
+
+
+									<p:column headerText="Objectif" width="150">
+										<p:inputText label="#{formation.objectifFormation}"
+													 value="#{formation.objectifFormation}"/>
+
+									</p:column>
+
+									<p:column headerText="Date Formation" width="100">
+										<p:calendar value="#{formation.dateFormation}" mode="Popup" required="true"/>
+									</p:column>
+
+									<p:column headerText="Attestation" style="text-align: center" width="100">
+										<p:commandButton
+											actionListener="#{collaboratorController.selectCurrentObj(rowId)}"
+											ajax="true"
+											update="@(.cvDialog)"
+											oncomplete="PF('cvDialog').show()"
+											process="@this"
+											icon="fa fa-eye"/>
+									</p:column>
+								</p:dataTable>
+							</p:tab>
+						</p:tabView>
+
+						<div class="ui-grid-row" style="margin: 10px 0 !important;padding-bottom: 10px;">
+							<div class=" iw2-center-block" style="width: 25%;">
+								<p:commandButton value="#{msg['iw.bouton.valider']}"
+												 action="#{collaboratorController.saveCollaborator()}"
+												 style="width: 100%;"/>
+							</div>
+						</div>
+
+						<p:dialog id="cvDialog" widgetVar="cvDialog" styleClass="cvDialog" closable="true"
+								  draggable="true" closeOnEscape="true" dynamic="true"
+								  height="200" width="800" maximizable="false" modal="true"
+								  resizable="false" showEffect="fold" responsive="true">
+							<p:fieldset id="upload" widgetVar="upload" styleClass="upload">
+								<p:fileUpload
+									fileUploadListener="#{collaboratorController.handleUploadedAttestation}"
+									mode="advanced"
+									fileLimit="1"
+									update="upload"/>
+
+								<ui:repeat var="ot" value="#{collaboratorController.currentObj.attestation.iwFileList}">
+									<div>
+										<p:commandButton process="@this" value="#{ot.iwName}" icon="fa fa-download"
+														 ajax="false">
+											<p:fileDownload value="#{collaboratorController.downloadFile(ot)}"
+															contentDisposition="attachment" transient="true">
+
+											</p:fileDownload>
+										</p:commandButton>
+										<p:commandButton process="@this" action="#{collaboratorController.removeFile()}"
+														 value="#{msg['iw.button.supprimer']}" icon="fa fa-remove "
+														 ajax="true" update="@(.upload)"/>
+									</div>
+								</ui:repeat>
+							</p:fieldset>
+						</p:dialog>
+					</h:form>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

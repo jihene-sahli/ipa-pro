@@ -1,0 +1,85 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core">
+
+
+				<h:form id="anciennete" >
+				<p:panelGrid columns="2" class="Wid100" id="aa">
+					<p:outputLabel for="team" value="Séléctionnez une équipe:"/>
+					<p:selectOneMenu id="team" value="#{dashController.teamId}"
+									 panelStyle="width:180px"
+									 effect="fade" var="t" style="width:160px" filter="true"
+									 filterMatchMode="startsWith">
+						<p:ajax event="change" listener="#{dashController.teamChanged}"
+								oncomplete="moyAncienneteFuntion()"
+								update="anciennete"/>
+						<f:selectItem itemLabel="Sélectionnez Equipe" itemValue=""
+									  noSelectionOption="true"/>
+						<f:selectItem itemLabel="Tous" itemValue="Tous"/>
+						<f:selectItems value="#{hierarchyController.groupList}" var="te"
+									   itemLabel="#{te.id}" itemValue="#{te.id}"/>
+					</p:selectOneMenu>
+				</p:panelGrid>
+
+					<p:panel rendered="#{dashController.teamId !=null}">
+						<div id="buttons13"></div>
+						<br/><br/>
+						<div id="moyAnciennete">
+							<div id="chart_moyAnciennete" style="width: 100%; height: 250px;"></div>
+						</div>
+					</p:panel>
+
+
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		var moyAncienneteFuntion = function () {
+
+			function AddNamespaceHandlerMoyAnciennete() {
+				var svg = jQuery('#chart_moyAnciennete svg');
+				svg.attr("xmlns", "http://www.w3.org/2000/svg");
+				svg.css('overflow', 'visible');
+			}
+
+			var click = "return xepOnline.Formatter.Format('moyAnciennete', {render:'download', srctype:'svg'})";
+			jQuery('#buttons13').append('<button onclick="' + click + '">PDF</button>');
+
+			google.charts.load('current', {packages: ['corechart', 'bar']});
+			google.charts.setOnLoadCallback(drawMoyAnciennete);
+
+			function drawMoyAnciennete() {
+				var mydata = JSON.parse('#{dashController.getMoyenneAncienneteAsJson(dashController.teamId)}');
+				console.log("************: " + JSON.stringify(mydata));
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'TEAM');
+				data.addColumn('number', 'Moyenne Anciennete (en mois)');
+				//data.addColumn('number', 'nbr mois');
+				data.addColumn({type: 'string', role: 'annotation'});
+				//data.addColumn('string', 'mille année');
+				for (var team of mydata) {
+					data.addRows([[team.team + " : "+team.nbMembers +" membre(s)", team.anciennete, team.nbAnne + " Année(s) et "+team.nbMois+ " mois"]]);
+				}
+
+				var options = {
+					title: 'Ancienneté moyenne des collaborateurs par equipe',
+					bar: {groupWidth: "30%"},
+					legend: {position: "right"},
+					hAxis: {
+						title: 'Moyenne Ancienneté (en mois)',
+						minValue: 0,
+					},
+					vAxis: {
+						title: 'Teams'
+					}
+				};
+				var ancienneteChart = new google.visualization.BarChart(document.getElementById('chart_moyAnciennete'));
+				google.visualization.events.addListener(ancienneteChart, 'ready', AddNamespaceHandlerMoyAnciennete);
+				ancienneteChart.draw(data, options);
+			}
+		}
+
+		/*]]>*/
+	</script>
+				</h:form>
+</ui:composition>

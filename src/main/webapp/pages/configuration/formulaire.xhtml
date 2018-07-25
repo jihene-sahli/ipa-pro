@@ -1,0 +1,219 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:c="http://java.sun.com/jsp/jstl/core"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:sec="http://www.springframework.org/security/tags"
+				template="../templates/modena/template.xhtml">
+	<ui:define name="title">#{msg['iw.configuration']}</ui:define>
+	<ui:define name="subheader">#{msg['iw.configuration']}</ui:define>
+	<ui:define name="head">
+		<f:verbatim>
+			<style type="text/css">
+				.cofig-form-upload{
+					font-style: italic;
+					font-size: 11px!important;
+					color: red;
+				}
+				.ui-button-submit{
+					margin-left: 40%;
+					margin-top: .9em;
+					width: 350px;
+				}
+			</style>
+		</f:verbatim>
+	</ui:define>
+	<ui:define name="content">
+		<div class="Container100 Responsive100">
+			<div class="Container100">
+				<div class="ContainerIndent">
+					<div class="Card ShadowEffect">
+						<h:form id="formConfig" enctype="multipart/form-data">
+							<p:tabView id="confTab" tabindex="3">
+								<p:tab title="#{msg['iw.configuration.tab.perso']}">
+									<p:dataTable class="Wid100" value="#{configController.configListPerso}" var="config" >
+										<p:column>
+											<p:outputLabel value="#{config.configDescription} : " />
+										</p:column>
+										<p:column>
+											<p:fileUpload rendered="#{config.configName=='company_favicon'}"
+														  dragDropSupport="true" sizeLimit="512000"
+														  mode="simple"  skinSimple="true"
+														  fileLimit="1" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+														  value="#{configController.favicon}" />
+											<p:fileUpload rendered="#{config.configName=='company_logo'}"
+														  dragDropSupport="true" sizeLimit="512000"
+														  mode="simple"  skinSimple="true"
+														  fileLimit="1" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+														  value="#{configController.companyLogo}" />
+											<p:inputText rendered="#{config.configName=='company_name'}" value="#{config.configValue}" label="#{config.configDescription}" />
+											<p:inputText rendered="#{config.configName=='company_slogan'}" value="#{config.configValue}" label="#{config.configDescription}" />
+											<p:inputText rendered="#{config.configName=='imagineworkflow_title'}" value="#{config.configValue}" label="#{config.configDescription}" />
+											<p:inputText rendered="#{config.configName=='upload_directory_name'}" value="#{config.configValue}" label="#{config.configDescription}" />
+											<p:outputLabel rendered="#{config.configName=='upload_directory_name'}" styleClass="cofig-form-upload" >#{msg['iw.configuration.form.upload.msg']} <strong>D:/#{msg['iw.configuration.form.upload.msg2']}</strong> | <strong>/home/Documents/#{msg['iw.configuration.form.upload.msg2']}</strong></p:outputLabel>
+											<p:selectOneMenu rendered="#{config.configName=='company_theme'}" value="#{config.configValue}" >
+												<f:selectItem itemValue="GrayModena" itemLabel="#{msg['iw.theme.gris']}" />
+												<f:selectItem itemValue="BlueModena" itemLabel="#{msg['iw.theme.blue']}" />
+												<f:selectItem itemValue="RedModena" itemLabel="#{msg['iw.theme.rouge']}" />
+												<f:selectItem itemValue="IndigoModena" itemLabel="#{msg['iw.theme.indigo']}" />
+												<f:selectItem itemValue="CyanModena" itemLabel="#{msg['iw.theme.cyan']}" />
+											</p:selectOneMenu>
+										</p:column>
+									</p:dataTable>
+								</p:tab>
+								<sec:authorize access="hasAnyRole('ROLE_SUPER_ADMIN')">
+									<p:tab title="#{msg['iw.configuration.tab.advance']}">
+										<p:dataTable class="Wid100" value="#{configController.configListAdvance}" var="config" >
+											<p:column>
+												<p:outputLabel value="#{config.configDescription} : " />
+											</p:column>
+											<p:column>
+												<p:inputText rendered="#{config.configName=='upload_directory_name'}" 	value="#{config.configValue}" label="#{config.configDescription}" />
+												<p:outputLabel rendered="#{config.configName=='upload_directory_name'}" styleClass="cofig-form-upload" >#{msg['iw.configuration.form.upload.msg']} <strong>D:/#{msg['iw.configuration.form.upload.msg2']}</strong> | <strong>/home/Documents/#{msg['iw.configuration.form.upload.msg2']}</strong></p:outputLabel>
+												<p:selectOneRadio rendered="#{config.configName=='display_completed_tasks'}" value="#{config.configValue}" >
+													<f:selectItem itemLabel="Oui" itemValue="#{true}" />
+													<f:selectItem itemLabel="Non" itemValue="#{false}" />
+												</p:selectOneRadio>
+												<p:selectOneRadio rendered="#{config.configName=='display_involved_task'}" value="#{config.configValue}" >
+													<f:selectItem itemLabel="Oui" itemValue="#{true}" />
+													<f:selectItem itemLabel="Non" itemValue="#{false}" />
+												</p:selectOneRadio>
+												<p:selectOneRadio rendered="#{config.configName=='display_instance_creation_dialog'}" value="#{config.configValue}" >
+													<f:selectItem itemLabel="Oui" itemValue="#{true}" />
+													<f:selectItem itemLabel="Non" itemValue="#{false}" />
+												</p:selectOneRadio>
+												<p:selectOneRadio rendered="#{config.configName=='display_standalonetask_creation_dialog'}" value="#{config.configValue}" >
+													<f:selectItem itemLabel="Oui" itemValue="#{true}" />
+													<f:selectItem itemLabel="Non" itemValue="#{false}" />
+												</p:selectOneRadio>
+												<p:selectOneRadio rendered="#{config.configName=='display_folder_number'}" value="#{config.configValue}" >
+													<f:selectItem itemLabel="Oui" itemValue="#{true}" />
+													<f:selectItem itemLabel="Non" itemValue="#{false}" />
+												</p:selectOneRadio>
+												<p:selectOneRadio rendered="#{config.configName=='display_task_number'}" value="#{config.configValue}" >
+													<f:selectItem itemLabel="Oui" itemValue="#{true}" />
+													<f:selectItem itemLabel="Non" itemValue="#{false}" />
+												</p:selectOneRadio>
+												<p:selectOneRadio rendered="#{config.configName=='enable_stitcky_title'}" value="#{config.configValue}" >
+													<f:selectItem itemLabel="Oui" itemValue="#{true}" />
+													<f:selectItem itemLabel="Non" itemValue="#{false}" />
+												</p:selectOneRadio>
+												<p:selectOneRadio rendered="#{config.configName=='display_traduction_list'}" value="#{config.configValue}" >
+													<f:selectItem itemLabel="Oui" itemValue="#{true}" />
+													<f:selectItem itemLabel="Non" itemValue="#{false}" />
+												</p:selectOneRadio>
+												<p:selectOneRadio rendered="#{config.configName=='show_process_progresssion'}" value="#{config.configValue}" >
+													<f:selectItem itemLabel="Oui" itemValue="#{true}" />
+													<f:selectItem itemLabel="Non" itemValue="#{false}" />
+												</p:selectOneRadio>
+												<p:selectOneRadio rendered="#{config.configName=='show_agenda_reservation'}" value="#{config.configValue}" >
+													<f:selectItem itemLabel="Oui" itemValue="#{true}" />
+													<f:selectItem itemLabel="Non" itemValue="#{false}" />
+												</p:selectOneRadio>
+												<p:fileUpload rendered="#{config.configName=='login_logo'}"
+															  dragDropSupport="true" sizeLimit="512000"
+															  mode="simple"  skinSimple="true"
+															  fileLimit="1" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+															  value="#{configController.loginLogo}" />
+											</p:column>
+										</p:dataTable>
+									</p:tab>
+									<p:tab id="authenticationTab" title="#{msg['iw.configuration.tab.authentication']}" >
+										<p:panelGrid  columns="2"  class="Wid100" layout="grid">
+											<p:column>
+												<p:outputLabel   value="#{configController.authenticationConfigSelected.configDescription} : " rendered="#{configController.authenticationConfigSelected.configName=='authentication_mode'}"/>
+											</p:column>
+											<p:column >
+												<p:selectOneMenu  rendered="#{configController.authenticationConfigSelected.configName=='authentication_mode'}" value="#{configController.authenticationConfigSelected.configValue}" >
+													<f:selectItem itemValue="db" itemLabel="#{msg['iw.authentication.mode.normal']}" />
+													<f:selectItem itemValue="mixte" itemLabel="#{msg['iw.authentication.mode.ldap']}" />
+													<p:ajax event="change" update="authDataTable" process="@this" listener="#{configController.displayLdapConfigOption(configController.authenticationConfigSelected)}"/>
+												</p:selectOneMenu>
+											</p:column>
+										</p:panelGrid>
+										<p:panel id="authDataTable">
+											<p:dataTable    class="Wid100" value="#{configController.lDapOrMixteConfigListe}" var="config" rendered= "#{configController.lDapOrMixteSelected}" >
+												<p:column>
+													<p:outputLabel value="#{config.configDescription} : " />
+												</p:column>
+												<p:column>
+													<p:inputText rendered="#{config.configName=='ldap_domain'}" 	value="#{config.configValue}" label="#{config.configDescription}" />
+													<p:inputText rendered="#{config.configName=='ldap_server'}" 	value="#{config.configValue}" label="#{config.configDescription}" />
+													<p:selectOneRadio rendered="#{config.configName=='ldap_sync_ad_users'}" value="#{config.configValue}" >
+														<f:selectItem itemLabel="Oui" itemValue="#{true}" />
+														<f:selectItem itemLabel="Non" itemValue="#{false}" />
+													</p:selectOneRadio>
+													<p:selectOneRadio rendered="#{config.configName=='ldap_sync_ad_groups'}" value="#{config.configValue}" >
+														<f:selectItem itemLabel="Oui" itemValue="#{true}" />
+														<f:selectItem itemLabel="Non" itemValue="#{false}" />
+													</p:selectOneRadio>
+													<p:selectOneRadio rendered="#{config.configName=='ldap_sync_ad_membership'}" value="#{config.configValue}" >
+														<f:selectItem itemLabel="Oui" itemValue="#{true}" />
+														<f:selectItem itemLabel="Non" itemValue="#{false}" />
+													</p:selectOneRadio>
+												</p:column>
+											</p:dataTable>
+										</p:panel>
+									</p:tab>
+									<p:tab title="#{msg['iw.configuration.tab.smtp']}">
+										<p:dataTable    class="Wid100" value="#{configController.configListMailSending}" var="config"  >
+											<p:column>
+												<p:outputLabel value="#{config.configDescription} : " />
+											</p:column>
+											<p:column>
+												<p:inputText rendered="#{config.configName=='smtp_mail_server_host'}" 	value="#{config.configValue}" label="#{config.configDescription}" />
+												<p:inputText rendered="#{config.configName=='smtp_mail_server_port'}" 	value="#{config.configValue}" label="#{config.configDescription}" />
+												<p:inputText rendered="#{config.configName=='smtp_mail_server_username'}" 	value="#{config.configValue}" label="#{config.configDescription}" />
+												<p:inputText rendered="#{config.configName=='smtp_mail_server_password'}" 	value="#{config.configValue}" label="#{config.configDescription}" type="password" />
+												<p:inputText rendered="#{config.configName=='smtp_mail_server_default_from'}" 	value="#{config.configValue}" label="#{config.configDescription}"  />
+												<p:selectOneRadio rendered="#{config.configName=='smtp_mail_server_use_ssl'}" value="#{config.configValue}" >
+													<f:selectItem itemLabel="Oui" itemValue="#{true}" />
+													<f:selectItem itemLabel="Non" itemValue="#{false}" />
+												</p:selectOneRadio>
+												<p:selectOneRadio rendered="#{config.configName=='smtp_mail_server_use_tls'}" value="#{config.configValue}" >
+													<f:selectItem itemLabel="Oui" itemValue="#{true}" />
+													<f:selectItem itemLabel="Non" itemValue="#{false}" />
+												</p:selectOneRadio>
+											</p:column>
+										</p:dataTable>
+									</p:tab>
+									<p:tab title="#{msg['iw.configuration.tab.fileExportPaths']}">
+
+										<p:outputLabel styleClass="cofig-form-upload" >Spécifiez le chemin absolut de chaque répértoire, ex: <strong>D:/#{msg['iw.configuration.form.upload.msg2']}</strong> | <strong>/home/Documents/#{msg['iw.configuration.form.upload.msg2']}</strong></p:outputLabel>
+
+										<p:dataTable class="Wid100" value="#{configController.configListFileExportPaths}" var="fileExportPath">
+
+											<p:column>
+												<p:outputLabel value="#{fileExportPath.configDescription} : "/>
+											</p:column>
+											<p:column>
+												<p:inputText value="#{fileExportPath.configValue}" rendered="#{fileExportPath.configName=='file_export_path_csv'}" label="#{fileExportPath.configDescription}" />
+												<p:inputText value="#{fileExportPath.configValue}" rendered="#{fileExportPath.configName=='file_export_path_excel'}" label="#{fileExportPath.configDescription}" />
+												<p:inputText value="#{fileExportPath.configValue}" rendered="#{fileExportPath.configName=='file_export_path_pdf'}" label="#{fileExportPath.configDescription}" />
+												<p:inputText value="#{fileExportPath.configValue}" rendered="#{fileExportPath.configName=='file_export_path_log'}" label="#{fileExportPath.configDescription}" />
+											</p:column>
+										</p:dataTable>
+									</p:tab>
+
+									<p:tab title="#{msg['iw.configuration.tab.generatePasswordWithNotification']}">
+
+										<p>Sélectionner les utilisateurs pour générer de nouveaux mots de passes :</p>
+
+										<p:pickList id="pickList" value="#{configController.userList}" var="userList" itemLabel="#{userList.firstName} #{userList.lastName}" itemValue="#{userList}" converter="#{userConverter}" />
+
+										<p:commandButton id="citySubmit" value="Changer les mots de passe" action="#{configController.generateAndNotifyUsersPasswords()}" style="margin-top:5px" />
+
+									</p:tab>
+
+								</sec:authorize>
+							</p:tabView>
+							<p:commandButton action="#{configController.saveConfig()}" update="@(.authenticationTab)" icon="fa fa-check" value="#{msg['iw.button.valider']}" ajax="false" styleClass="ui-button-submit" />
+						</h:form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

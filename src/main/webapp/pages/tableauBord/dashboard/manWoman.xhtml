@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core">
+
+
+				<h:form id="HF" >
+				<p:panelGrid columns="2" class="Wid100" id="aa">
+					<p:outputLabel for="team2" value="Séléctionnez une équipe:"/>
+					<p:selectOneMenu id="team2" value="#{dashController.teamId}"
+									 panelStyle="width:180px"
+									 effect="fade" var="t" style="width:160px" filter="true"
+									 filterMatchMode="startsWith">
+						<p:ajax event="change" listener="#{dashController.teamChanged}"
+								oncomplete="manWomanFuntion()"
+								update="HF"/>
+						<f:selectItem itemLabel="Sélectionnez Equipe" itemValue=""
+									  noSelectionOption="true"/>
+						<f:selectItem itemLabel="Tous" itemValue="Tous"/>
+						<f:selectItems value="#{hierarchyController.groupList}" var="te"
+									   itemLabel="#{te.id}" itemValue="#{te.id}"/>
+					</p:selectOneMenu>
+				</p:panelGrid>
+
+					<p:panel rendered="#{dashController.teamId !=null}">
+						<div id="buttons3"></div>
+						<br/><br/>
+						<div id="manwoman">
+							<div id="chart_manwoman" style="width: 100%; height: 400px;"></div>
+						</div>
+					</p:panel>
+
+
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		var manWomanFuntion = function () {
+
+			function AddNamespaceHandlerMW() {
+				var svg = jQuery('#chart_manwoman svg');
+				svg.attr("xmlns", "http://www.w3.org/2000/svg");
+				svg.css('overflow', 'visible');
+			}
+
+			var click = "return xepOnline.Formatter.Format('manwoman', {render:'download', srctype:'svg'})";
+			jQuery('#buttons3').append('<button onclick="' + click + '">PDF</button>');
+
+			google.charts.load('current', {packages: ['corechart']});
+			google.charts.setOnLoadCallback(drawManWoman);
+
+			function drawManWoman() {
+				var mydata = JSON.parse('#{dashController.getManWomanAsJson(dashController.teamId)}');
+
+				console.log("************: " + JSON.stringify(mydata));
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'SEXE');
+				data.addColumn('number', 'NB MEMBERS');
+
+				for (var team of mydata) {
+					data.addRows([["Man", team.man]]);
+					data.addRows([["Woman", team.woman]]);
+
+				}
+
+				var options = {
+					title: 'Répartition Homme/Femme',
+					pieHole: 0.4
+				};
+				var manWomanChart = new google.visualization.PieChart(document.getElementById('chart_manwoman'));
+				google.visualization.events.addListener(manWomanChart, 'ready', AddNamespaceHandlerMW);
+				manWomanChart.draw(data, options);
+			}
+		}
+
+		/*]]>*/
+	</script>
+				</h:form>
+</ui:composition>

@@ -1,0 +1,25 @@
+<ui:composition 	xmlns="http://www.w3.org/1999/xhtml"
+				   xmlns:f="http://java.sun.com/jsf/core"
+				   xmlns:h="http://java.sun.com/jsf/html"
+				   xmlns:ui="http://java.sun.com/jsf/facelets"
+				   xmlns:p="http://primefaces.org/ui"
+				   xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+				   xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	#{taskController.registerTemplate('dirigeantSecondEntretienController','DirigeantSecondEntretienController',fn:split('dirigeantEntretien2',','))}
+
+
+	<h:panelGrid columns="5" cellpadding="10" style="margin: 10px 50px;">
+		<p:outputLabel for="usersL2" value="Dirigeant de second entretien"/>
+		<p:selectOneMenu id="usersL2"
+						 filter="true" filterMatchMode="contains"
+						 value="#{dirigeantSecondEntretienController.dirigeantEntretien2}"
+		>
+			<f:selectItem  itemLabel="#{dirigeantSecondEntretienController.dirigeantEntretien2}"
+						  itemValue="#{dirigeantSecondEntretienController.dirigeantEntretien2}"/>
+			<f:selectItems value="#{dirigeantSecondEntretienController.users}" var="user"
+						   itemLabel="#{user.firstName.concat(' ').concat(user.lastName)}"
+						   itemValue="#{user.firstName.concat(' ').concat(user.lastName)}"/>
+
+		</p:selectOneMenu>
+	</h:panelGrid>
+</ui:composition>

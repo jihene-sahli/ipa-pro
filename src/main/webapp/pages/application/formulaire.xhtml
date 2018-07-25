@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+    <f:metadata>
+    </f:metadata>
+
+    <ui:define name="title" >#{(empty applicationController.applicationId)?msg['iw.ajouterApplication']:msg['iw.modifierApplication']} </ui:define>
+    <ui:define name="subheader"  >#{(empty applicationController.applicationId)?msg['iw.ajouterApplication']:msg['iw.modifierApplication']}</ui:define>
+
+
+    <ui:define name="content">
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <h:form>
+                            <p:panelGrid columns="2" class="Wid100">
+
+                                <p:outputPanel>
+                                    <p:outputLabel value="#{msg['iw.application.name']}" />
+                                    <p:outputLabel value=" *" class="Red"/>
+                                </p:outputPanel>
+                                <p:inputText value="#{applicationController.application.iwName}"/>
+
+
+                                <p:outputLabel value="#{msg['iw.application.description']}" />
+                                <p:inputTextarea value="#{applicationController.application.iwDescription}"/>
+
+                                <p:commandButton action="#{applicationController.saveApplication(true)}" value="#{msg['iw.bouton.enregistrernouveau']}" ajax="false" update="@(.applicationList)"/>
+                                <p:commandButton action="#{applicationController.saveApplication(false)}" value="OK" ajax="false" update="@(.applicationList)"/>
+
+                            </p:panelGrid>
+
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ui:remove>
+            <div class="Container20 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect HeiAutoOnMobile">
+                            <ui:include src="../templates/processList.xhtml" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:remove>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.5.0.v201506092134 Build &lt;@BUILD@></property>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <parameters>
+        <scalar-parameter name="numero_titre" id="98">
+            <property name="hidden">true</property>
+            <text-property name="helpText">numero_titre</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="nom" id="100">
+            <property name="hidden">true</property>
+            <text-property name="helpText">nom</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="prenom" id="177">
+            <property name="hidden">true</property>
+            <text-property name="helpText">prenom</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="fonction" id="179">
+            <property name="hidden">true</property>
+            <text-property name="helpText">fonction</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="type_conge" id="181">
+            <property name="hidden">true</property>
+            <text-property name="helpText">type_conge</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="nb_jour_conge" id="183">
+            <property name="hidden">true</property>
+            <text-property name="helpText">nb_jour_conge</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="date_deb_cong" id="185">
+            <property name="hidden">true</property>
+            <text-property name="helpText">date_deb_cong</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">date</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="date_fin_cong" id="187">
+            <property name="hidden">true</property>
+            <text-property name="helpText">date_fin_cong</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">date</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="date_reprise" id="189">
+            <property name="hidden">true</property>
+            <text-property name="helpText">date_reprise</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="conge_au" id="191">
+            <property name="hidden">true</property>
+            <text-property name="helpText">conge_au</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">date</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="nb_jour_reliquat" id="193">
+            <property name="hidden">true</property>
+            <text-property name="helpText">nb_jour_reliquat</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="rest_au" id="195">
+            <property name="hidden">true</property>
+            <text-property name="helpText">rest_au</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">date</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="nb_jour_rest" id="197">
+            <property name="hidden">true</property>
+            <text-property name="helpText">nb_jour_rest</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant"></value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="date_redaction" id="199">
+            <property name="hidden">true</property>
+            <text-property name="helpText">date_redaction</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">date</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="concealValue">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <page-footer>
+                <text id="3">
+                    <property name="contentType">html</property>
+                    <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
+                </text>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid id="155">
+            <column id="156"/>
+            <column id="157"/>
+            <column id="158"/>
+            <row id="159">
+                <cell id="160"/>
+                <cell id="161"/>
+                <cell id="162"/>
+            </row>
+            <row id="163">
+                <cell id="164">
+                    <image id="341">
+                        <property name="height">0.9375in</property>
+                        <property name="width">2.5520833333333335in</property>
+                        <property name="source">file</property>
+                        <expression name="uri" type="constant">medialgerie_logo.jpg</expression>
+                    </image>
+                </cell>
+                <cell id="165"/>
+                <cell id="166"/>
+            </row>
+            <row id="167">
+                <cell id="168"/>
+                <cell id="169"/>
+                <cell id="170"/>
+            </row>
+            <row id="171">
+                <cell id="172"/>
+                <cell id="173"/>
+                <cell id="174"/>
+            </row>
+        </grid>
+        <grid id="201">
+            <column id="202"/>
+            <column id="203"/>
+            <column id="204"/>
+            <row id="205">
+                <cell id="206"/>
+                <cell id="207">
+                    <label id="96">
+                        <text-property name="text"></text-property>
+                    </label>
+                    <label id="342">
+                        <text-property name="text">     Titre De Congé </text-property>
+                    </label>
+                </cell>
+                <cell id="208"/>
+            </row>
+            <row id="209">
+                <cell id="210"/>
+                <cell id="211">
+                    <label id="314">
+                        <text-property name="text">     </text-property>
+                    </label>
+                </cell>
+                <cell id="212"/>
+            </row>
+            <row id="213">
+                <cell id="214"/>
+                <cell id="215">
+                    <data id="99">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">numero_titre</property>
+                                <expression name="expression" type="javascript">params["numero_titre"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">numero_titre</property>
+                    </data>
+                </cell>
+                <cell id="216"/>
+            </row>
+            <row id="217">
+                <cell id="218"/>
+                <cell id="219">
+                    <label id="315"/>
+                </cell>
+                <cell id="220"/>
+            </row>
+            <row id="221">
+                <cell id="222">
+                    <label id="101">
+                        <text-property name="text">Nom</text-property>
+                    </label>
+                </cell>
+                <cell id="223">
+                    <data id="176">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">nom</property>
+                                <expression name="expression" type="javascript">params["nom"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">nom</property>
+                    </data>
+                </cell>
+                <cell id="224"/>
+            </row>
+            <row id="225">
+                <cell id="226">
+                    <label id="313"/>
+                </cell>
+                <cell id="227">
+                    <label id="316"/>
+                </cell>
+                <cell id="228"/>
+            </row>
+            <row id="229">
+                <cell id="230">
+                    <label id="102">
+                        <text-property name="text">Prénom</text-property>
+                    </label>
+                </cell>
+                <cell id="231">
+                    <data id="178">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">prenom</property>
+                                <expression name="expression" type="javascript">params["prenom"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">prenom</property>
+                    </data>
+                </cell>
+                <cell id="232"/>
+            </row>
+            <row id="233">
+                <cell id="234"/>
+                <cell id="235">
+                    <label id="317"/>
+                </cell>
+                <cell id="236"/>
+            </row>
+            <row id="237">
+                <cell id="238">
+                    <label id="103">
+                        <text-property name="text">Fonction</text-property>
+                    </label>
+                </cell>
+                <cell id="239">
+                    <data id="180">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">fonction</property>
+                                <expression name="expression" type="javascript">params["fonction"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">fonction</property>
+                    </data>
+                </cell>
+                <cell id="240"/>
+            </row>
+            <row id="241">
+                <cell id="242"/>
+                <cell id="243">
+                    <label id="318"/>
+                </cell>
+                <cell id="244"/>
+            </row>
+            <row id="245">
+                <cell id="246">
+                    <label id="104">
+                        <text-property name="text">Est autorisé(e) a prendre un congé </text-property>
+                    </label>
+                </cell>
+                <cell id="247">
+                    <data id="182">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">type_conge</property>
+                                <expression name="expression" type="javascript">params["type_conge"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">type_conge</property>
+                    </data>
+                </cell>
+                <cell id="248"/>
+            </row>
+            <row id="249">
+                <cell id="250"/>
+                <cell id="251">
+                    <label id="319"/>
+                </cell>
+                <cell id="252"/>
+            </row>
+            <row id="253">
+                <cell id="254">
+                    <label id="105">
+                        <text-property name="text">De</text-property>
+                    </label>
+                </cell>
+                <cell id="255">
+                    <data id="184">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">nb_jour_conge</property>
+                                <expression name="expression" type="javascript">params["nb_jour_conge"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">nb_jour_conge</property>
+                    </data>
+                </cell>
+                <cell id="256"/>
+            </row>
+            <row id="257">
+                <cell id="258"/>
+                <cell id="259">
+                    <label id="320"/>
+                </cell>
+                <cell id="260"/>
+            </row>
+            <row id="261">
+                <cell id="262">
+                    <label id="106">
+                        <text-property name="text">Du</text-property>
+                    </label>
+                </cell>
+                <cell id="263">
+                    <data id="186">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">date_deb_cong</property>
+                                <expression name="expression" type="javascript">params["date_deb_cong"]</expression>
+                                <property name="dataType">date</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">date_deb_cong</property>
+                    </data>
+                </cell>
+                <cell id="264"/>
+            </row>
+            <row id="265">
+                <cell id="266"/>
+                <cell id="267">
+                    <label id="321"/>
+                </cell>
+                <cell id="268"/>
+            </row>
+            <row id="269">
+                <cell id="270">
+                    <label id="107">
+                        <text-property name="text">Au</text-property>
+                    </label>
+                </cell>
+                <cell id="271">
+                    <data id="188">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">date_fin_cong</property>
+                                <expression name="expression" type="javascript">params["date_fin_cong"]</expression>
+                                <property name="dataType">date</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">date_fin_cong</property>
+                    </data>
+                </cell>
+                <cell id="272"/>
+            </row>
+            <row id="273">
+                <cell id="274"/>
+                <cell id="275">
+                    <label id="322"/>
+                </cell>
+                <cell id="276"/>
+            </row>
+            <row id="277">
+                <cell id="278">
+                    <label id="108">
+                        <text-property name="text">Date reprise</text-property>
+                    </label>
+                </cell>
+                <cell id="279">
+                    <data id="190">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">date_reprise</property>
+                                <expression name="expression" type="javascript">params["date_reprise"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">date_reprise</property>
+                    </data>
+                </cell>
+                <cell id="280"/>
+            </row>
+            <row id="281">
+                <cell id="282"/>
+                <cell id="283">
+                    <label id="323"/>
+                </cell>
+                <cell id="284"/>
+            </row>
+        </grid>
+        <grid id="285">
+            <column id="286"/>
+            <column id="287"/>
+            <column id="288"/>
+            <row id="289">
+                <cell id="290">
+                    <label id="109">
+                        <text-property name="text">Sur reliquat congé au </text-property>
+                    </label>
+                </cell>
+                <cell id="291">
+                    <data id="192">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">conge_au</property>
+                                <expression name="expression" type="javascript">params["conge_au"]</expression>
+                                <property name="dataType">date</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">conge_au</property>
+                    </data>
+                </cell>
+                <cell id="292">
+                    <data id="194">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">nb_jour_reliquat</property>
+                                <expression name="expression" type="javascript">params["nb_jour_reliquat"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">nb_jour_reliquat</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="293">
+                <cell id="294"/>
+                <cell id="295">
+                    <label id="324"/>
+                </cell>
+                <cell id="296"/>
+            </row>
+            <row id="297">
+                <cell id="298">
+                    <label id="110">
+                        <text-property name="text">Reste reliquat de congé au</text-property>
+                    </label>
+                </cell>
+                <cell id="299">
+                    <data id="196">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">rest_au</property>
+                                <expression name="expression" type="javascript">params["rest_au"]</expression>
+                                <property name="dataType">date</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">rest_au</property>
+                    </data>
+                </cell>
+                <cell id="300">
+                    <data id="198">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">nb_jour_rest</property>
+                                <expression name="expression" type="javascript">params["nb_jour_rest"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">nb_jour_rest</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="301">
+                <cell id="302"/>
+                <cell id="303">
+                    <label id="325"/>
+                </cell>
+                <cell id="304"/>
+            </row>
+            <row id="305">
+                <cell id="306"/>
+                <cell id="307">
+                    <label id="326"/>
+                </cell>
+                <cell id="308"/>
+            </row>
+            <row id="309">
+                <cell id="310"/>
+                <cell id="311">
+                    <label id="175">
+                        <text-property name="text">Fait a Alger le : </text-property>
+                    </label>
+                </cell>
+                <cell id="312">
+                    <data id="200">
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">date_redaction</property>
+                                <expression name="expression" type="javascript">params["date_redaction"]</expression>
+                                <property name="dataType">date</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">date_redaction</property>
+                    </data>
+                </cell>
+            </row>
+        </grid>
+        <grid id="327">
+            <column id="328"/>
+            <column id="329"/>
+            <column id="330"/>
+            <row id="331">
+                <cell id="332"/>
+                <cell id="333">
+                    <label id="339"/>
+                </cell>
+                <cell id="334"/>
+            </row>
+            <row id="335">
+                <cell id="336"/>
+                <cell id="337">
+                    <label id="340"/>
+                </cell>
+                <cell id="338"/>
+            </row>
+        </grid>
+    </body>
+</report>

@@ -1,0 +1,376 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:c="http://java.sun.com/jsp/jstl/core"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:sec="http://www.springframework.org/security/tags"
+				template="../templates/modena/template.xhtml">
+	<f:metadata>
+		<ui:remove>
+			<f:viewParam name="user" value="#{profileController.userId}"/>
+		</ui:remove>
+	</f:metadata>
+	<ui:define name="title"
+			   rendered="#{not empty profileController.userId}">#{msg['iw.profil.modifiermonprofil']}</ui:define>
+	<ui:define name="subheader"
+			   rendered="#{empty profileController.userId}">#{msg['iw.profil.modifiermonprofil']}</ui:define>
+	<ui:define name="content">
+		<div class="Container100 Responsive100">
+			<div class="ContainerIndent">
+				<div class="iw2-center-block">
+					<p:panel styleClass="iw2-center-block iw2-width-80">
+						<h:form enctype="multipart/form-data">
+							<p:tabView id="tabCol">
+								<p:tab title="#{msg['iw.collab.information']}">
+									<div class="Card ShadowEffect ui-fluid">
+										<div class="ui-panelgrid ui-widget ui-panelgrid-blank"
+											 style="border:0px !important; background:none;">
+											<div
+												class="ui-panelgrid-content ui-widget-content ui-grid ui-grid-responsive">
+												<!--Upload a photo-->
+												<div class="ui-grid-row">
+													<div class="iw2-center-block"
+														 style="text-align: center !important;">
+														<p:outputPanel>
+															<p:graphicImage style="height: 65px;"
+																			rendered="#{!profileController.user.pictureSet}"
+																			url="/resources/img/avatar.png"/>
+															<p:graphicImage cache="false" style="height: 65px;"
+																			rendered="#{profileController.user.pictureSet}"
+																			value="#{fileController.avatar}">
+																<f:param name="user"
+																		 value="#{profileController.userId}"/>
+															</p:graphicImage>
+															<br/>
+															<p:fileUpload value="#{profileController.avatarFile}"
+																		  update=":templateForm:profilAvatar"
+																		  dragDropSupport="true"
+																		  sizeLimit="512000"
+																		  mode="simple"
+																		  skinSimple="true"
+																		  fileLimit="1"
+																		  allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+																		  label="Choisir une photo"/>
+														</p:outputPanel>
+													</div>
+												</div>
+												<!--Identifiant-->
+												<div class="ui-grid-row">
+													<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+														<p:outputLabel
+															style="font-size: medium !important; margin: 5px;"
+															value="#{msg['iw.utilisateur.identifiant']}"/>
+														<p:outputLabel value=" *" class="Red"/>
+														<p:inputText disabled="#{not empty profileController.userId}"
+																	 value="#{profileController.user.id}"
+																	 required="true"
+																	 label="#{msg['iw.utilisateur.identifiant']}"/>
+													</div>
+												</div>
+												<!-- Matricule -->
+												<div class="ui-grid-row">
+													<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+														<p:outputLabel
+															style="font-size: medium !important; margin: 5px;"
+															value="Matricule"/>
+														<p:inputText disabled="#{not empty profileController.userId}"
+																	 value="#{profileController.collaborateur.matricule}"
+																	 required="true"
+																	 label="Matricule"/>
+													</div>
+												</div>
+												<!--Nom-->
+												<div class="ui-grid-row">
+													<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+														<p:outputLabel
+															style="font-size: medium !important; margin: 5px;"
+															value="#{msg['iw.utilisateur.nom']}"/>
+														<p:inputText value="#{profileController.user.lastName}"
+																	 label="#{msg['iw.utilisateur.nom']}"/>
+													</div>
+												</div>
+												<!--Prénom-->
+												<div class="ui-grid-row">
+													<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+														<p:outputLabel
+															style="font-size: medium !important; margin: 5px;"
+															value="#{msg['iw.utilisateur.prenom']}"/>
+														<p:inputText value="#{profileController.user.firstName}"
+																	 label="#{msg['iw.utilisateur.prenom']}"/>
+													</div>
+												</div>
+												<!--TimeZone-->
+												<div class="ui-grid-row">
+													<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+														<p:outputLabel
+															style="font-size: medium !important; margin: 5px;"
+															value="#{msg['iw.utilisateur.timezone']}"/>
+														<p:selectOneMenu
+															value="#{profileController.iwUserDetails.iwTimeZone}">
+															<f:selectItems
+																value="#{profileController.getTimeZoneList().iwListOptionsList}"
+																var="timezone"
+																itemValue="#{timezone.iwName}"
+																itemLabel="#{timezone.iwName}"/>
+														</p:selectOneMenu>
+													</div>
+												</div>
+												<!-- date Naissance -->
+												<div class="ui-grid-row">
+													<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+														<p:outputLabel
+															style="font-size: medium !important; margin: 5px;"
+															value="Date Naissance"/>
+														<p:calendar label="Date Naissance" value="#{profileController.collaborateur.dateNaissance}"/>
+													</div>
+												</div>
+												<!-- lieu Naissance -->
+												<div class="ui-grid-row">
+													<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+														<p:outputLabel
+															style="font-size: medium !important; margin: 5px;"
+															value="Lieu Naissance"/>
+														<p:inputText
+															value="#{profileController.collaborateur.lieuNaissance}"
+															label="Lieu Naissance"/>
+													</div>
+												</div>
+
+												<!--Adresse-->
+												<div class="ui-grid-row">
+													<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+														<p:outputLabel
+															style="font-size: medium !important; margin: 5px;"
+															value="Adresse"/>
+														<p:inputText
+															value="#{profileController.collaborateur.adresse}"
+															label="Adresse"/>
+													</div>
+												</div>
+												<!--Email-->
+												<div class="ui-grid-row">
+													<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+														<p:outputLabel
+															style="font-size: medium !important; margin: 5px;"
+															value="#{msg['iw.utilisateur.email']}"/>
+														<p:outputLabel value=" *" class="Red"/>
+														<p:inputText required="true"
+																	 value="#{profileController.user.email}"
+																	 validatorMessage="#{msg['iw.input.emailvalidationerror']}"
+																	 label="#{msg['iw.utilisateur.email']}">
+															<f:validateRegex
+																pattern="#{navigationController.emailRegExp}"/>
+														</p:inputText>
+													</div>
+												</div>
+												<!--Phone-->
+												<div class="ui-grid-row">
+													<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+														<p:outputLabel
+															style="font-size: medium !important; margin: 5px;"
+															value="Phone"/>
+														<p:inputMask
+															value="#{profileController.collaborateur.telephone}"
+															label="Phone" mask="(+999) 999-999-999"/>
+													</div>
+												</div>
+
+												<!-- Niveau Etude -->
+												<div class="ui-grid-row">
+													<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+														<p:outputLabel
+															style="font-size: medium !important; margin: 5px;"
+															value="Niveau d’étude "/>
+														<p:inputText
+															value="#{profileController.collaborateur.niveauEtude}"
+															label="Niveau d’étude "/>
+													</div>
+												</div>
+
+												<!-- RIB -->
+												<div class="ui-grid-row">
+													<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+														<p:outputLabel
+															style="font-size: medium !important; margin: 5px;"
+															value="RIB"/>
+														<p:inputText
+															value="#{profileController.collaborateur.rib}"
+															label="RIB"/>
+													</div>
+												</div>
+
+												<!-- Numéro de passeport  -->
+												<div class="ui-grid-row">
+													<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+														<p:outputLabel
+															style="font-size: medium !important; margin: 5px;"
+															value="Numéro de passeport "/>
+														<p:inputText
+															value="#{profileController.collaborateur.numPassport}"
+															label="Numéro de passeport "/>
+													</div>
+												</div>
+
+
+
+
+												<!--Validation-->
+												<div class="ui-grid-row" style="margin-top: 30px !important;">
+													<div class="ui-grid-col-3 iw2-center-block">
+														<p:commandButton action="#{profileController.saveProfil()}"
+																		 value="Modifier" ajax="false"/>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</p:tab>
+								<p:tab title="#{msg['iw.collab.poste']}">
+									<p:fieldset legend="Date de recrutement" toggleable="true" toggleSpeed="500" style="margin-bottom:20px">
+										<h:panelGrid columns="1" cellpadding="5" styleClass="iw2-center-block">
+											<h:outputText value="#{profileController.collaborateur.dateEmbauche}"/>
+										</h:panelGrid>
+									</p:fieldset>
+									<p:fieldset legend="#{msg['iw.collab.poste']}" toggleable="true" toggleSpeed="500" style="margin-bottom:20px">
+										<h:panelGrid columns="5" cellpadding="5" styleClass="iw2-center-block">
+											<p:outputLabel for="dd" value="Date Début : "/>
+											<p:outputLabel id="dd" value="#{profileController.posteOccupe.dateDebut}"/>
+											<p:separator style="width: 20px;"/>
+
+											<p:outputLabel for="po" value="#{msg['iw.collab.poste']} : "/>
+											<p:outputLabel id="po"  value="#{profileController.posteOccupe.description}"/>
+
+
+											<p:outputLabel  value="Contrat : "/>
+											<p:spacer width="20"/>
+											<p:spacer width="20"/>
+											<ui:repeat var="ot"
+													   value="#{profileController.collaborateur.contrat.iwFileList}">
+												<div>
+													<p:commandButton process="@this" value="#{ot.iwName}"
+																	 icon="fa fa-download"
+																	 ajax="false">
+														<p:fileDownload
+															value="#{collaboratorController.downloadFile(ot)}"
+															contentDisposition="attachment" transient="true">
+
+														</p:fileDownload>
+													</p:commandButton>
+												</div>
+											</ui:repeat>
+											<p:spacer width="20"/>
+										</h:panelGrid>
+										<h:panelGrid columns="2" cellpadding="5" styleClass="iw2-center-block">
+
+											<p:outputLabel for="classIntern" value="Classification Interne:"/>
+											<p:inputTextarea readonly="true" rows="6"  cols="49" id="classIntern" value="#{profileController.collaborateur.classificationInterne}" />
+										</h:panelGrid>
+
+									</p:fieldset>
+									<p:fieldset legend="Promese Embauche" toggleable="true" toggleSpeed="500" style="margin-bottom:20px">
+
+										<h:panelGrid columns="1" cellpadding="5" styleClass="iw2-center-block">
+											<ui:repeat var="ot"
+													   value="#{profileController.collaborateur.promesseEmbauche.iwFileList}">
+												<div>
+													<p:commandButton process="@this" value="#{ot.iwName}"
+																	 icon="fa fa-download"
+																	 ajax="false">
+														<p:fileDownload
+															value="#{collaboratorController.downloadFile(ot)}"
+															contentDisposition="attachment" transient="true">
+
+														</p:fileDownload>
+													</p:commandButton>
+												</div>
+											</ui:repeat>
+										</h:panelGrid>
+									</p:fieldset>
+									<p:fieldset legend="Fiche de Poste" toggleable="true" toggleSpeed="500" style="margin-bottom:20px">
+										<h:panelGrid columns="1" cellpadding="5" styleClass="iw2-center-block">
+
+											<ui:repeat var="ot"
+													   value="#{profileController.collaborateur.fichePoste.iwFileList}">
+												<div>
+													<p:commandButton process="@this" value="#{ot.iwName}"
+																	 icon="fa fa-download"
+																	 ajax="false">
+														<p:fileDownload
+															value="#{collaboratorController.downloadFile(ot)}"
+															contentDisposition="attachment" transient="true">
+
+														</p:fileDownload>
+													</p:commandButton>
+												</div>
+											</ui:repeat>
+										</h:panelGrid>
+									</p:fieldset>
+								</p:tab>
+								<p:tab title="#{msg['iw.collab.evolution']}">
+									<p:dataTable id="posteTemplate" rowIndexVar="rowId" var="poste"
+												 value="#{profileController.evolutions}" styleClass="entityList">
+
+										<p:column headerText="Description" width="100">
+											<p:outputLabel label="#{poste.description}" value="#{poste.description}"/>
+
+										</p:column>
+										<p:column headerText="Date Debut" width="100">
+											<p:outputLabel value="#{poste.dateDebut}"/>
+										</p:column>
+										<p:column headerText="Date Fin" width="100">
+											<p:outputLabel value="#{poste.dateFin}"/>
+										</p:column>
+									</p:dataTable>
+								</p:tab>
+
+								<p:tab title="#{msg['iw.collab.formation']}">
+									<p:dataTable id="formationTemplate" rowIndexVar="rowId" var="formation"
+												 value="#{profileController.formations}" styleClass="entityList">
+
+										<p:column headerText="Intitulé" width="100">
+											<p:outputLabel value="#{formation.intituleFormation}"/>
+										</p:column>
+
+										<p:column headerText="Objectif" width="150">
+											<p:outputLabel value="#{formation.objectifFormation}"/>
+
+										</p:column>
+
+										<p:column headerText="Date Formation" width="100">
+											<p:outputLabel value="#{formation.dateFormation}"/>
+										</p:column>
+
+										<p:column headerText="Attestation" style="text-align: center" width="100">
+											<ui:repeat var="ot"
+													   value="#{formation.attestation.iwFileList}">
+												<div>
+													<p:commandButton process="@this" value="#{ot.iwName}"
+																	 icon="fa fa-download"
+																	 ajax="false">
+														<p:fileDownload
+															value="#{collaboratorController.downloadFile(ot)}"
+															contentDisposition="attachment" transient="true">
+
+														</p:fileDownload>
+													</p:commandButton>
+												</div>
+											</ui:repeat>
+										</p:column>
+
+									</p:dataTable>
+								</p:tab>
+							</p:tabView>
+						</h:form>
+					</p:panel>
+				</div>
+			</div>
+		</div>
+		<style type="text/css">
+
+		.iw2-center-block td{
+			vertical-align: top;
+		}
+		</style>
+	</ui:define>
+</ui:composition>

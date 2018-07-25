@@ -1,0 +1,35 @@
+# Project files
+src/main/frontend/node_modules/
+src/main/frontend/vendors/
+src/main/resources/db.properties
+src/main/resources/log4j.properties
+src/main/resources/flyway.properties
+src/main/webapp/META-INF/MANIFEST.MF
+UPLOADED_FILES/
+
+# Maven
+log/
+target/
+
+# NetBeans specific
+nbproject/
+build/
+nbbuild/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+faces-config.NavData
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# ci
+ci/
+.gitlab-ci.yml

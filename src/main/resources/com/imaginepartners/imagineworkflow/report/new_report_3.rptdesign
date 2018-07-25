@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.5.0.v201506092134 Build &lt;@BUILD@></property>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <data-sources>
+        <script-data-source name="Data Source" id="4">
+            <method name="beforeOpen"><![CDATA[commands = java.util.Arrays.asList("1","2","3");
+count = 0;]]></method>
+        </script-data-source>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="Data Set" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">col1</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">col2</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">col1</property>
+                    <text-property name="displayName">COL1</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">col2</property>
+                    <text-property name="displayName">COL2</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">col1</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">col2</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <method name="fetch"><![CDATA[if(count < commands.size()){
+  row["col1"] = commands[count];
+  row["col2"] =  commands[count];
+  java.lang.System.out.println("col2 --- "+commands[count]);
+  count++;
+  return true;
+}
+return false;]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <page-footer>
+                <text id="3">
+                    <property name="contentType">html</property>
+                    <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
+                </text>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="54">
+            <property name="dataSet">Data Set</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">col1</property>
+                    <text-property name="displayName">COL1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["col1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">col2</property>
+                    <text-property name="displayName">COL2</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["col2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="68"/>
+            <column id="69"/>
+            <header>
+                <row id="55">
+                    <cell id="56">
+                        <label id="57">
+                            <text-property name="text">COL1</text-property>
+                        </label>
+                    </cell>
+                    <cell id="58">
+                        <label id="59">
+                            <text-property name="text">COL2</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="60">
+                    <cell id="61">
+                        <data id="62">
+                            <property name="resultSetColumn">col1</property>
+                        </data>
+                    </cell>
+                    <cell id="63">
+                        <data id="64">
+                            <property name="resultSetColumn">col2</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="65">
+                    <cell id="66"/>
+                    <cell id="67"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

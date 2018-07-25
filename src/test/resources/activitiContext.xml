@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jee="http://www.springframework.org/schema/jee" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+    <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+        <property name="dataSource" ref="dataSource" />
+        <property name="transactionManager" ref="transactionManager" />
+        <property name="databaseSchemaUpdate" value="true" />
+        <property name="jobExecutorActivate" value="false" />
+        <property name="enableDatabaseEventLogging" value="true" />
+        <property name="deploymentResources" value="classpath*:com/imaginepartners/imagineworkflow/activiti/bpmn/autodeployment/*" />
+
+        <property name="jpaHandleTransaction" value="true" />
+        <property name="jpaCloseEntityManager" value="true" />
+
+        <property name="customFormTypes">
+            <list>
+                <bean class="com.imaginepartners.imagineworkflow.form.activiti.TextFormType" />
+                <bean class="com.imaginepartners.imagineworkflow.form.activiti.MoneyFormType" />
+                <bean class="com.imaginepartners.imagineworkflow.form.activiti.TextAreaFormType" />
+            </list>
+        </property>
+
+        <property name="mailServerHost" value="smtp.gmail.com" />
+        <property name="mailServerPort" value="587" />
+        <property name="mailServerDefaultFrom" value="mailsender@imaginepartners.com" />
+        <property name="mailServerUsername" value="mailsender@imaginepartners.com" />
+        <property name="mailServerPassword" value="mailsender2013" />
+        <property name="mailServerUseSSL" value="false" />
+        <property name="mailServerUseTLS" value="true" />
+    </bean>
+
+    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean" destroy-method="destroy">
+        <property name="processEngineConfiguration" ref="processEngineConfiguration" />
+    </bean>
+
+    <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService" />
+    <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" />
+    <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" />
+    <bean id="formService" factory-bean="processEngine" factory-method="getFormService" />
+    <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" />
+    <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />
+    <bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService" />
+    <bean id="dynamicBpmnService" factory-bean="processEngine" factory-method="getDynamicBpmnService" />
+
+</beans>

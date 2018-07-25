@@ -1,0 +1,204 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+	#{taskController.registerTemplate('formationController','FormationController',fn:split('formationsList',',') )}
+
+	<div class="Container100 Responsive100">
+
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+				<div class="Card ShadowEffect">
+					<h:form id="f">
+
+						<p:dataTable id="variablesTemplate" rowIndexVar="rowId" var="formation"
+									 value="#{formationController.formationsList}" styleClass="entityList"
+									 rowStyleClass="#{formationController.ShowOrHideRowByCollaborator(formation)}">
+
+							<f:facet name="header">
+								<div class="ui-grid-row">
+									<div class="ui-grid-col center">
+										<p:commandButton style="width: 225px"
+														 actionListener="#{formationController.addFormation}"
+														 value="Ajouter une demande formation"
+														 ajax="true"
+														 label="Ajouter une demande formation"
+														 update="variablesTemplate"
+														 icon="ui-icon-plusthick"
+														 disabled="#{formationController.checkTask(1,formationController.taskNumber) ==false}"
+										>
+										</p:commandButton>
+									</div>
+								</div>
+							</f:facet>
+
+
+							<p:column width="4%">
+								<p:commandButton
+									actionListener="#{formationController.deleteFormation(rowId)}"
+									update="variablesTemplate"
+									icon="fa fa-times"
+									title="Delete"
+									disabled="#{formationController.checkTask(1,formationController.taskNumber) ==false}"
+								>
+								</p:commandButton>
+							</p:column>
+
+							<p:column headerText="Intitulé" width="100">
+								<p:inputText label="#{formation.intituleFormation}"
+											 value="#{formation.intituleFormation}"
+											 disabled="#{formationController.checkTask(1,formationController.taskNumber) ==false}">
+								</p:inputText>
+							</p:column>
+
+							<p:column headerText="Période Souhaitée" width="150">
+								<p:inputText label="#{formation.periodeFormation}"
+											 value="#{formation.periodeFormation}"
+											 disabled="#{formationController.checkTask(1,formationController.taskNumber) ==false}">
+								</p:inputText>
+							</p:column>
+
+							<p:column headerText="Objectif" width="150">
+								<!--<p:inputText label="#{formation.objectifFormation}"
+											 value="#{formation.objectifFormation}"
+											 disabled="#{formationController.checkTask(1,formationController.taskNumber) ==false}">
+								</p:inputText>-->
+								<p:inputTextarea label="#{formation.objectifFormation}"
+												 value="#{formation.objectifFormation}"
+												 disabled="#{formationController.checkTask(1,formationController.taskNumber) ==false}">
+								</p:inputTextarea>
+							</p:column>
+
+							<p:column headerText="Collaborateur" width="150">
+								<p:inputText label="#{formation.collaborateur}"
+											 value="#{formation.collaborateur}"
+											 disabled="true"
+											 rendered="#{formationController.checkTask(1,formationController.taskNumber)==false}">
+								</p:inputText>
+								<p:selectOneMenu label="#{formation.collaborateur}" value="#{formation.collaborateur}"
+												 panelStyle="width:180px" effect="fade" var="co" style="width:160px"
+												 rendered="#{formationController.checkTask(1,formationController.taskNumber)}">
+
+									<f:selectItem itemLabel="Sélectionnez Collaborateur" itemValue="" noSelectionOption="true" />
+									<f:selectItems value="#{formationController.collaborateurs}" var="collab"
+												   itemLabel="#{collab.firstName.concat(' ').concat(collab.lastName)}"
+												   itemValue="#{collab.id}"/>
+									<p:column>
+										<h:outputText value="#{co.firstName.concat(' ').concat(co.lastName)}"/>
+									</p:column>
+								</p:selectOneMenu>
+							</p:column>
+
+							<p:column headerText="Validation" styleClass="line_wrap center-item"
+									  style="text-align: center" width="100">
+								<p:selectBooleanCheckbox value="#{formation.rejected}"
+														 disabled="#{formationController.checkTask(3,formationController.taskNumber) ==false}">
+									<p:ajax listener="#{formationController.updateFormationValidation(formation)}"/>
+								</p:selectBooleanCheckbox>
+							</p:column>
+
+							<p:column headerText="Date Formation" width="100">
+								<p:calendar value="#{formation.dateFormation}" mode="Popup"
+											disabled="#{formationController.checkTask(4,formationController.taskNumber) ==false  and formationController.checkTask(8,formationController.taskNumber) ==false}"/>
+											<!--disabled="#{formationController.checkTask(4,formationController.taskNumber) ==false
+											and formationController.checkTask(8,formationController.taskNumber) ==false}"-->
+							</p:column>
+
+							<p:column headerText="Attestation" style="text-align: center" width="100">
+								<p:commandButton
+									actionListener="#{formationController.selectCurrentObj(rowId,1)}"
+									ajax="true"
+									update="@(.cvDialog)"
+									oncomplete="PF('cvDialog').show()"
+									process="@this"
+									icon="fa fa-eye"
+									disabled="#{(formationController.greaterThan(5,formationController.taskNumber) ==true) or formationController.taskIsT08}">
+								</p:commandButton>
+							</p:column>
+
+							<p:column headerText="Evaluation à chaud" width="100">
+								<p:spinner id="minMax" value="#{formation.evalChaud}" min="0" max="10"
+										   disabled="#{formationController.checkTask(6,formationController.taskNumber) ==false}"/>
+							</p:column>
+							<p:column headerText="Attestation à chaud" style="text-align: center" width="100">
+								<p:commandButton
+									actionListener="#{formationController.selectCurrentObj(rowId,2)}"
+									ajax="true"
+									update="@(.cvDialog)"
+									oncomplete="PF('cvDialog').show()"
+									process="@this"
+									icon="fa fa-eye"
+									disabled="#{formationController.greaterThan(6,formationController.taskNumber) ==true}">
+								</p:commandButton>
+							</p:column>
+
+							<p:column headerText="Evaluation à froid" width="100">
+								<!--<p:selectOneMenu value="#{formation.evalFroid}"
+												 disabled="#{formationController.checkTask(7,formationController.taskNumber) ==false}">
+									<f:selectItem itemValue="Insuffisant" itemLabel="Insuffisant"/>
+									<f:selectItem itemValue="Moyen" itemLabel="Moyen"/>
+									<f:selectItem itemValue="Bon" itemLabel="Bon"/>
+									<f:selectItem itemValue="Excellent" itemLabel="Excellent"/>
+								</p:selectOneMenu>-->
+									<p:spinner id="minMaxfroid" value="#{formation.evalFroid}" min="0" max="10"
+											   disabled="#{formationController.checkTask(7,formationController.taskNumber) ==false}" /><!--converter=""-->
+
+							</p:column>
+							<p:column headerText="Attestation à froid" style="text-align: center" width="100">
+								<p:commandButton
+									actionListener="#{formationController.selectCurrentObj(rowId,3)}"
+									ajax="true"
+									update="@(.cvDialog)"
+									oncomplete="PF('cvDialog').show()"
+									process="@this"
+									icon="fa fa-eye"
+									disabled="#{formationController.greaterThan(7,formationController.taskNumber) ==true}">
+								</p:commandButton>
+							</p:column>
+
+						</p:dataTable>
+
+
+
+						<p:dialog id="cvDialog" widgetVar="cvDialog" styleClass="cvDialog" closable="true"
+								  draggable="true" closeOnEscape="true" dynamic="true"
+								  height="200" width="800" maximizable="false" modal="true"
+								  resizable="false" showEffect="fold" responsive="true">
+							<p:fieldset id="upload" widgetVar="upload" styleClass="upload">
+								<p:fileUpload
+									fileUploadListener="#{formationController.handleUploadedFile}"
+									mode="advanced"
+									fileLimit="1"
+									update="upload"/>
+
+								<ui:repeat var="ot" value="#{formationController.currentAttestation.iwFileList}">
+									<div>
+										<p:commandButton process="@this" value="#{ot.iwName}" icon="fa fa-download"
+														 ajax="false">
+											<p:fileDownload value="#{formationController.downloadFile(ot)}"
+															contentDisposition="attachment" transient="true">
+
+											</p:fileDownload>
+										</p:commandButton>
+										<p:commandButton process="@this" action="#{formationController.removeFile()}"
+														 value="#{msg['iw.button.supprimer']}" icon="fa fa-remove "
+														 ajax="true" update="@(.upload)"/>
+									</div>
+								</ui:repeat>
+							</p:fieldset>
+						</p:dialog>
+
+					</h:form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</ui:composition>

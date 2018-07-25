@@ -1,0 +1,146 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/modena"
+	xmlns:sec="http://www.springframework.org/security/tags">
+	<div class="Animated05" id="layout-menu-cover">
+		<h:form id="menuform">
+			<pm:menu>
+				<p:submenu label="#{msg['iw.taches']}" icon="fa fa-tasks">
+					<p:menuitem value="#{msg['iw.mestaches']}" icon="fa fa-inbox" outcome="taskList" />
+					<p:menuitem value="#{msg['iw.tacheimplique']}" icon="fa fa-street-view" outcome="taskList" rendered="#{navigationController.displayInvolvedTasks}" >
+						<f:param name="view" value="involved" />
+					</p:menuitem>
+					<p:menuitem value="#{msg['iw.tacherecuperable']}" icon="fa fa-cart-plus" outcome="taskList">
+						<f:param name="view" value="queue" />
+					</p:menuitem>
+					<sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN')">
+						<p:menuitem value="#{msg['iw.standalonetask.tacheautonome']}" icon="fa fa-street-view" outcome="standaloneTaskList"></p:menuitem>
+					</sec:authorize>
+					<p:menuitem value="#{msg['iw.tachearchive']}" icon="fa fa-archive" outcome="taskList" rendered="#{navigationController.displayCompletedTasks}">
+						<f:param name="view" value="archive" />
+					</p:menuitem>
+					<sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN')">
+						<p:menuitem value="#{msg['iw.standalonetask.taskautonomecompletee']}" icon="fa fa-archive" outcome="standaloneTaskList" >
+							<f:param name="archive" value="true" />
+						</p:menuitem>
+					</sec:authorize>
+				</p:submenu>
+				<p:submenu label="#{msg['iw.instances']}" icon="fa fa-copy">
+					<p:menuitem value="#{msg['iw.instancescours']}" outcome="procInstanceList" icon="fa fa-inbox" />
+					<p:menuitem value="#{msg['iw.instancescomplete']}" outcome="procInstanceCompletedList" icon="fa fa-archive" />
+				</p:submenu>
+				<sec:authorize access="hasAnyRole('ROLE_SUPER_ADMIN')">
+					<p:menuitem value="#{msg['iw.definitions']}" icon="fa fa-clipboard" outcome="processDefinitionList" />
+					<p:menuitem value="#{msg['iw.modeles']}" icon="fa fa-pencil-square-o" outcome="modeleList" />
+					<p:menuitem value="#{msg['iw.formulaires']}" icon="fa fa-list-alt" outcome="formList" />
+				</sec:authorize >
+				<p:submenu label="#{msg['iw.agenda']}" icon="fa fa-calendar">
+					<p:menuitem value="#{msg['iw.agenda']}" icon="fa fa-calendar" outcome="agenda" />
+					<p:menuitem value="#{msg['iw.location']}" icon="fa fa-car" outcome="location"  rendered="#{navigationController.showAgendaReservation}"/>
+				</p:submenu>
+
+				<sec:authorize access="hasAnyRole('ROLE_DRH')">
+					<p:menuitem value="#{msg['iw.employes']}" icon="fa fa-employee" outcome="employees" />
+				</sec:authorize>
+
+
+				<sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN')">
+					<p:submenu label="#{msg['iw.document.generer']}" icon="fa fa-file-word-o">
+						<p:menuitem value="#{msg['iw.document.edit']}" outcome="document_edit" icon="fa fa-text-height" />
+						<p:menuitem value="#{msg['iw.template.manage']}" outcome="template_manage" icon="fa fa-cog"  />
+					</p:submenu>
+				</sec:authorize>
+				<p:submenu label="#{msg['iw.tableaubord']}" icon="fa fa-dashboard">
+					<p:menuitem value="#{msg['iw.rapports']}" icon="fa fa-pie-chart" outcome="dashBoard" />
+					<p:menuitem value="#{msg['iw.dashboard.collaborators']}" icon="fa fa-pie-chart" outcome="dashBoardCollaborators" />
+					<p:menuitem value="#{msg['iw.dashboard.achats']}" icon="fa fa-pie-chart" outcome="dashBoardAchats" />
+					<p:menuitem value="#{msg['iw.dashboard.achatsHS']}" icon="fa fa-pie-chart" outcome="dashBoardAchatsHS" />
+					<p:menuitem value="#{msg['iw.dashboard.achatsConv']}" icon="fa fa-pie-chart" outcome="dashBoardAchatsConv" />
+				</p:submenu>
+				<p:menuitem value="#{msg['iw.manuel.utilistation.download']}" icon="fa-file-word-o" outcome="downloadManuel" />
+				<sec:authorize access="hasAnyRole('ROLE_SUPER_ADMIN')">
+					<p:menuitem value="#{msg['iw.droit.fonctions']}" icon="fa fa-magic" outcome="listfonction" />
+				</sec:authorize>
+
+				<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+					<p:menuitem value="#{msg['iw.applications']}" icon="fa fa-th" outcome="applicationList" />
+				</sec:authorize>
+				<p:submenu rendered="#{sec:areAnyGranted('ROLE_ADMIN,ROLE_SUPER_ADMIN')}" label="#{msg['iw.administration']}" icon="fa fa-gear">
+					<p:submenu label="#{msg['iw.utilisateurs']}" icon="fa fa-user">
+						<p:menuitem value="#{msg['iw.listeutilisateurs']}" outcome="userList" icon="fa fa-list-ul" />
+						<p:menuitem value="#{msg['iw.ajouterutilisateur']}" outcome="userForm" icon="fa fa-plus" />
+					</p:submenu>
+					<p:submenu label="#{msg['iw.groups']}" icon="fa fa-group">
+						<p:menuitem value="#{msg['iw.listegroups']}" outcome="groupList" icon="fa fa-list-ul" />
+						<p:menuitem value="#{msg['iw.ajoutergroup']}" outcome="groupForm" icon="fa fa-plus" />
+						<p:menuitem value="#{msg['iw.group.hierarchie.departement']}" outcome="organigramme" icon="fa fa-street-view" />
+					</p:submenu>
+					<p:submenu label="#{msg['iw.hierarchie']}" icon="fa fa-sitemap">
+						<p:menuitem value="#{msg['iw.listehierarchie']}" outcome="hierarchygroupList" icon="fa fa-list-ul">
+						</p:menuitem>
+						<p:menuitem value="#{msg['iw.ajouterhierarchie']}" outcome="hierarchygroupForm" icon="fa fa-plus">
+						</p:menuitem>
+					</p:submenu>
+					<p:submenu label="#{msg['iw.tache.exploiter']}" icon="fa fa-eyedropper" >
+						<p:menuitem value="#{msg['iw.tache.manage']}" outcome="manageTask" icon="fa fa-database" />
+					</p:submenu>
+					<p:submenu label="#{msg['iw.general.import']}" icon="fa fa-download" >
+						<p:menuitem value="#{msg['iw.tree.aller.vers']}" outcome="treeConfig" icon="fa fa-cog" />
+						<p:menuitem value="#{msg['iw.charger.ficher.excel']}" outcome="chargerExcel" icon="fa fa-table" />
+					</p:submenu>
+					<sec:authorize access="hasAnyRole('ROLE_SUPER_ADMIN')">
+						<p:menuitem value="#{msg['iw.droits']}" icon="fa fa-lock" outcome="rightForm" >
+						</p:menuitem>
+					</sec:authorize>
+					<sec:authorize access="hasAnyRole('ROLE_SUPER_ADMIN')">
+						<p:menuitem value="#{msg['iw.manuel.utilistation.upload']}" icon="fa-file-word-o" outcome="userManual" >
+						</p:menuitem>
+					</sec:authorize>
+					<sec:authorize access="hasAnyRole('ROLE_SUPER_ADMIN')">
+					<p:submenu label="#{msg['iw.entity']}" icon="fa fa-cubes">
+						<p:menuitem value="#{msg['iw.entity.list']}" outcome="entityList" icon="fa fa-list" />
+						<p:menuitem value="#{msg['iw.entity.manager']}" outcome="entityManager" icon="fa fa-database" />
+					</p:submenu>
+					</sec:authorize>
+					<p:submenu label="#{msg['iw.avancement']}" icon="fa fa-rocket" >
+						<p:menuitem value="#{msg['iw.avancementsimple']}" outcome="progressSimple" icon="fa fa-play">
+						</p:menuitem>
+						<p:menuitem value="#{msg['iw.avencement.avancementphase']}" outcome="progressPhase" icon="fa fa-puzzle-piece">
+						</p:menuitem>
+					</p:submenu>
+					<sec:authorize access="hasAnyRole('ROLE_SUPER_ADMIN')">
+						<p:submenu label="#{msg['iw.licence']}" icon="fa fa-key" >
+							<p:menuitem value="#{msg['iw.listelicence']}" outcome="licenseList" icon="fa fa-list-ul" />
+							<p:menuitem value="#{msg['iw.ajouterlicence']}" outcome="licenseUpload" icon="fa fa-plus" />
+							<ui:remove>
+								<sec:authorize access="hasAnyRole('ROLE_SUPER_ADMIN')">
+									<p:menuitem value="#{msg['iw.genererlicense']}" outcome="licenseForm" icon="fa fa-certificate" />
+								</sec:authorize>
+							</ui:remove>
+						</p:submenu>
+					</sec:authorize>
+					<p:submenu label="Notifications" icon="fa fa-user">
+						<p:menuitem value="Liste Notifications" outcome="notificationList" icon="fa fa-list-alt" />
+						<p:menuitem value="Ajout Notification" outcome="notificationForm" icon="fa fa-plus" />
+					</p:submenu>
+					<p:submenu label="#{msg['iw.avance']}" icon="fa fa-puzzle-piece">
+						<sec:authorize access="hasAnyRole('ROLE_SUPER_ADMIN')">
+							<p:menuitem value="#{msg['iw.avance.cartouche.cartouchegenerale']}" outcome="cartridgeList" icon="fa fa-list-alt" >
+								<f:param name="type" value="Cartouche" />
+							</p:menuitem>
+							<p:menuitem value="#{msg['iw.avance.cartouche.colonnegenerale']}" outcome="cartridgeList" icon="fa fa-list-alt" >
+								<f:param name="type" value="Colonne" />
+							</p:menuitem>
+						</sec:authorize>
+						<p:menuitem value="#{msg['iw.list.titreMenu']}" outcome="listes" icon="fa fa-list-ol" />
+						<p:menuitem value="#{msg['iw.configuration']}" outcome="configForm" icon="fa fa-sliders"/>
+					</p:submenu>
+				</p:submenu>
+			</pm:menu>
+		</h:form>
+	</div>
+</ui:composition>

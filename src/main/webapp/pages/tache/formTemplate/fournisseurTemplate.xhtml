@@ -1,0 +1,308 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<f:verbatim>
+		<style type="text/css">
+			.ui-widget-content a{
+				color: #0288D1;
+			}
+		</style>
+	</f:verbatim>
+	#{taskController.registerTemplate('fournisseurTemplate','FournisseurTemplate',fn:split('fournisseurList,fournisseurListHash',',') )}
+	<p:remoteCommand name="onRowEdit" update="@(.fournisseurList)" />
+	<p:dataTable styleClass="arp-datatable fournisseurList"
+				 id="fournisseurList"
+				 var="fournisseur"
+				 value="#{fournisseurTemplate.fournisseurListHash}"
+				 resizableColumns="true"
+				 scrollable="true"
+				 rowIndexVar="rowIndex"
+				 editable="true"
+				 rendered="#{fournisseurTemplate.metierAcheteurRole}"
+	>
+		<!--
+		-->
+		<f:facet name="header">
+			<div class="ui-grid-row">
+				<div class="ui-grid-col-6">
+					<p:commandButton style="width: 185px"
+									 actionListener = "#{fournisseurTemplate.updateStatus('import')}"
+									 value			= "Ajouter un fournisseur"
+									 ajax  			= "true"
+									 label			= "Ajouter un Fournisseur"
+									 oncomplete		= "PF('fournisseurAutoSuggestDialog').show()"
+									 update			= "@(.fournisseurAutoSuggestDialog)"
+									 rendered		= "#{fournisseurTemplate.acheteurRole}"
+									 process 		= "@this"
+									 icon			="ui-icon-plusthick"
+									 disabled="#{!formWrapper.value.isWritable}">
+					</p:commandButton>
+				</div>
+				<div class="ui-grid-col-6">
+					<p:commandButton style="width: 185px"
+									 actionListener = "#{fournisseurTemplate.updateStatus('create')}"
+									 value			= "Créer un fournisseur"
+									 ajax  			= "true"
+									 label			= "Créer un nouveau Fournisseur"
+									 oncomplete		= "PF('fournisseurDialog').show()"
+									 update			= "@(.fournisseurDialog)"
+									 rendered 		= "#{fournisseurTemplate.acheteurRole}"
+									 process 		= "@this"
+									 icon			="ui-icon-plusthick"
+									 disabled="#{!formWrapper.value.isWritable}">
+					</p:commandButton>
+				</div>
+			</div>
+		</f:facet>
+		<p:ajax
+			event		= "rowEdit"
+			listener	= "#{fournisseurTemplate.onRowCancel}"
+			process		= "@(.fournisseurList)"
+			oncomplete	= "onRowEdit()"
+		/>
+		<p:column headerText="Raison Social" styleClass="line_wrap" width="5%" rendered="#{fournisseurTemplate.acheteurRole}">
+			<h:outputText value="${fournisseur.get('fournisseur').raisonSocial}"/>
+		</p:column>
+		<p:column headerText="Alias" styleClass="line_wrap" width="5%">
+			<h:outputText value="${fournisseur.get('fournisseur').alias}"/>
+		</p:column>
+		<p:column headerText="Email" styleClass="line_wrap" width="65" rendered="#{fournisseurTemplate.acheteurRole}">
+			<h:outputText value="${fournisseur.get('fournisseur').email}"/>
+		</p:column>
+		<p:column headerText="TEL" styleClass="line_wrap" width="4%"  rendered="#{fournisseurTemplate.acheteurRole}">
+			<h:outputText value="${fournisseur.get('fournisseur').tel}"/>
+		</p:column>
+
+		<p:column headerText="Fiche téchnique" styleClass="line_wrap" width="65"  rendered="#{fournisseurTemplate.acheteurRole}">
+			<ui:repeat var="ot" value="#{fournisseur.get('fournisseur').offreTechnique.iwFileList}">
+				<!--<a href="#{ot.iwPath}">#{ot.iwName}</a>-->
+				<p:commandLink  value="#{ot.iwName}" ajax="false"  >
+					<p:fileDownload   value="#{fournisseurTemplate.downloadFile(ot)}" >
+					</p:fileDownload>
+				</p:commandLink>
+			</ui:repeat>
+
+
+		</p:column >
+		<p:column headerText="Fiche Financière" styleClass="line_wrap" width="65"  rendered="#{fournisseurTemplate.acheteurRole}">
+			<ui:repeat var="of" value="#{fournisseur.get('fournisseur').offreFinanciere.iwFileList}">
+				<p:commandLink  value="#{of.iwName}" ajax="false"  >
+					<p:fileDownload   value="#{fournisseurTemplate.downloadFile(of)}" >
+					</p:fileDownload>
+				</p:commandLink>
+			</ui:repeat>
+		</p:column>
+		<p:column headerText="Spécifications technique" styleClass="line_wrap" width="65" >
+			<ui:repeat var="sf" value="#{fournisseur.get('fournisseur').specificationFonctionnelles.iwFileList}">
+				<p:commandLink  value="#{sf.iwName}" ajax="false"  >
+					<p:fileDownload   value="#{fournisseurTemplate.downloadFile(sf)}" >
+					</p:fileDownload>
+				</p:commandLink>
+			</ui:repeat>
+		</p:column>
+
+		<p:column headerText="Classement Acheteur" styleClass="line_wrap" width="20"  rendered="#{fournisseurTemplate.acheteurRole}">
+			<p:cellEditor>
+				<f:facet name="output">
+					<h:outputText value="#{fournisseur.get('classementAcheteur')}"/>
+				</f:facet>
+				<f:facet name="input">
+					<h:selectOneMenu value="#{fournisseur['classementAcheteur']}" style="width:100%">
+						<f:selectItems value="#{fournisseurTemplate.totalFournisseurArray}" var="calssAcheteur" itemLabel="#{calssAcheteur}" itemValue="#{calssAcheteur}" />
+					</h:selectOneMenu>
+				</f:facet>
+			</p:cellEditor>
+		</p:column>
+		<p:column headerText="Classement Metier" styleClass="line_wrap" width="20"  rendered="#{fournisseurTemplate.metierRole}">
+			<p:cellEditor>
+				<f:facet name="output">
+					<h:outputText value="#{fournisseur.get('classementMetier')}"/>
+				</f:facet>
+				<f:facet name="input">
+					<h:selectOneMenu value="#{fournisseur['classementMetier']}" style="width:100%">
+						<f:selectItems value="#{fournisseurTemplate.totalFournisseurArray}" var="classementMetier" itemLabel="#{classementMetier}" itemValue="#{classementMetier}" />
+					</h:selectOneMenu>
+				</f:facet>
+			</p:cellEditor>
+		</p:column>
+		<p:column  rendered="#{fournisseurTemplate.acheteurRole}" headerText="Classement Metier" width="20">
+			<h:outputText value="#{fournisseur.get('classementMetier')}"/>
+		</p:column>
+
+		<p:column headerText="Classement Définitif" styleClass="line_wrap" width="20" rendered="#{fournisseurTemplate.acheteurRole}">
+			<p:cellEditor>
+				<f:facet name="output">
+					<h:outputText value="#{fournisseur.get('classementDefinitif')}"/>
+				</f:facet>
+				<f:facet name="input">
+					<h:selectOneMenu value="#{fournisseur['classementDefinitif']}" style="width:100%">
+						<f:selectItems value="#{fournisseurTemplate.totalFournisseurArray}" var="classementDefinitif" itemLabel="#{classementDefinitif}" itemValue="#{classementDefinitif}" />
+					</h:selectOneMenu>
+				</f:facet>
+			</p:cellEditor>
+		</p:column>
+
+		<p:column style="width:32px">
+			<p:rowEditor />
+		</p:column>
+		<p:column headerText="" styleClass="line_wrap center-item" width="2.5%" rendered="#{fournisseurTemplate.acheteurRole}">
+			<p:commandButton actionListener = "#{fournisseurTemplate.updateSelected(fournisseur, rowIndex)}"
+							 ajax 			= "true"
+							 oncomplete 	= "PF('fournisseurDialog').show()"
+							 process 		= "@this"
+							 icon 			= "fa fa-edit"
+							 update 		= "@(.fournisseurDialog)"
+							 disabled 		= "#{!formWrapper.value.isWritable}"
+			>
+			</p:commandButton>
+		</p:column>
+
+
+	</p:dataTable>
+
+	<p:dialog id="fournisseurDialog" widgetVar="fournisseurDialog" styleClass="fournisseurDialog" closable="true" draggable="true" closeOnEscape="true" dynamic="true"
+			  header="Formulaire Fournisseur" height="400" width="900" maximizable="false" modal="true"
+			  resizable="false" showEffect="fold" responsive="true" >
+		<p:panelGrid columns="2" layout="grid" id="objWidget">
+			<p:outputLabel value="Code Fournisseur (*)" style="font-size: 11px !important"/>
+			<p:inputText value="#{fournisseurTemplate.currentFournisseur.codeFournisseur}" required="true"			  />
+			<p:outputLabel value="Raison Social (*)" style="font-size: 11px !important"/>
+			<p:inputText value="#{fournisseurTemplate.currentFournisseur.raisonSocial}"		required="true"	  />
+			<p:outputLabel value="Alias (*)" style="font-size: 11px !important"/>
+			<p:inputText value="#{fournisseurTemplate.currentFournisseur.alias}"	required="true"			  />
+			<p:outputLabel value="TEL (*)" style="font-size: 11px !important"/>
+			<p:inputText value="#{fournisseurTemplate.currentFournisseur.tel}"	required="true"			  />
+			<p:outputLabel value="E-MAIL (*)" style="font-size: 11px !important"/>
+			<p:inputText value="#{fournisseurTemplate.currentFournisseur.email}"	required="true"		  />
+
+			<p:outputLabel value="Fiche Technique" style="font-size: 11px !important"/>
+			<p:fileUpload
+				fileUploadListener="#{fournisseurTemplate.handleUploadedFiles}"
+				mode="advanced"
+				dragDropSupport="false"
+				sizeLimit="100000"
+				fileLimit="1"
+			>
+				<f:attribute name="fournisseurUpload" value="offreTechnique" />
+			</p:fileUpload>
+
+			<p:outputLabel value="Fiche Financière" style="font-size: 11px !important"/>
+			<p:fileUpload
+				fileUploadListener="#{fournisseurTemplate.handleUploadedFiles}"
+				mode="advanced"
+				dragDropSupport="false"
+				sizeLimit="100000"
+				fileLimit="1"
+			>
+				<f:attribute name="fournisseurUpload" value="offreFinancier" />
+			</p:fileUpload>
+
+			<p:outputLabel value="Spécifications technique" style="font-size: 11px !important"/>
+			<p:fileUpload
+				fileUploadListener="#{fournisseurTemplate.handleUploadedFiles}"
+				mode="advanced"
+				dragDropSupport="false"
+				sizeLimit="100000"
+				fileLimit="1"
+			>
+				<f:attribute name="fournisseurUpload" value="specificationFonctionnelles" />
+			</p:fileUpload>
+
+			<p:outputLabel value="Nom Habituel " style="font-size: 11px !important"/>
+			<p:inputText value="#{fournisseurTemplate.currentFournisseur.nomHabituel}"	  />
+			<p:outputLabel value="Adresse" style="font-size: 11px !important"/>
+			<p:inputText value="#{fournisseurTemplate.currentFournisseur.adresse}"			  />
+			<p:outputLabel value="CIF" style="font-size: 11px !important"/>
+			<p:inputText value="#{fournisseurTemplate.currentFournisseur.cif}"			  />
+			<p:outputLabel value="Numéro registre De Commecre" style="font-size: 11px !important"/>
+			<p:inputText value="#{fournisseurTemplate.currentFournisseur.numRegistreCommerce}"			  />
+			<p:outputLabel value="FAX" style="font-size: 11px !important"/>
+			<p:inputText value="#{fournisseurTemplate.currentFournisseur.fax}"			  />
+			<p:outputLabel value="Represantant" style="font-size: 11px !important"/>
+			<p:inputText value="#{fournisseurTemplate.currentFournisseur.representant}"			  />
+
+		</p:panelGrid>
+		<h:panelGrid columns="3" style="text-align: center">
+			<p:commandButton actionListener="#{fournisseurTemplate.createFournisseur}"
+							 rendered="#{fournisseurTemplate.create}"
+							 value="Ajouter et Quitter"
+							 ajax="true"
+							 label="save continuer"
+							 process="objWidget,@this"
+							 update="@(.fournisseurList),@(fournisseurDialog)"
+							 oncomplete="PF('fournisseurDialog').hide()">
+			</p:commandButton>
+			<p:commandButton actionListener="#{fournisseurTemplate.editFournisseur}"
+							 rendered="#{fournisseurTemplate.update }"
+							 value="Modifier et Quitter"
+							 ajax="true"
+							 label="save continuer"
+							 process="objWidget,@this"
+							 update="@(.fournisseurList),@(fournisseurDialog)"
+							 oncomplete="PF('fournisseurDialog').hide()">
+			</p:commandButton>
+			<p:commandButton partialSubmit="true"
+							 value="annuler"
+							 ajax="true"
+							 label="Annuler"
+							 process="@(.fournisseurList),@(fournisseurDialog)"
+							 update="@(.fournisseurList),@(fournisseurDialog)"
+							 oncomplete="PF('fournisseurDialog').hide()">
+
+			</p:commandButton>
+			<p:commandButton actionListener="#{fournisseurTemplate.deleteFournisseur}"
+							 value="Supprimer et Quitter"
+							 ajax="true"
+							 label="vider les champs"
+							 process="objWidget,@this"
+							 rendered="#{fournisseurTemplate.update}"
+							 oncomplete="PF('fournisseurDialog').hide()"
+							 update="@(.fournisseurList),@(fournisseurDialog)">
+
+			</p:commandButton>
+		</h:panelGrid>
+	</p:dialog>
+	<p:dialog id="fournisseurAutoSuggestDialog" widgetVar="fournisseurAutoSuggestDialog" styleClass="fournisseurAutoSuggestDialog" closable="true" draggable="true" closeOnEscape="true" dynamic="true"
+			  header="Ajouter un Fournisseur" height="200" width="900" maximizable="false" modal="true"
+			  resizable="false" showEffect="fold" responsive="true" >
+		<h:panelGrid columns="2" id="objWidget2">
+			<p:outputLabel value="Selectionner des Fournisseurs:"  />
+			<p:selectOneMenu
+				value				= "#{fournisseurTemplate.fournisseurAutoSuggest}"
+				converter			= "#{entityConverter}"
+				filter				= "true"
+				filterMatchMode		= "contains"
+				caseSensitive		= "false">
+				<f:selectItem noSelectionOption	= "true" />
+				<f:selectItems value="#{fournisseurTemplate.allFournisseur}"  var="fournisseurItem" itemValue="#{fournisseurItem}"  itemLabel="#{fournisseurItem.raisonSocial}" />
+				<f:attribute name="entity" value="com.imaginepartners.imagineworkflow.models.business.BizFournisseur" />
+			</p:selectOneMenu>
+		</h:panelGrid>
+
+		<h:panelGrid columns="3" style="text-align: center">
+			<p:commandButton actionListener	= "#{fournisseurTemplate.addFournisseur}"
+							 rendered		= "#{fournisseurTemplate.importer}"
+							 value			= "Ajouter et Quitter"
+							 ajax			= "true"
+							 label			= "save continuer"
+							 process		= "objWidget2,@this"
+							 update			= "@(.fournisseurList),@(fournisseurAutoSuggestDialog)"
+							 oncomplete		= "PF('fournisseurAutoSuggestDialog').hide()">
+			</p:commandButton>
+			<p:commandButton partialSubmit="true"
+							 value="annuler"
+							 ajax="true"
+							 label="Annuler"
+							 process="@(.fournisseurList),@(fournisseurAutoSuggestDialog)"
+							 update="@(.fournisseurList),@(fournisseurAutoSuggestDialog)"
+							 oncomplete="PF('fournisseurAutoSuggestDialog').hide()">
+
+			</p:commandButton>
+		</h:panelGrid>
+	</p:dialog>
+</ui:composition>

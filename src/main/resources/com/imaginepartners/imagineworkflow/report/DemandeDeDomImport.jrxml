@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DemandeDeDomImport" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f8489fbe-554f-425b-bec9-e4cb1ae029da">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="240"/>
+	<parameter name="parameter1" class="java.lang.String"/>
+	<parameter name="parameter2" class="java.lang.String"/>
+	<parameter name="parameter3" class="java.lang.String"/>
+	<parameter name="parameter4" class="java.lang.String"/>
+	<parameter name="parameter5" class="java.lang.String"/>
+	<parameter name="parameter6" class="java.lang.String"/>
+	<parameter name="parameter7" class="java.lang.String"/>
+	<parameter name="parameter8" class="java.lang.String"/>
+	<parameter name="parameter9" class="java.lang.String"/>
+	<parameter name="parameter10" class="java.lang.String"/>
+	<parameter name="parameter11" class="java.lang.String"/>
+	<parameter name="parameter12" class="java.lang.String"/>
+	<parameter name="parameter13" class="java.lang.String"/>
+	<detail>
+		<band height="802" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="555" height="802" uuid="d75c489f-662e-4966-a975-9d0bef16965e"/>
+				<imageExpression><![CDATA["DemandeDeDomImport.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="238" y="178" width="100" height="20" uuid="d46a70cf-7535-4243-8352-bbf909210409"/>
+				<text><![CDATA[BATIVERT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="236" y="199" width="100" height="20" uuid="d760f59b-000d-4a90-b59b-fda63d3d573a"/>
+				<text><![CDATA[50 000 000,00 DA ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="115" y="221" width="356" height="16" uuid="3ad2de3d-2aaf-456b-94e6-81e839800fdb"/>
+				<text><![CDATA[Rue des Frères Oudahmane N°8- Local 02- Axe nouveau lycée-Tizi-Ouzou]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="207" y="240" width="167" height="20" uuid="a3467136-f7be-4c83-acb5-80573fca9015"/>
+				<text><![CDATA[020 00 151 702 5542 001 01]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="207" y="261" width="154" height="18" uuid="4916ecad-9f5b-4652-b3d9-64abe6f0705d"/>
+				<text><![CDATA[/9/9/       / B  / 0/0/4/3/5/2/5/ 1/5/0/0   ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="402" y="81" width="107" height="20" uuid="d2e3867c-1472-4471-97e8-2baff53b4a46"/>
+				<textFieldExpression><![CDATA[$P{parameter1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="178" y="275" width="233" height="20" uuid="332acf01-6b8b-4e7c-a64c-8da0a53474e5"/>
+				<text><![CDATA[/ 1 /5 / 3 /  / 5 / 3/  / 8 / 3 / 9 /  / 5 / 2 /   /   /   /]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="360" y="43" width="149" height="20" uuid="a0ecd971-0853-4d21-8407-a6e0c7e38cbe"/>
+				<textFieldExpression><![CDATA[$P{parameter2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="333" width="218" height="20" uuid="b7b8f3d5-e6b7-4d87-ab91-30663e6d3789"/>
+				<textFieldExpression><![CDATA[$P{parameter3}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="237" y="358" width="147" height="20" uuid="50a922a6-8894-4a9e-9266-f1a24c3e6938"/>
+				<textFieldExpression><![CDATA[$P{parameter4}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="442" y="359" width="100" height="20" uuid="ffb527ab-1e31-4003-861b-18cbee698354"/>
+				<textFieldExpression><![CDATA[$P{parameter5}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="228" y="380" width="183" height="20" uuid="fff8dee0-ac96-4f07-81a1-6a66e610ac38"/>
+				<textFieldExpression><![CDATA[$P{parameter6}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="226" y="404" width="245" height="20" uuid="a870274e-ea31-45fe-a837-125a09622822"/>
+				<textFieldExpression><![CDATA[$P{parameter7}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="228" y="428" width="243" height="20" uuid="819c90e7-e4d6-4ce6-b5e8-9ea31aded075"/>
+				<textFieldExpression><![CDATA[$P{parameter8}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="229" y="450" width="242" height="20" uuid="49f3888e-cf65-4983-bcbd-67585574502b"/>
+				<textFieldExpression><![CDATA[$P{parameter9}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="192" y="492" width="100" height="20" uuid="6d134e39-803e-4aa1-a7d8-81d33ec5a24c"/>
+				<textFieldExpression><![CDATA[$P{parameter10}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="357" y="493" width="100" height="20" uuid="5ba9aa9c-a4e5-432e-93cf-7d165771c94a"/>
+				<textFieldExpression><![CDATA[$P{parameter11}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="191" y="517" width="100" height="20" uuid="9ce578b7-34b0-4c43-ab32-e9ac3e42de35"/>
+				<textFieldExpression><![CDATA[$P{parameter12}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="357" y="515" width="100" height="20" uuid="0f3126f6-4c58-4234-a7e8-95b183dd895f"/>
+				<textFieldExpression><![CDATA[$P{parameter13}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

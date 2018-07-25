@@ -1,0 +1,175 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+    <f:metadata>
+    </f:metadata>
+
+    <ui:define name="title">
+        #{msg['iw.droit.gestiondroits']}
+    </ui:define>
+    <ui:define name="subheader">
+        #{msg['iw.droit.gestiondroits']}
+    </ui:define>
+    <ui:define name="content">
+        <h:form enctype="multipart/form-data" id="formRight">
+            <div class="Container100 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect "  >
+                            <p:selectOneMenu value="#{rightController.rightProcess}">
+                                <f:selectItem itemValue="#{null}" itemLabel="#{msg['iw.selectionner']}"/>
+                                <f:selectItem itemValue="#{true}" itemLabel="#{msg['iw.droit.process']}"/>
+                                <f:selectItem itemValue="#{false}" itemLabel="#{msg['iw.droit.fonction']}"/>
+                                <p:ajax event="change" update="@parent" listener="#{rightController.reset()}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p:outputPanel  rendered="#{not empty rightController.rightProcess}">
+                <div class="Container100 Responsive100">
+                    <div class="Container100">
+                        <div class="ContainerIndent">
+                            <div class="Card ShadowEffect">
+
+                                <p:panelGrid columns="2" class="Wid100" >
+                                    <p:outputLabel value="#{msg['iw.droit.selectionnerapplication']}" />
+                                    <p:selectOneMenu id="applistId" value="#{rightController.currentApplication}"  converter="#{applicationConverter}">
+                                        <f:attribute name="converterItemsList" value="#{rightController.applicationList}" />
+                                        <f:selectItem noSelectionOption="true" itemLabel="#{msg['iw.droit.selectionnerapplication']}"/>
+                                        <f:selectItems value="#{rightController.applicationList}" var="app" itemLabel="#{app.iwName}" itemValue="#{app}"/>
+                                        <p:ajax event="change" update="usersAndGroups,modelList,stdTaskList" listener="#{rightController.updateApp()}" />
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="#{msg['iw.droit.process']}" rendered="#{rightController.rightProcess == true}" />
+                                    <p:selectOneMenu id="modelList" value="#{rightController.currentModel}" disabled="#{empty rightController.currentApplication}" rendered="#{rightController.rightProcess == true}" converter="#{modelConverter}">
+                                        <f:attribute name="converterItemsList" value="#{rightController.modelList}" />
+                                        <f:selectItem noSelectionOption="true" itemLabel="#{msg['iw.droit.selectionnerprocess']}"/>
+                                        <f:selectItems value="#{rightController.modelList}" var="model" itemLabel="#{model.name}" itemValue="#{model}"/>
+                                        <p:ajax event="change" update="usersAndGroups" listener="#{rightController.updateModel()}" />
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="#{msg['iw.droit.fonction']}" rendered="#{rightController.rightProcess == false}" />
+                                    <p:selectOneMenu id="stdTaskList" value="#{rightController.standaloneTaskSelected}" disabled="#{empty rightController.currentApplication}" rendered="#{rightController.rightProcess == false}" converter="#{standaloneConverter}">
+                                        <f:attribute name="converterItemsList" value="#{rightController.standaloneTaskList}" />
+                                        <f:selectItem noSelectionOption="true" itemLabel="#{msg['iw.droit.selectionnerfonction']}"/>
+                                        <f:selectItems value="#{rightController.standaloneTaskList}" var="standaloneTask" itemLabel="#{standaloneTask.iwName}" itemValue="#{standaloneTask}"/>
+                                        <p:ajax event="change" update="usersAndGroups" listener="#{rightController.updateModel()}" />
+                                    </p:selectOneMenu>
+
+                                </p:panelGrid>
+
+                                <p:panelGrid id="usersAndGroups" columns="1" class="Wid100"  >
+
+                                    <p:outputLabel value="#{msg['iw.droit.groups']}" />
+                                    <p:autoComplete multiple="true"
+                                                    value="#{rightController.groupList}"
+                                                    completeMethod="#{suggestionController.completeGroups}"
+                                                    var="group"
+                                                    itemLabel="#{group.name}"
+                                                    itemValue="#{group}"
+                                                    converter="#{groupConverter}"
+                                                    disabled="#{((rightController.rightProcess == true and empty rightController.currentModel) || (rightController.rightProcess == false and  empty rightController.standaloneTaskSelected))}" >
+                                        <p:ajax event="itemSelect" listener="#{rightController.onItemSelect}" update="rightsToLaunchProcess" />
+                                        <p:ajax event="itemUnselect" listener="#{rightController.onItemUnselect}" update="rightsToLaunchProcess" />
+                                        <p:ajax event="query" listener="#{rightController.onQuery}" update="rightsToLaunchProcess" />
+                                    </p:autoComplete>
+
+
+
+                                    <p:outputLabel value="#{msg['iw.droit.utilisateurs']}"  />
+                                    <p:autoComplete multiple="true"
+                                                    value="#{rightController.userList}"
+                                                    completeMethod="#{suggestionController.completeUsers}"
+                                                    var="user"
+                                                    itemLabel="#{user.id}"
+                                                    itemValue="#{user}"
+                                                    converter="#{userConverter}"
+                                                    disabled="#{((rightController.rightProcess == true and empty rightController.currentModel) || (rightController.rightProcess == false and  empty rightController.standaloneTaskSelected))}">
+                                        
+                                        <p:ajax event="itemSelect" listener="#{rightController.onItemSelect}" update="rightsToLaunchProcess" />
+                                        <p:ajax event="itemUnselect" listener="#{rightController.onItemUnselect}" update="rightsToLaunchProcess" />
+                                        <p:ajax event="query" listener="#{rightController.onQuery}" update="rightsToLaunchProcess" />
+                                        
+                                        <p:column style="width:10%">
+                                            <p:graphicImage rendered="#{user.pictureSet}" style="height: 40px;"
+                                                            value="#{fileController.avatar}">
+                                                <f:param name="user" value="#{user.id}" />
+                                            </p:graphicImage>
+                                            <p:graphicImage style="height: 40px;"
+                                                            rendered="#{!user.pictureSet}"
+                                                            url="/resources/img/avatar.png" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{user.id}" />
+                                        </p:column>
+
+                                    </p:autoComplete>
+                                    
+                                    <p:panel id="rightsToLaunchProcess" header="rights to launch processes" toggleable="true" toggleTitle="toggle" collapsed="false"
+                                             rendered="#{rightController.rightProcess == true}">
+                                        <p:pickList id="rightsToLaunchProcessGr" value="#{rightController.groups}" var="gr" effect="bounce" 
+                                                    itemValue="#{gr}" itemLabel="#{gr.id}" showSourceControls="true" showTargetControls="true" showCheckbox="true" responsive="true"
+                                                    showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="#{groupConverter}">
+
+                                            <f:facet name="sourceCaption">not launched</f:facet>
+                                            <f:facet name="targetCaption">launched</f:facet>
+
+                                            <p:ajax event="transfer" listener="#{rightController.onTransferGr}" update="@this" />
+                                            <p:ajax event="select" listener="#{rightController.onSelectGr}"  />
+                                            <p:ajax event="unselect" listener="#{rightController.onUnselectGr}"  />
+                                            <p:ajax event="reorder" listener="#{rightController.onReorderGr}" update="@this" />
+
+                                        </p:pickList>
+                                    
+                                        <p:pickList id="rightsToLaunchProcessUs" value="#{rightController.users}" var="us" effect="bounce" 
+                                                    itemValue="#{us}" itemLabel="#{us.id}" showSourceControls="true" showTargetControls="true" showCheckbox="true" responsive="true"
+                                                    showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="#{userConverter}">
+
+                                            <f:facet name="sourceCaption">not launched</f:facet>
+                                            <f:facet name="targetCaption">launched</f:facet>
+
+                                            <p:ajax event="transfer" listener="#{rightController.onTransferUs}" update="@this" />
+                                            <p:ajax event="select" listener="#{rightController.onSelectUs}"  />
+                                            <p:ajax event="unselect" listener="#{rightController.onUnselectUs}" />
+                                            <p:ajax event="reorder" listener="#{rightController.onReorderUs}" update="@this" />
+
+                                        </p:pickList>
+                                    </p:panel>
+                                    <p:commandButton actionListener="#{rightController.save()}" 
+                                                     value="#{msg['iw.bouton.valider']}" 
+                                                     ajax="true" update="rightsToLaunchProcess"
+                                                     disabled="#{((rightController.rightProcess == true and empty rightController.currentModel) || (rightController.rightProcess == false and  empty rightController.standaloneTaskSelected))}"/>
+                                </p:panelGrid>
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </p:outputPanel>
+        </h:form>
+        <ui:remove>
+            <div class="Container20 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect HeiAutoOnMobile">
+                            <ui:include src="../templates/processList.xhtml" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:remove>
+    </ui:define>
+</ui:composition>

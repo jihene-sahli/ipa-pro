@@ -1,0 +1,42 @@
+<h2 class="BigTopic">Ajouter <span ng-bind="schema.gender == 'MASCULINE' ? 'un' : 'une'"></span> {{ ::schema.label }}</h2>
+<p ng-show="schema.description">{{ ::schema.description }}</p>
+<div class="ui-panelgrid ui-widget ui-panelgrid-blank">
+	<div class="ui-panelgrid-content ui-widget-content ui-grid ui-grid-responsive">
+		<form name="entityForm" novalidate>
+			<div ng-repeat="field in schema.fields | exclude" ng-switch="field.type">
+				<div ng-switch-when="java.lang.Boolean">
+					<div class="ui-grid-row">
+						<div class="ui-panelgrid-cell ui-grid-col-12">
+							<label class="ui-outputlabel ui-widget" for="checkbox_{{ ::field.name }}">
+								<input type="checkbox" name="{{ ::field.name }}" role="checkbox" ng-model="data[field.name]" id="checkbox_{{ ::field.name }}"> {{ ::field.label }}
+							</label>
+						</div>
+					</div>
+				</div>
+				<div ng-switch-when="association">
+					<many-to-one type="edit" attribute="data[field.name]"></many-to-one>
+				</div>
+				<div ng-switch-default>
+					<div class="ui-grid-row">
+						<div class="ui-panelgrid-cell ui-grid-col-12">
+							<label class="ui-outputlabel ui-widget" for="text_{{ ::field.name }}">
+								{{ ::field.label }}
+							</label>
+						</div>
+					</div>
+					<div class="ui-grid-row">
+						<div class="ui-panelgrid-cell ui-grid-col-12">
+							<input type="text" class="ui-inputfield ui-widget ui-state-default ui-corner-all" name="{{ ::field.name }}" id="text_{{ ::field.name }}" role="textbox" ng-model="data[field.name]" value="data[field.name]">
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		<div class="ui-panelgrid-cell ui-grid-col-12 text-right">
+			<a ui-sref="workflow.entities.entity({entity: schema.name})">Annuler</a>
+			<button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" type="submit" ng-click="save(entityForm)">
+				<span class="ui-button-text ui-c" ng-bind="data[schema.primaryKey] ? 'Modifier': 'Ajouter'"></span>
+			</button>
+		</div>
+	</div>
+</div>

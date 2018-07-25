@@ -1,0 +1,145 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+
+    <ui:define name="title">#{msg['iw.location']}</ui:define>
+    <ui:define name="subheader">
+        #{msg['iw.location']}
+    </ui:define>
+    <ui:define name="head">
+        <f:verbatim>
+            <style type="text/css">
+                .TurquoiseBack{
+                    background-color: #26C6DA !important;
+                }
+                .OrangeBack {
+                    background-color: #FB8C00 !important;
+                }
+            </style>
+            <script type="text/javascript">
+                cahngeColorDateSelected = function (xhr, status, args) {
+                    var cellSelected = "td[data-date='" + args.dateCellSelected + "']";
+                    $(cellSelected).css("background-color", "#AAAAAA");
+                }
+            </script>
+        </f:verbatim>
+    </ui:define>
+
+
+    <ui:define name="content">
+
+        <h:form id="formAg" >
+            <div class="Container00 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect HeiAutoOnMobile ">
+                            <p:link outcome="location" rendered="false">
+                                <div class="Container100 Responsive" >
+                                    <div class="ContainerIndent">
+                                        <div class="Card ShadowEffect TurquoiseBack White TexAlCenter HoverEffect">
+                                            <div class="EmptyBox5"></div>
+                                            <i class="icon-directions_car Fs40"></i>
+                                            <div class="EmptyBox5"></div>
+                                            <div class="FontRobotoLight Fs9 White DispBlock ClearBoth">
+                                                <p:outputLabel class="White" value="#{msg['iw.location.toutesvoitures']}" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:link>
+                            <div class="Container100">
+                                <div class="ContainerIndent">
+                                    <p:dataGrid value="#{bookingController.carsList}" var="car" columns="3" layout="grid" rendered="false"
+                                                rows="9" paginator="true" id="cars"
+                                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                >
+                                        <p:link outcome="location">
+                                            <f:param name="car" value="#{car.iwCarId}" />
+                                            <div class="Container Responsive" >
+                                                <div class="ContainerIndent">
+                                                    <div class="Card ShadowEffect LeadenGreenBack White TexAlCenter HoverEffect" style="height:120px;">
+                                                        <div class="EmptyBox5"></div>
+                                                        <i class="icon-directions_car Fs40"></i>
+                                                        <div class="EmptyBox5"></div>
+                                                        <div class="FontRobotoLight Fs9 White DispBlock ClearBoth">
+                                                            <p:outputLabel class="White"  rendered="#{not empty car.iwIntitule and car.iwIntitule.length() lt 40}" value="#{car.iwIntitule}" title="#{car.iwIntitule}" />
+                                                            <p:outputLabel class="White"  rendered="#{not empty car.iwIntitule and car.iwIntitule.length() >=40}" value="#{car.iwIntitule.substring(0,39)}" title="#{car.iwIntitule}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:link>
+
+                                    </p:dataGrid>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="Container100 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect Hei100">
+                            <p:messages id="messages" showDetail="true" closable="true" />
+                            <p:schedule rightHeaderTemplate="month,agendaWeek,basicWeek,agendaDay,basicDay"  view="agendaWeek"  id="schedule" styleClass="btvAgenda"   value="#{bookingController.eventModel}" initialDate="#{bookingController.navigationDate}" widgetVar="loanSchedule"  locale="fr"  aspectRatio="1"  allDaySlot="true"  timeFormat="HH:mm" axisFormat="HH:mm" slotMinutes="60"   >
+                                <p:ajax event="dateSelect" listener="#{bookingController.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                                <p:ajax event="eventSelect" listener="#{bookingController.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                                <p:ajax event="eventMove" listener="#{bookingController.onEventMove}"  oncomplete="PF('loanSchedule').update();"/>
+                                <p:ajax event="eventResize"  listener="#{bookingController.onEventResize}" />
+                            </p:schedule>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <p:dialog  widgetVar="eventDialog" header="#{msg['iw.agenda.nouvellelocation']}" resizable="false" >
+                <h:panelGrid id="eventDetails" columns="2"      >
+
+                    <h:outputLabel for="resource" value="#{msg['iw.agenda.resource']}" />
+                    <p:selectOneMenu id="resource" value="#{bookingController.event.data.iwResourceId.iwEntityName}" converter="#{resourceTypeConverter}" >
+                        <f:selectItem itemLabel="selectionner une" itemValue=""/>
+                        <f:selectItems value="#{bookingController.resourceAttribute}" var="res" itemLabel="#{res.iwDescription}" itemValue="#{res}"/>
+                        <f:attribute name="converterItemsList" value="#{bookingController.resourceAttribute}" />
+                        <p:ajax event="change" listener="#{bookingController.onResourceSelect}" update="eventDetails" />
+                    </p:selectOneMenu>
+                    
+                    <h:outputLabel for="title" value="#{msg['iw.agenda.resource.list']}"/>
+                    <p:selectOneMenu id="title" value="#{bookingController.event.data.iwResourceId.iwEntityId}" converter="#{resourceConverter}" disabled="#{bookingController.disableResourceEntity}">
+                        <f:selectItem itemLabel="selectionner une" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{bookingController.listResource}" var="obj" itemLabel="#{obj.iwIntitule}" itemValue="#{obj[bookingController.idAttributeName]}"/>
+                        <f:attribute name="converterItemsList" value="#{bookingController.listResource}" />
+                        <p:ajax event="change" listener="#{bookingController.onSelectOneMenu}" update="eventDetails" />
+                    </p:selectOneMenu>
+
+                    <h:outputLabel for="from" value="#{msg['iw.agenda.de']}" />
+                    <p:calendar id="from" value="#{bookingController.event.startDate}"   disabled="#{bookingController.event.editable==false}"  pattern="#{navigationController.longDateFormat}" locale="#{navigationController.locale}" showButtonPanel="true"   />
+
+                    <h:outputLabel for="to" value="#{msg['iw.agenda.a']}"  />
+                    <p:calendar id="to" value="#{bookingController.event.endDate}" pattern="#{navigationController.longDateFormat}" locale="#{navigationController.locale}"   disabled="#{bookingController.event.editable==false}" showButtonPanel="true"   />
+
+                    <h:outputLabel for="allDay" value="#{msg['iw.agenda.toutlejour']}"  />
+                    <h:selectBooleanCheckbox id="allDay" value="#{bookingController.event.data.iwAllDay}"   disabled="#{bookingController.event.editable==false}" />
+
+                    <h:outputLabel for="status" value="#{msg['iw.agenda.statut']}"  />
+                    <p:selectOneMenu id="status" value="#{bookingController.event.data.iwStatus}"   disabled="#{bookingController.event.editable==false}">
+                        <f:selectItem itemValue="reserved" itemLabel="#{msg['iw.agenda.statut.reserve']}"></f:selectItem>
+                        <f:selectItem itemValue="loaned" itemLabel="#{msg['iw.agenda.statut.loue']}"></f:selectItem>
+                    </p:selectOneMenu>
+
+                    <p:commandButton id="addButton"   value="#{msg['iw.button.enregistrer']}"   actionListener="#{bookingController.addEvent}"  oncomplete="PF('eventDialog').hide();PF('loanSchedule').update();" update="messages"/>
+                    <p:commandButton id="removeButton" value="#{msg['iw.button.supprimer']}"     actionListener="#{bookingController.removeEvent}"  oncomplete="PF('eventDialog').hide();PF('loanSchedule').update();"/>
+
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
+
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,61 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="../templates/modena/template.xhtml">
+
+    <ui:define name="title">#{msg['iw.avencement']}</ui:define>
+    <ui:define name="subheader">
+        #{msg['iw.avencement']}
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="fromAv">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <p:selectOneMenu id="selectProcess" value="#{progressController.currentProcessDef}">
+                            <f:selectItem  itemLabel="#{msg['iw.avencement.selectionnerunprocessus']}" itemValue="#{null}" /> 
+                            <f:selectItems value="#{progressController.processDefList}" var="processDef" itemLabel="#{processDef.name}" itemValue="#{processDef.id}" />
+                            <p:ajax  event="change"  update="dataTasksProgs"    listener="#{progressController.loadProgressTasks}"/>
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </div>
+
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <p:dataTable  id="dataTasksProgs" value="#{progressController.taskModelList.keySet()}" var="taskId" rowIndexVar="indexTask"  class="hide-column-names"  >
+                            <p:column>
+                                <p:outputLabel value="#{progressController.taskModelList.get(taskId)}"></p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                <h:outputText id="taskId" value="De #{progressController.taskProgsList.get(indexTask).iwProgressRate}% à #{progressController.taskProgsList.get(indexTask).iwProgressEnd}%" />
+                                <p:slider for="minId,maxId" display="taskId" range="true"  displayTemplate="De {min}% à {max}%" minValue="0" maxValue="100" step="1"/>
+                                <h:inputHidden id="minId" value="#{progressController.taskProgsList.get(indexTask).iwProgressRate}" />
+                                <h:inputHidden id="maxId" value="#{progressController.taskProgsList.get(indexTask).iwProgressEnd}" />
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu value="#{progressController.taskProgsList.get(indexTask).iwPhase}" converter="#{phaseConverter}">
+                                    <f:selectItem  itemLabel="#{msg['iw.avencement.selectionnerunephase']}" itemValue="#{null}" />
+                                    <f:selectItems value="#{progressController.phaseList}"  var="phase" itemLabel="#{phase.iwPhaseName}" itemValue="#{phase}"/>
+                                    <f:attribute name="converterItemsList" value="#{progressController.phaseList}" />
+                                    <p:ajax process="@this" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton action="#{progressController.saveProgression()}" icon="fa fa-check" value="Sauvegarder">
+                                    <p:confirm   header="#{msg['iw.confirmation.titre']}" message="#{msg['iw.message.voulezvouscontinuer']}" icon="fa fa-warning" />
+                                </p:commandButton>
+                            </f:facet>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

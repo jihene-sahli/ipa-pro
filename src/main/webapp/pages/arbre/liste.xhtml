@@ -1,0 +1,154 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+    <f:metadata></f:metadata>
+
+    <ui:define name="title">#{msg['iw.tree']}</ui:define>
+    <ui:define name="subheader">#{msg['iw.tree']}</ui:define>
+
+    <ui:define name="content">
+        <h:form id="formUp2">
+            <div class="Container100 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect">
+
+                            <p:dataTable
+                                    value="#{treeController.leafs}"
+                                    var="tree"
+                                    id="tabOfList"
+                                    styleClass="stApplist"
+                                    paginator="true"
+                                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    rowsPerPageTemplate="10,50,100"
+                                    rows="50"
+                                    draggableRows="true"
+                                    editable="true"
+                                >
+
+                                <p:ajax event="rowEdit" listener="#{treeController.onRowEdit(event, tree)}" />
+                                <p:ajax event="rowEditCancel" listener="#{treeController.onRowEditCanceled}"  />
+
+                                <p:column  style="width:4%;">
+                                    <p:rowEditor />
+                                </p:column>
+
+                                <p:column headerText="#{msg['iw.list.id']}" >
+                                        <h:outputText  value="#{tree.child}" />
+                                </p:column>
+
+                                <p:column headerText="#{msg['iw.list.title']}" >
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText  value="#{tree.title}" />
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <p:inputText value="#{tree.title}" />
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column headerText="#{msg['iw.list.description']}" >
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText  value="#{tree.description}" />
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <p:selectOneMenu value="#{tree.description}"
+                                                            filter="true"
+                                                            filterMatchMode="contains"
+                                                            caseSensitive="false"
+                                                            >
+                                                <f:selectItem  itemLabel="null" itemValue="" noSelectionOption="false" />
+
+                                                <f:selectItems value="#{treeController.allGroupeIds}"
+                                                              var="group"
+                                                              itemValue="#{group}"
+                                                              itemLabel="#{group}" />
+
+                                                <p:ajax event="change"
+														listener="#{treeController.onChange}"
+														update="@parent"
+														process="@this"
+                                                    />
+                                           </p:selectOneMenu>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+								<f:facet name="footer">
+									<p:commandButton value="ajouter" ajax="true" update=":formUp2:dialogPanel"
+													 process="@this"
+													 oncomplete="PF('edit').show()"
+													 actionListener="#{treeController.createInstance}"/>
+								</f:facet>
+
+							</p:dataTable>
+
+
+						</div>
+                    </div>
+                </div>
+            </div>
+
+			<p:dialog closable="true" closeOnEscape="true" draggable="false" dynamic="true" fitViewport="false"
+					  header="editer l'arbre" maximizable="false" minimizable="false" minWidth="200" minHeight="200"
+					  modal="true" resizable="false" width="400" height="200" showHeader="true"
+					  widgetVar="edit" id="edit" styleClass="edit">
+
+				<h:panelGrid columns="2" id="dialogPanel">
+					<p:outputLabel value="parent"/>
+					<p:selectOneMenu value="#{treeController.newOne.parent}"
+									 filter="true"
+									 filterMatchMode="contains"
+									 caseSensitive="false"
+									 converter="#{iwTreeConverter}"
+					>
+						<f:selectItem itemLabel="parent" itemValue="#{null}" noSelectionOption="false"/>
+
+						<f:selectItems value="#{treeController.allTrees}"
+									   var="tree"
+									   itemValue="#{tree}"
+									   itemLabel="#{tree.parent.title} - #{tree.title}"/>
+
+						<p:ajax event="change"
+								listener="#{treeController.onParentSelected}"
+								update="@parent"
+								process="@this"
+						/>
+						<f:attribute value="#{treeController.allTrees}" name="converterItemsList"/>
+					</p:selectOneMenu>
+
+					<p:outputLabel value="title"/>
+					<p:inputText value="#{treeController.newOne.title}">
+						<f:validateLength minimum="3" maximum="50"/>
+					</p:inputText>
+
+					<p:outputLabel value="description"/>
+					<p:inputText value="#{treeController.newOne.description}">
+						<f:validateLength minimum="4" maximum="500"/>
+					</p:inputText>
+
+
+					<p:commandButton ajax="true" actionListener="#{treeController.onAddChild}" update="@parent"
+									 oncomplete="PF('edit').hide()" value="ajouter et quitté"/>
+
+					<p:commandButton ajax="true" actionListener="#{treeController.onAddChild}" update="@parent"
+									 value="ajouter et continuer"/>
+				</h:panelGrid>
+
+			</p:dialog>
+
+		</h:form>
+
+
+	</ui:define>
+
+
+</ui:composition>

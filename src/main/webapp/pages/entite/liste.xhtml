@@ -1,0 +1,89 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="../templates/modena/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <f:metadata>
+    </f:metadata>
+
+    <ui:define name="title">#{msg['iw.avance.entite.listentite']}</ui:define>
+    <ui:define name="subheader">
+        #{msg['iw.avance.entite.listentite']}
+    </ui:define>
+    <ui:define name="content">
+        <h:form>
+            <div class="Container100 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect">
+                            <p:commandButton  value="#{msg['iw.avance.entite.ajouterentite']}"   actionListener="#{advencedController.addMultiLineEntity()}"  process="@this" update="entityList">
+                            </p:commandButton>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="Container100 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect">
+
+                            <p:dataTable id="entityList" styleClass="entityList" value="#{advencedController.multiLineEntityList}" var="entity" editable="true"  emptyMessage="#{msgiw.avance.aucuneentitetrouvé['iw.avance.aucuneentitetrouvé']}"  rowIndexVar="entityIndex"  >
+                                <p:ajax event="rowEdit" listener="#{advencedController.saveMultiLineEntity(entity)}" update="entityList" />
+                                <p:column  style="width:4%;">
+                                    <p:rowEditor />
+                                </p:column>
+                                <p:column headerText="Nom" style="width: 20%;">
+                                    <p:cellEditor>
+                                        <f:facet name="input">
+                                            <p:inputText value="#{entity.iwName}" />
+                                        </f:facet>
+                                        <f:facet name="output">
+                                            <h:outputText  value="#{entity.iwName}" />
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Classe">
+                                    <p:cellEditor>
+                                        <f:facet name="input">
+                                            <p:inputText value="#{entity.iwClass}" />
+                                        </f:facet>
+                                        <f:facet name="output">
+                                            <h:outputText  value="#{entity.iwClass}" />
+                                        </f:facet>
+                                    </p:cellEditor>
+
+                                </p:column>
+                                <p:column style="width: 60px !important; margin: 0 auto !important;">
+                                    <p:menuButton value="#{msg['iw.button.actions']}"
+												  styleClass="ui-button-icon-only">
+                                        <p:menuitem  value="#{msg['iw.avence.details']}" outcome="entityDetails" >
+                                            <f:param name="entity" value="#{entity.iwMultilineEntityId}" />
+                                        </p:menuitem>
+                                        <p:menuitem  value="#{msg['iw.button.supprimer']}"  actionListener="#{advencedController.removeEntite(entityIndex)}"  update="entityList">
+                                            <f:param name="entity" value="#{entity.iwMultilineEntityId}" />
+                                        </p:menuitem>
+                                    </p:menuButton>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+        <ui:remove>
+            <div class="Container20 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect HeiAutoOnMobile">
+                            <ui:include src="../templates/processList.xhtml" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:remove>
+    </ui:define>
+</ui:composition>

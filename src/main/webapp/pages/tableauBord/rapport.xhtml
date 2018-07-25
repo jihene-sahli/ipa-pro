@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+
+    <ui:define name="title">#{msg['iw.tableaubord']}</ui:define>
+    <ui:define name="subheader">
+        #{msg['iw.tableaubord']}
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <h:outputText value="#{birtReportController.displayReport()}" escape="false" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </ui:define>
+</ui:composition>

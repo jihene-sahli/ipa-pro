@@ -1,0 +1,85 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+
+    <ui:define name="title">#{msg['iw.instance.liste']}</ui:define>
+    <ui:define name="subheader">#{msg['iw.instance.liste']}</ui:define>
+    <ui:define name="content">
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <h:form>
+                            <p:dataTable value="#{instanceController.procInstList}" var="procInst" id="instanceList" paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10,50,100">
+                                <p:column headerText="#{msg['iw.instance.numero']}" width="15%" filterBy="#{procInst.id}" filterMatchMode="contains">
+                                    <p:link  outcome="processInstanceDetails" value="#{procInst.id}">
+                                        <f:param name="instance" value="#{procInst.id}" />
+                                    </p:link>
+                                </p:column>
+                                <p:column headerText="#{msg['iw.instance.nom']}" filterBy="#{procInst.name}" filterMatchMode="contains">
+                                    <p:link  outcome="processInstanceDetails" value="#{procInst.name}">
+                                        <f:param name="instance" value="#{procInst.id}" />
+                                    </p:link>
+                                </p:column>
+                                <ui:remove>
+                                    <p:column headerText="#{msg['iw.instance.definitionname']}" filterBy="#{procInst.processDefinitionName}" filterMatchMode="contains">
+                                        <p:link  outcome="processDefinitionDetails" value="#{procInst.processDefinitionName}">
+                                            <f:param name="process" value="#{procInst.processDefinitionId}" />
+                                        </p:link>
+                                    </p:column>
+                                    <p:column headerText="#{msg['iw.instance.definitionid']}" filterBy="#{procInst.processDefinitionId}" filterMatchMode="contains">
+                                        <p:link  outcome="processDefinitionDetails" value="#{procInst.processDefinitionId}">
+                                            <f:param name="process" value="#{procInst.processDefinitionId}" />
+                                        </p:link>
+                                    </p:column>
+                                </ui:remove>
+                                <p:column headerText="#{msg['iw.instance.suspendu']}" width="10%" filterBy="#{procInst.suspended}" filterMatchMode="contains">
+                                    <p:outputLabel value="#{msg['iw.boolean.oui']}" rendered="#{procInst.suspended}" />
+                                    <p:outputLabel value="#{msg['iw.boolean.non']}" rendered="#{!procInst.suspended}" />
+                                </p:column>
+                                <p:column style="width: 60px !important; margin: 0 auto !important;">
+                                    <p:menuButton value="#{msg['iw.button.actions']}"
+												  styleClass="ui-button-icon-only">
+                                        <p:menuitem  update="instanceList" rendered="#{procInst.suspended==false}" value="#{msg['iw.instance.suspendre']}" actionListener="#{instanceController.suspend}">
+                                            <f:param name="instance" value="#{procInst.id}" />
+                                            <p:confirm   header="#{msg['iw.confirmation.titre']}" message="#{msg['iw.message.voulezvouscontinuer']}" icon="fa fa-warning" />
+                                        </p:menuitem>
+                                        <p:menuitem rendered="#{procInst.suspended==true}" update="instanceList" value="#{msg['iw.instance.activer']}" actionListener="#{instanceController.activate}">
+                                            <f:param name="instance" value="#{procInst.id}" />
+
+                                        </p:menuitem>
+                                        <p:menuitem update="instanceList" value="#{msg['iw.instance.supprimer']}" actionListener="#{instanceController.delete}">
+                                            <f:param name="instance" value="#{procInst.id}" />
+                                            <p:confirm   header="#{msg['iw.confirmation.titre']}" message="#{msg['iw.message.voulezvouscontinuer']}" icon="fa fa-warning" />
+                                        </p:menuitem>
+
+                                    </p:menuButton>
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ui:remove>
+            <div class="Container20 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect HeiAutoOnMobile">
+                            <ui:include src="../templates/processList.xhtml" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:remove>
+    </ui:define>
+</ui:composition>

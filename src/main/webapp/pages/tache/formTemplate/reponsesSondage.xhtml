@@ -1,0 +1,44 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core" xmlns:bp="http://java.sun.com/jsf/html"
+>
+	#{taskController.registerTemplate('reponsesSondageController','ReponsesSondageController',fn:split('allSondages',','))}
+
+	<div class="Container100 Responsive100">
+		<div class="Container100">
+			<div class="ContainerIndent">
+				<div class="Card ShadowEffect">
+
+					<p:dataTable emptyMessage="#{msg['iw.sondage.aucunSondage']}"
+								 value="#{reponsesSondageController.listAllSondages}"
+								 var="sondage"
+								 id="reponsesList"
+								 rowIndexVar="rowIdex"
+								 styleClass="entityList"
+					 >
+
+
+						<p:column headerText="#{msg['iw.sondage.question']}">
+
+							<p:outputLabel  value="#{sondage.question}" />
+						</p:column>
+
+						<p:column headerText="#{msg['iw.sondage.reponse']}">
+							<p:outputLabel  value="#{sondage.reponse}" />
+						</p:column>
+
+						<p:column headerText="Collaborateur">
+							<p:outputLabel  value="#{sondage.collaborateur}" />
+						</p:column>
+
+
+					</p:dataTable>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</ui:composition>

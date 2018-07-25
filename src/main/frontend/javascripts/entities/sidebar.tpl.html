@@ -1,0 +1,9 @@
+<div class="ui-fluid">
+	<h4>Choisissez une entité</h4>
+	<input type="text" ng-model="search" class="ui-autocomplete ui-inputfield ui-widget ui-state-default ui-corner-all" placeholder="Rechercher une entité">
+	<ul class="entity-list">
+		<li ng-repeat="entity in entities | filter: search" ui-sref-active="active" class="active">
+			<a ui-sref="workflow.entities.entity({entity: entity.iwName})" class="ui-link">{{ ::entity.iwName }}</a>
+		</li>
+	</ul>
+</div>

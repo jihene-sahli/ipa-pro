@@ -1,0 +1,107 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:sec="http://www.springframework.org/security/tags"
+				xmlns:c="http://java.sun.com/jsp/jstl/core"
+				template="../templates/modena/template.xhtml">
+
+
+
+
+	<ui:define name="head">
+
+	</ui:define>
+	<ui:define name="content">
+
+		<div class="Container100 Responsive100">
+
+
+			<div class="Container100">
+				<div class="ContainerIndent">
+					<div class="Card ShadowEffect">
+						<h:form id="f">
+
+							<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+
+								<p:outputLabel for="temp" value="Template : " />
+								<p:selectOneMenu id="temp" value="#{templateController.templateId}" style="width:150px">
+									<p:ajax listener="#{templateController.onTemplateChange}" update="f" />
+									<f:selectItem itemLabel="Sélectionnez Template" itemValue="" noSelectionOption="true" />
+									<f:selectItems value="#{templateController.templateList}" var="t" itemValue="#{t.iwFormTemplateId}" itemLabel="#{t.iwName}" />
+								</p:selectOneMenu>
+
+							</h:panelGrid>
+
+							<p:dataTable id="variablesTemplate" rowIndexVar="rowId" var="variable" value="#{templateController.variableTemplateList}" styleClass="entityList"  >
+
+								<f:facet name="header">
+									<div class="ui-grid-row">
+										<div class="ui-grid-col center">
+											<p:commandButton style="width: 225px"
+															 actionListener = "#{templateController.addVariableTemplate}"
+															 value			= "Ajouter une variable template"
+															 ajax  			= "true"
+															 label			= "Ajouter une variable template"
+															 update			="variablesTemplate"
+															 icon			= "ui-icon-plusthick"
+											>
+											</p:commandButton>
+										</div>
+									</div>
+								</f:facet>
+
+
+								<p:column width="4%">
+									<p:commandButton
+										actionListener ="#{templateController.deleteVariableTemplate(rowId)}"
+										update="variablesTemplate"
+										icon="fa fa-times"
+										title="Delete"
+									>
+									</p:commandButton>
+								</p:column>
+
+								<p:column headerText="Variable_ID">
+									<p:inputText  label="#{variable.id}"
+												  value="#{variable.id}"
+									>
+										<p:ajax event="blur"/>
+									</p:inputText>
+								</p:column>
+								<p:column headerText="Label">
+									<p:inputText  label="#{variable.label}"
+												  value="#{variable.label}"
+									>
+										<p:ajax event="blur"/>
+									</p:inputText>
+								</p:column>
+								<p:column headerText="Description">
+									<p:inputText  label="#{variable.description}"
+												  value="#{variable.description}"
+									>
+										<p:ajax event="blur" />
+									</p:inputText>
+								</p:column>
+
+								<f:facet name="footer">
+									<p:commandButton style="width: 225px"
+													 value  = "Finaliser"
+													 action ="#{templateController.saveOrDeleteVariable()}"
+													 ajax  	= "true"
+													 label	= "Ajouter une variable template"
+													 update	="variablesTemplate"
+													 icon	= "ui-icon-check">
+									</p:commandButton>
+								</f:facet>
+							</p:dataTable>
+						</h:form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>

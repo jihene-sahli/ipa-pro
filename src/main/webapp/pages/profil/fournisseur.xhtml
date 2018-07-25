@@ -1,0 +1,279 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:c="http://java.sun.com/jsp/jstl/core"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:sec="http://www.springframework.org/security/tags"
+				template="../templates/modena/template.xhtml">
+	<f:metadata>
+
+	</f:metadata>
+	<ui:define name="title"> #{msg['iw.fourn.add']}</ui:define>
+	<ui:define name="subheader"> #{msg['iw.fourn.add']}</ui:define>
+	<ui:define name="content">
+		<div class="Container100 Responsive100">
+			<div class="ContainerIndent">
+				<div class="iw2-center-block" style="background-color: white;">
+					<h:form id="fournForm">
+						<p:dataTable styleClass="arp-datatable fournisseurList"
+									 id="fournisseurList"
+									 var="fournisseur"
+									 value="#{fournisseurController.listfournisseurs}"
+									 resizableColumns="true"
+									 scrollable="true"
+									 rowIndexVar="rowIndex"
+									 editable="true"
+									 paginator="true"
+									 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									 rowsPerPageTemplate="10,50,100"
+									 rows="10">
+							<!--
+                            -->
+							<f:facet name="header">
+
+											<p:commandButton style="width: 185px"
+															 actionListener="#{fournisseurController.createFournisseur}"
+                                                             value			= "Ajouté un fournisseur"
+                                                             ajax  			= "true"
+                                                             label			= "Créer un nouveau Fournisseur"
+                                                             oncomplete		= "PF('fournisseurDialog').show()"
+                                                             update			= "@(.fournisseurDialog)"
+                                                             process 		= "@this"
+                                                             icon			="ui-icon-plusthick">
+                                            </p:commandButton>
+							</f:facet>
+							<p:column headerText="N°" styleClass="line_wrap" width="1%" style="text-align: center;">
+								<h:outputText value="${rowIndex + 1}" />
+							</p:column>
+							<p:column headerText="Raison Social" styleClass="line_wrap" width="5%">
+								<h:outputText value="${fournisseur.raisonSocial}"/>
+							</p:column>
+							<p:column headerText="Alias" styleClass="line_wrap" width="5%">
+								<h:outputText value="${fournisseur.alias}"/>
+							</p:column>
+							<p:column headerText="Email" styleClass="line_wrap" width="65" >
+								<h:outputText value="${fournisseur.email}"/>
+							</p:column>
+							<p:column headerText="TEL" styleClass="line_wrap" width="4%" >
+								<h:outputText value="${fournisseur.tel}"/>
+							</p:column>
+
+							<p:column headerText="Fiche téchnique" styleClass="line_wrap" width="65" >
+								<ui:repeat var="ot" value="#{fournisseur.offreTechnique.iwFileList}">
+									<!--<a href="#{ot.iwPath}">#{ot.iwName}</a>-->
+									<p:commandLink  value="#{ot.iwName}" ajax="false"  >
+										<p:fileDownload   value="#{fournisseurController.downloadFile(ot)}" >
+										</p:fileDownload>
+									</p:commandLink>
+								</ui:repeat>
+
+
+							</p:column >
+							<p:column headerText="Fiche Financière" styleClass="line_wrap" width="65">
+								<ui:repeat var="of" value="#{fournisseur.offreFinanciere.iwFileList}">
+									<p:commandLink  value="#{of.iwName}" ajax="false"  >
+										<p:fileDownload   value="#{fournisseurController.downloadFile(of)}" >
+										</p:fileDownload>
+									</p:commandLink>
+								</ui:repeat>
+							</p:column>
+							<p:column headerText="Spécifications technique" styleClass="line_wrap" width="65" >
+								<ui:repeat var="sf" value="#{fournisseur.specificationFonctionnelles.iwFileList}">
+									<p:commandLink  value="#{sf.iwName}" ajax="false"  >
+										<p:fileDownload   value="#{fournisseurController.downloadFile(sf)}" >
+										</p:fileDownload>
+									</p:commandLink>
+								</ui:repeat>
+							</p:column>
+							<p:column width="3%">
+								<p:commandButton
+									actionListener="#{fournisseurController.selectFournisseur(rowIndex)}"
+									icon="fa fa-edit"
+									title="Edit"
+									update="fournForm:objWidget"
+									oncomplete="PF('fournisseurDialog').show()"/>
+								<p:commandButton
+									actionListener="#{fournisseurController.selectFournisseur(rowIndex)}"
+									icon="fa fa-times"
+									title="Delete"
+									update="fournForm:currentFournisseur"
+								oncomplete="PF('confirmDelete').show()"/>
+							</p:column>
+
+						</p:dataTable>
+						<p:dialog id="confirmDelete" widgetVar="confirmDelete" closable="true" draggable="true" closeOnEscape="true" dynamic="true"
+								  header="Confirm Suppression" maximizable="false" modal="true"
+								  resizable="false" showEffect="fold" responsive="true">
+
+<h:outputText value="Vous Etes sur le point de supprimer le fournisseur"/>
+<h:outputText id="currentFournisseur" value="#{fournisseurController.selectedFournisseur.alias}" />
+							<h:panelGrid columns="2" style="text-align: center">
+							<p:commandButton actionListener="#{fournisseurController.deleteFournisseur()}"
+											 value			= "Supprimer un fournisseur"
+											 ajax  			= "true"
+											 label			= "Supprimer"
+											 oncomplete		= "PF('confirmDelete').hide()"
+											 update			= "@(.fournisseurList)"
+											 process 		= "@this"
+											 icon			="ui-icon-plusthick">
+							</p:commandButton>
+							<p:commandButton
+								value="Annulé et Quitter"
+								ajax="true"
+								label="confirm"
+								process="@this"
+								oncomplete="PF('fournisseurDialog').hide()">
+
+							</p:commandButton>
+							</h:panelGrid>
+
+						</p:dialog>
+
+							<p:dialog id="fournisseurDialog" widgetVar="fournisseurDialog" styleClass="fournisseurDialog" closable="true" draggable="true" closeOnEscape="true" dynamic="true"
+                                      header="Formulaire Fournisseur" height="400" width="900" maximizable="false" modal="true"
+                                      resizable="false" showEffect="fold" responsive="true" >
+                                <p:panelGrid columns="2" layout="grid" id="objWidget">
+                                    <p:outputLabel value="Code Fournisseur (*)" style="font-size: 11px !important"/>
+                                    <p:inputText value="#{fournisseurController.selectedFournisseur.codeFournisseur}" required="true"			  />
+                                    <p:outputLabel value="Raison Social (*)" style="font-size: 11px !important"/>
+                                    <p:inputText value="#{fournisseurController.selectedFournisseur.raisonSocial}"		required="true"	  />
+                                    <p:outputLabel value="Alias (*)" style="font-size: 11px !important"/>
+                                    <p:inputText value="#{fournisseurController.selectedFournisseur.alias}"	required="true"			  />
+                                    <p:outputLabel value="TEL (*)" style="font-size: 11px !important"/>
+                                    <p:inputText value="#{fournisseurController.selectedFournisseur.tel}"	required="true"			  />
+                                    <p:outputLabel value="E-MAIL (*)" style="font-size: 11px !important"/>
+                                    <p:inputText value="#{fournisseurController.selectedFournisseur.email}"	required="true"		  />
+
+                                    <p:outputLabel value="Fiche Technique" style="font-size: 11px !important"/>
+									<p:fieldset id="offreTechnique" widgetVar="offreTechnique" styleClass="upload">
+                                    <p:fileUpload
+                                        fileUploadListener="#{fournisseurController.handleUploadedFile}"
+                                        mode="advanced"
+                                        dragDropSupport="false"
+										update="offreTechnique"
+                                        fileLimit="1"
+                                    >
+                                        <f:attribute name="fournisseurUpload" value="offreTechnique" />
+                                    </p:fileUpload>
+
+										<ui:repeat var="ot" value="#{fournisseurController.selectedFournisseur.offreTechnique.iwFileList}">
+											<div>
+												<p:commandButton process="@this" value="#{ot.iwName}" icon="fa fa-download"
+																 ajax="false">
+													<p:fileDownload value="#{fournisseurController.downloadFile(ot)}"
+																	contentDisposition="attachment" transient="true">
+
+													</p:fileDownload>
+												</p:commandButton>
+												<p:commandButton process="@this" action="#{fournisseurController.removeFile('offreTechnique')}"
+																 value="#{msg['iw.button.supprimer']}" icon="fa fa-remove "
+																 ajax="true" update="@(.offreTechnique)"/>
+											</div>
+										</ui:repeat>
+									</p:fieldset>
+
+                                    <p:outputLabel value="Fiche Financière" style="font-size: 11px !important"/>
+									<p:fieldset id="offreFinancier" widgetVar="offreFinancier" styleClass="upload">
+                                    <p:fileUpload
+                                        fileUploadListener="#{fournisseurController.handleUploadedFile}"
+                                        mode="advanced"
+                                        dragDropSupport="false"
+										update="offreFinancier"
+                                        fileLimit="1"
+                                    >
+                                        <f:attribute name="fournisseurUpload" value="offreFinancier" />
+                                    </p:fileUpload>
+
+										<ui:repeat var="ot" value="#{fournisseurController.selectedFournisseur.offreFinanciere.iwFileList}">
+											<div>
+												<p:commandButton process="@this" value="#{ot.iwName}" icon="fa fa-download"
+																 ajax="false">
+													<p:fileDownload value="#{fournisseurController.downloadFile(ot)}"
+																	contentDisposition="attachment" transient="true">
+
+													</p:fileDownload>
+												</p:commandButton>
+												<p:commandButton process="@this" action="#{fournisseurController.removeFile('offreFinancier')}"
+																 value="#{msg['iw.button.supprimer']}" icon="fa fa-remove "
+																 ajax="true" update="@(.offreFinancier)"/>
+											</div>
+										</ui:repeat>
+									</p:fieldset>
+
+                                    <p:outputLabel value="Spécifications technique" style="font-size: 11px !important"/>
+									<p:fieldset id="specificationFonctionnelles" widgetVar="specificationFonctionnelles" styleClass="upload">
+                                    <p:fileUpload
+                                        fileUploadListener="#{fournisseurController.handleUploadedFile}"
+                                        mode="advanced"
+                                        dragDropSupport="false"
+										update="specificationFonctionnelles"
+                                        fileLimit="1">
+                                        <f:attribute name="fournisseurUpload" value="specificationFonctionnelles" />
+                                    </p:fileUpload>
+										<ui:repeat var="ot" value="#{fournisseurController.selectedFournisseur.specificationFonctionnelles.iwFileList}">
+											<div>
+												<p:commandButton process="@this" value="#{ot.iwName}" icon="fa fa-download"
+																 ajax="false">
+													<p:fileDownload value="#{fournisseurController.downloadFile(ot)}"
+																	contentDisposition="attachment" transient="true">
+
+													</p:fileDownload>
+												</p:commandButton>
+												<p:commandButton process="@this" action="#{fournisseurController.removeFile('specificationFonctionnelles')}"
+																 value="#{msg['iw.button.supprimer']}" icon="fa fa-remove "
+																 ajax="true" update="@(.specificationFonctionnelles)"/>
+											</div>
+										</ui:repeat>
+									</p:fieldset>
+
+                                    <p:outputLabel value="Nom Habituel " style="font-size: 11px !important"/>
+                                    <p:inputText value="#{fournisseurController.selectedFournisseur.nomHabituel}"	  />
+                                    <p:outputLabel value="Adresse" style="font-size: 11px !important"/>
+                                    <p:inputText value="#{fournisseurController.selectedFournisseur.adresse}"			  />
+                                    <p:outputLabel value="CIF" style="font-size: 11px !important"/>
+                                    <p:inputText value="#{fournisseurController.selectedFournisseur.cif}"			  />
+                                    <p:outputLabel value="Numéro registre De Commecre" style="font-size: 11px !important"/>
+                                    <p:inputText value="#{fournisseurController.selectedFournisseur.numRegistreCommerce}"			  />
+                                    <p:outputLabel value="FAX" style="font-size: 11px !important"/>
+                                    <p:inputText value="#{fournisseurController.selectedFournisseur.fax}"			  />
+                                    <p:outputLabel value="Represantant" style="font-size: 11px !important"/>
+                                    <p:inputText value="#{fournisseurController.selectedFournisseur.representant}"			  />
+
+                                </p:panelGrid>
+                                <h:panelGrid columns="3" style="text-align: center">
+                                    <p:commandButton action="#{fournisseurController.persistFournisseur()}"
+                                                     value="Enregistrer et Quitter"
+                                                     ajax="true"
+                                                     label="save continuer"
+                                                     process="objWidget,@this"
+                                                     update="@(.fournisseurList),@(fournisseurDialog)"
+                                                     oncomplete="PF('fournisseurDialog').hide()">
+                                    </p:commandButton>
+
+                                    <p:commandButton partialSubmit="true"
+                                                     value="annuler"
+                                                     ajax="true"
+                                                     label="Annuler"
+                                                     process="@(.fournisseurList),@(fournisseurDialog)"
+                                                     update="@(.fournisseurList),@(fournisseurDialog)"
+                                                     oncomplete="PF('fournisseurDialog').hide()">
+
+                                    </p:commandButton>
+                                    <p:commandButton action="#{fournisseurController.deleteFournisseur()}"
+                                                     value="Supprimer et Quitter"
+                                                     ajax="true"
+                                                     label="confirm"
+                                                     process="@this"
+                                                     oncomplete="PF('fournisseurDialog').hide()"
+                                                     update="@(.fournisseurList)">
+
+                                    </p:commandButton>
+                                </h:panelGrid>
+                            </p:dialog>
+					</h:form>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

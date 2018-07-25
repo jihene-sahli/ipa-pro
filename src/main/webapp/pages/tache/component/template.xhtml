@@ -1,0 +1,59 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    <p:column rendered="#{formWrapper.value.iwInput.component == 'template'}" colspan="2" >
+        <p:panel toggleable="true" header="#{formWrapper.value.iwInput.label}">
+           <!-- Process Anomaly Component -->
+            <p:outputPanel  rendered="#{'processAnomalie.xhtml'.equals(formWrapper.value.iwInput.value)}">
+                <ui:include src="../formTemplate/numidis/processAnomalie.xhtml" />
+            </p:outputPanel>
+            <!--Multiselect Process Anomaly Component -->
+            <p:outputPanel  rendered="#{'multiSelectProcessAnomaly.xhtml'.equals(formWrapper.value.iwInput.value)}">
+                <ui:include src="../formTemplate/numidis/multiSelectProcessAnomaly.xhtml" />
+            </p:outputPanel>
+			<p:outputPanel rendered="#{'uploadImg.xhtml'.equals(formWrapper.value.iwInput.value)}">
+				<ui:include src="../formTemplate/document/uploadImg.xhtml"/>
+			</p:outputPanel>
+			<p:outputPanel rendered="#{'annonces.xhtml'.equals(formWrapper.value.iwInput.value)}">
+				<ui:include src="../formTemplate/annonces.xhtml"/>
+			</p:outputPanel>
+			<p:outputPanel rendered="#{'candidats.xhtml'.equals(formWrapper.value.iwInput.value)}">
+				<ui:include src="../formTemplate/candidats.xhtml"/>
+			</p:outputPanel>
+			<p:outputPanel  rendered="#{'fournisseurTemplate.xhtml'.equals(formWrapper.value.iwInput.value)}">
+				<ui:include src="../formTemplate/fournisseurTemplate.xhtml" />
+			</p:outputPanel>
+			<p:outputPanel rendered="#{'produits.xhtml'.equals(formWrapper.value.iwInput.value)}">
+				<ui:include src="../formTemplate/produits.xhtml"/>
+			</p:outputPanel>
+			<p:outputPanel rendered="#{'emoluments.xhtml'.equals(formWrapper.value.iwInput.value)}">
+				<ui:include src="../formTemplate/emoluments.xhtml"/>
+			</p:outputPanel>
+			<p:outputPanel rendered="#{'listeSondages.xhtml'.equals(formWrapper.value.iwInput.value)}">
+				<ui:include src="../formTemplate/listeSondages.xhtml"/>
+			</p:outputPanel>
+			<p:outputPanel rendered="#{'formation.xhtml'.equals(formWrapper.value.iwInput.value)}">
+				<ui:include src="../formTemplate/formation/formation.xhtml"/>
+			</p:outputPanel>
+			<p:outputPanel rendered="#{'salaireTemplate.xhtml'.equals(formWrapper.value.iwInput.value)}">
+				<ui:include src="../formTemplate/document/salaireTemplate.xhtml"/>
+			</p:outputPanel>
+			<p:outputPanel rendered="#{'salaireTemplate2.xhtml'.equals(formWrapper.value.iwInput.value)}">
+				<ui:include src="../formTemplate/document/salaireTemplate2.xhtml"/>
+			</p:outputPanel>
+			<p:outputPanel rendered="#{'congeTemplate.xhtml'.equals(formWrapper.value.iwInput.value)}">
+				<ui:include src="../formTemplate/conge/congeTemplate.xhtml"/>
+			</p:outputPanel>
+			<p:outputPanel rendered="#{'reponsesSondage.xhtml'.equals(formWrapper.value.iwInput.value)}">
+				<ui:include src="../formTemplate/reponsesSondage.xhtml"/>
+			</p:outputPanel>
+			<p:outputPanel rendered="#{'dirigeantEntretien1.xhtml'.equals(formWrapper.value.iwInput.value)}">
+				<ui:include src="../formTemplate/dirigeantEntretien1.xhtml"/>
+			</p:outputPanel>
+			<p:outputPanel rendered="#{'dirigeantEntretien2.xhtml'.equals(formWrapper.value.iwInput.value)}">
+				<ui:include src="../formTemplate/dirigeantEntretien2.xhtml"/>
+			</p:outputPanel>
+        </p:panel>
+    </p:column>
+</ui:composition>

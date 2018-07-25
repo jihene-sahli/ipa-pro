@@ -1,0 +1,163 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core"
+				template="../templates/modena/template.xhtml">
+
+	<ui:define name="title" rendered="#{not empty notificationController.notificationId}">#{msg['iw.action.modification']} #{notificationController.notificationId}</ui:define>
+	<ui:define name="subheader" rendered="#{empty notificationController.notificationId}">Ajout Notification</ui:define>
+	<ui:define name="content">
+		<div class="Container100 Responsive100">
+			<div class="ContainerIndent">
+				<div class="iw2-center-block">
+					<p:panel styleClass="iw2-center-block iw2-width-80">
+						<!--The actual form-->
+						<h:form enctype="multipart/form-data">
+							<div class="Card ShadowEffect ui-fluid">
+								<div class="ui-panelgrid ui-widget ui-panelgrid-blank" style="border:0px !important; background:none;">
+									<div class="ui-panelgrid-content ui-widget-content ui-grid ui-grid-responsive">
+
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="Nom" />
+												<p:inputText value="#{notificationController.iwNotification.name}" label="Nom"
+															 required="true" requiredMessage="Le champ Nom ne peut être vide "/>
+											</div>
+										</div>
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="From" />
+												<p:inputText value="#{notificationController.iwNotification.fromName}" label="From" />
+											</div>
+										</div>
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="To User" />
+												<p:autoComplete multiple="true"
+																value="#{notificationController.userList}"
+																completeMethod="#{suggestionController.completeUsers}"
+																var="user"
+																itemLabel="#{user.id}"
+																itemValue="#{user}"
+																converter="#{userConverter}"
+																disabled="#{((rightController.rightProcess == true and empty rightController.currentModel) || (rightController.rightProcess == false and  empty rightController.standaloneTaskSelected))}">
+
+
+													<p:column style="width:10%">
+														<p:graphicImage rendered="#{user.pictureSet}" style="height: 40px;"
+																		value="#{fileController.avatar}">
+															<f:param name="user" value="#{user.id}" />
+														</p:graphicImage>
+														<p:graphicImage style="height: 40px;"
+																		rendered="#{!user.pictureSet}"
+																		url="/resources/img/avatar.png" />
+													</p:column>
+
+													<p:column>
+														<h:outputText value="#{user.id}" />
+													</p:column>
+
+												</p:autoComplete>
+											</div>
+										</div>
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="To Role" />
+												<p:autoComplete multiple="true"
+																value="#{notificationController.groupList}"
+																completeMethod="#{suggestionController.completeGroups}"
+																var="group"
+																itemLabel="#{group.name}"
+																itemValue="#{group}"
+																converter="#{groupConverter}"
+												>
+												</p:autoComplete>
+											</div>
+										</div>
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="To Email" />
+												<p:inputText value="#{notificationController.iwNotification.toEmail}" label="To Email" />
+											</div>
+										</div>
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="Sujet" />
+												<p:inputText value="#{notificationController.iwNotification.subject}" label="Sujet" />
+											</div>
+										</div>
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="Message" />
+												<p:inputTextarea value="#{notificationController.iwNotification.body}" label="Message" required="true" requiredMessage="Value is required" />
+											</div>
+										</div>
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="Notifier Responsable"  />
+												<p:selectOneMenu value="#{notificationController.iwNotification.notifierResponsable}" >
+													<p:ajax event="change" process="@this"></p:ajax>
+													<f:selectItem itemValue="#{null}" itemLabel="#{msg['iw.selectionner']}" noSelectionOption="true" />
+													<f:selectItem itemValue="#{true}" itemLabel="Oui"  />
+													<f:selectItem itemValue="#{false}" itemLabel="Non"  />
+												</p:selectOneMenu>
+											</div>
+										</div>
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="Piece jointe" />
+												<p:inputText value="#{notificationController.iwNotification.attachment}" label="Piece jointe" /> <span class="help-block"> Entrer les IDs séperarés par ;</span>
+											</div>
+										</div>
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="Tâches" />
+												<p:pickList id="Taches" value="#{notificationController.tasks}" var="gr" effect="bounce"
+															itemValue="#{gr}" itemLabel="#{gr}" showSourceControls="true" showTargetControls="true" showCheckbox="true" responsive="true"
+															showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains"  >
+
+													<f:facet name="sourceCaption">not selected</f:facet>
+													<f:facet name="targetCaption">selected</f:facet>
+
+													<p:ajax event="transfer" listener="#{notificationController.onTransferGr}" update="@this" />
+													<p:ajax event="select" listener="#{notificationController.onSelectGr}"  />
+													<p:ajax event="unselect" listener="#{notificationController.onUnselectGr}"  />
+													<p:ajax event="reorder" listener="#{notificationController.onReorderGr}" update="@this" />
+
+												</p:pickList>
+											</div>
+										</div>
+
+
+
+										<div class="ui-grid-row">
+											<div class="ui-panelgrid-cell ui-grid-col-6 iw2-center-block">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="Active"  />
+												<p:selectOneRadio value="#{notificationController.iwNotification.active}">
+													<f:selectItem itemLabel="#{msg['iw.boolean.oui']}" itemValue="true" />
+													<f:selectItem itemLabel="#{msg['iw.boolean.non']}" itemValue="false" />
+												</p:selectOneRadio>
+											</div>
+										</div>
+
+
+										<div class="ui-grid-row" style="margin-top: 30px !important;">
+											<div class="ui-grid-col-3 iw2-center-block" style="margin-right: -10% !important;">
+												<p:commandButton action="#{notificationController.saveNotification(true)}" value="#{msg['iw.bouton.enregistrernouveau']}" ajax="false"/>
+											</div>
+											<div class="ui-grid-col-3 iw2-center-block">
+												<p:commandButton styleClass="CyanButton" action="#{notificationController.saveNotification(false)}" value="Valider" ajax="false"/>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</h:form>
+					</p:panel>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

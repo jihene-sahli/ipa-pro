@@ -1,0 +1,105 @@
+<ui:composition
+
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+
+    #{taskController.registerTemplate('emoluments','Emoluments',fn:split('rhEmolumentList',',') )}
+	<f:verbatim>
+		<style>
+			.entityList th{
+				white-space: normal !important;
+			}
+			th.headerred  {
+				background-color: red !important;
+				color: #FFFFFF !important;
+			}
+		</style>
+	</f:verbatim>
+	<div class="Container100">
+    <p:dataTable id="rhEmolumentTemplate" rowIndexVar="rowId" var="rhEmolumentItem" value="#{emoluments.rhEmolumentList}" styleClass="entityList">
+
+		<p:column headerText="Période">
+			<h:outputText value="#{rhEmolumentItem.mois}">
+				<f:convertDateTime type="date" pattern="MMM-yy"/>
+			</h:outputText>
+		</p:column>
+		<p:column headerText="Sal. Base">
+			<p:inputText value="#{rhEmolumentItem.salaireBase}" disabled="#{!formWrapper.value.isWritable}" >
+			<!--	<p:ajax event="blur" listener ="#{emoluments.calculTotal()}" update="rhEmolumentTemplate"/>-->
+			</p:inputText>
+		</p:column>
+		<p:column headerText="SS/SAL 9%">
+			<p:inputText value="#{rhEmolumentItem.securiteSocialeSalarie}" disabled="#{!formWrapper.value.isWritable}" >
+				<!--<p:ajax event="blur" listener ="#{emoluments.calculTotal()}" update="rhEmolumentTemplate"/>-->
+			</p:inputText>
+		</p:column>
+		<p:column headerText="IRG">
+			<p:inputText value="#{rhEmolumentItem.irg}" disabled="#{!formWrapper.value.isWritable}" >
+				<!--<p:ajax event="blur" listener ="#{emoluments.calculTotal()}" update="rhEmolumentTemplate"/>-->
+			</p:inputText>
+		</p:column>
+		<p:column headerText="Prime Panier">
+			<p:inputText value="#{rhEmolumentItem.primePanier}" disabled="#{!formWrapper.value.isWritable}" >
+				<!--<p:ajax event="blur" listener ="#{emoluments.calculTotal()}" update="rhEmolumentTemplate"/>-->
+			</p:inputText>
+		</p:column>
+		<p:column headerText="Indemnité Exp. Prof">
+			<p:inputText value="#{rhEmolumentItem.indemniteExpProf}" disabled="#{!formWrapper.value.isWritable}" >
+				<!--<p:ajax event="blur" listener ="#{emoluments.calculTotal()}" update="rhEmolumentTemplate"/>-->
+			</p:inputText>
+		</p:column>
+		<p:column headerText="Bonus / Prime/ Rappel">
+			<p:inputText value="#{rhEmolumentItem.bonusPrimeRappel}" disabled="#{!formWrapper.value.isWritable}" >
+				<!--<p:ajax event="blur" listener ="#{emoluments.calculTotal()}" update="rhEmolumentTemplate"/>-->
+			</p:inputText>
+		</p:column>
+		<p:column headerText="Retenues Maladies et Avances">
+			<p:inputText value="#{rhEmolumentItem.retenuesMaladiesAvances}" disabled="#{!formWrapper.value.isWritable}" >
+				<!--<p:ajax event="blur" listener ="#{emoluments.calculTotal()}" update="rhEmolumentTemplate"/>-->
+			</p:inputText>
+		</p:column>
+		<p:column headerText="Net à Payer">
+			<p:inputText value="#{rhEmolumentItem.netAPayer}" disabled="#{!formWrapper.value.isWritable}" >
+				<!--<p:ajax event="blur" listener ="#{emoluments.calculTotal()}" update="rhEmolumentTemplate"/>-->
+			</p:inputText>
+		</p:column>
+		<p:column headerText="SS PAT 26%" styleClass="headerred">
+			<p:inputText value="#{rhEmolumentItem.securiteSocialeEmployeur}" disabled="#{!formWrapper.value.isWritable}" >
+				<!--<p:ajax event="blur" listener ="#{emoluments.calculTotal()}" update="rhEmolumentTemplate"/>-->
+			</p:inputText>
+		</p:column>
+		<p:columnGroup type="footer">
+			<p:row>
+				<p:column footerText="Total" />
+				<p:column footerText="#{emoluments.rhEmolumentTotal.salaireBase}" />
+				<p:column footerText="#{emoluments.rhEmolumentTotal.securiteSocialeSalarie}" />
+				<p:column footerText="#{emoluments.rhEmolumentTotal.irg}" />
+				<p:column footerText="#{emoluments.rhEmolumentTotal.primePanier}" />
+				<p:column footerText="#{emoluments.rhEmolumentTotal.indemniteExpProf}" />
+				<p:column footerText="#{emoluments.rhEmolumentTotal.bonusPrimeRappel}" />
+				<p:column footerText="#{emoluments.rhEmolumentTotal.retenuesMaladiesAvances}" />
+				<p:column footerText="#{emoluments.rhEmolumentTotal.netAPayer}" />
+				<p:column footerText="#{emoluments.rhEmolumentTotal.securiteSocialeEmployeur}" />
+			</p:row>
+		</p:columnGroup>
+
+		<f:facet name="footer">
+			<p:commandButton
+				value="Calculer Totale"
+				update ="rhEmolumentTemplate"
+				action="#{emoluments.calculTotal()}"
+				ajax = "true"
+				icon="ui-icon-calculator"
+
+				/>
+		</f:facet>
+    </p:dataTable>
+	</div>
+
+</ui:composition>

@@ -1,0 +1,107 @@
+<ui:composition
+
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+
+	#{taskController.registerTemplate('produits','Produits',fn:split('produits,initiator,produittotal',',') )}
+
+	<p:dataTable id="produitsTemplate" rowIndexVar="rowId" var="produitItem" value="#{produits.produits}" styleClass="entityList">
+
+		<f:facet name="header">
+			<div class="ui-grid-row">
+				<div class="ui-grid-col center">
+					<p:commandButton style="width: 225px"
+									 actionListener = "#{produits.addProduit}"
+									 value			= "Ajouter un produit"
+									 ajax  			= "true"
+									 label			= "Ajouter un produits"
+									 update			="produitsTemplate"
+									 icon			= "ui-icon-plusthick"
+									 disabled		="#{!formWrapper.value.isWritable}"
+					>
+					</p:commandButton>
+				</div>
+			</div>
+		</f:facet>
+
+
+		<p:column width="4%">
+			<p:commandButton
+				actionListener ="#{produits.deleteProduit(rowId)}"
+				update="produitsTemplate"
+				icon="fa fa-times"
+				title="Delete"
+				disabled="#{!formWrapper.value.isWritable}">
+			</p:commandButton>
+		</p:column>
+
+		<p:column headerText="Description">
+			<p:inputText  label="#{produitItem.description}"
+						  value="#{produitItem.description}"
+						  disabled="#{!formWrapper.value.isWritable}">
+				<p:ajax event="blur"/>
+			</p:inputText>
+		</p:column>
+		<p:column headerText="Quantite">
+			<p:inputText  label="#{produitItem.quantite}"
+						  value="#{produitItem.quantite}"
+						  disabled="#{!formWrapper.value.isWritable}">
+			</p:inputText>
+		</p:column>
+		<p:column headerText="Prix unitaire HT"   rendered="#{!produits.greaterThan(7,produits.taskNumber) or produits.showTemplateProduit}">
+			<p:inputText  label="#{produitItem.prixUnitaireHt}"
+						  value="#{produitItem.prixUnitaireHt}"
+						  disabled="#{!formWrapper.value.isWritable}">
+
+			</p:inputText>
+		</p:column>
+		<p:column headerText="Montant Total HT" rendered="#{!produits.greaterThan(7,produits.taskNumber) or produits.showTemplateProduit}">
+			<h:outputText value="${produitItem.totalHorsTaxe}"/>
+		</p:column>
+		<p:column headerText="TAUX %"   rendered="#{!produits.greaterThan(7,produits.taskNumber) or produits.showTemplateProduit}">
+			<p:selectOneMenu id="console" value="#{produitItem.taux}" style="width:125px">
+				<f:selectItem itemLabel="Sélectionner Taux" itemValue="" noSelectionOption="true"/>
+				<f:selectItem itemLabel="0" itemValue="0" />
+				<f:selectItem itemLabel="9" itemValue="9" />
+				<f:selectItem itemLabel="19" itemValue="19" />
+			</p:selectOneMenu>
+		</p:column>
+		<p:column headerText="TVA" rendered="#{!produits.greaterThan(7,produits.taskNumber) or produits.showTemplateProduit}">
+			<h:outputText value="${produitItem.tva}"/>
+		</p:column>
+		<p:column headerText="Montant Total TTC"  rendered="#{!produits.greaterThan(7,produits.taskNumber) or produits.showTemplateProduit}">
+			<h:outputText value="${produitItem.total}"/>
+		</p:column >
+		<p:columnGroup type="footer" rendered="#{!produits.greaterThan(7,produits.taskNumber) or produits.showTemplateProduit}" >
+			<p:row>
+				<p:column footerText="Total" />
+				<p:column footerText="" />
+				<p:column footerText="" />
+				<p:column footerText="" />
+				<p:column footerText="#{produits.produitsTotal.totalHorsTaxe}" />
+				<p:column footerText="" />
+				<p:column footerText="#{produits.produitsTotal.tva}" />
+				<p:column footerText="#{produits.produitsTotal.total}" />
+			</p:row>
+		</p:columnGroup>
+
+		<f:facet name="footer" >
+			<p:commandButton
+				rendered="#{!produits.greaterThan(7,produits.taskNumber) or produits.showTemplateProduit}"
+				value="Calculer Prix Total en DZD"
+				update ="produitsTemplate"
+				action="#{produits.calculTotal()}"
+				ajax = "true"
+				icon="ui-icon-calculator"
+
+			/>
+		</f:facet>
+
+	</p:dataTable>
+</ui:composition>

@@ -1,0 +1,58 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core">
+
+
+	<h:form id="dash6" >
+
+		<p:panel>
+			<div id="buttons"></div>
+			<br/><br/>
+			<div id="statHS">
+				<div id="chart_statHS" style="width: 100%; height: 250px;"></div>
+			</div>
+		</p:panel>
+
+
+		<script type="text/javascript">
+			function AddNamespaceHandlerMW() {
+				var svg = jQuery('#chart_statHS svg');
+				svg.attr("xmlns", "http://www.w3.org/2000/svg");
+				svg.css('overflow', 'visible');
+			}
+
+			var click = "return xepOnline.Formatter.Format('chart_statHS', {render:'download', srctype:'svg'})";
+			jQuery('#buttons').append('<button onclick="' + click + '">PDF</button>');
+
+			google.charts.load('current', {packages: ['corechart']});
+			google.charts.setOnLoadCallback(drawchart_statHS);
+
+			function drawchart_statHS() {
+				var mydata = JSON.parse('#{dashAchatsController.getDaHSByState()}');
+				console.log('mydata => '+JSON.stringify(mydata));
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'Demandes Achat');
+				data.addColumn('number', 'Nbr Demandes Achat');
+
+				data.addRows([["Factures Reçues",mydata.factRecue]]);
+				data.addRows([["En Attente De Validation",mydata.dpEnCours]]);
+				data.addRows([["Demande De Paiement Validée",mydata.dpValidee]]);
+				data.addRows([["Facture Réglée",mydata.FactureReglee]]);
+
+
+
+				//}
+
+				var options = {
+					title: 'Nombre de Demande Achat Par statut',
+					pieHole: 0.2
+				};
+				var daHSChart = new google.visualization.PieChart(document.getElementById('chart_statHS'));
+				google.visualization.events.addListener(daHSChart, 'ready', AddNamespaceHandlerMW);
+				daHSChart.draw(data, options);
+			}
+		</script>
+	</h:form>
+</ui:composition>

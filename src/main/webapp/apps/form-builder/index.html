@@ -1,0 +1,121 @@
+<!doctype html>
+<html ng-app="app">
+    <head>
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <title>Imagineworkflow form builder</title>
+        <link type="text/css" rel="stylesheet" href="dist/lib/css/bootstrap.min.css"/>
+        <link type="text/css" rel="stylesheet" href="dist/css/site.css"/>
+        <link type="text/css" rel="stylesheet" href="dist/css/angular-form-builder.css"/>
+        <script src="dist/lib/js/jquery.min.js"></script>
+        <script type="text/javascript" src="dist/lib/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="dist/lib/js/angular.min.js"></script>
+        <script type="text/javascript" src="dist/js/angular-form-builder.js"></script>
+        <script type="text/javascript" src="dist/js/angular-form-builder-components.js"></script>
+        <script type="text/javascript" src="dist/lib/js/validator/angular-validator.min.js"></script>
+        <script type="text/javascript" src="dist/lib/js/validator/angular-validator-rules.min.js"></script>
+        <script type="text/javascript" src="dist/js/form-controller.js"></script>
+        <link rel="stylesheet" href="dist/css/angular-ui-tree.min.css">
+        <script type="text/javascript" src="dist/js/angular-ui-tree.min.js"></script>
+        <script type="text/javascript" src="dist/js/jquery.multi-select.js"></script>
+        <link rel="stylesheet" href="dist/css/multi-select.css">
+        <script type="text/javascript" src="dist/js/googlemaps.js"></script>
+        <script type="text/javascript" src="dist/js/gmaps.js"></script>
+
+    </head>
+    <body class="container" ng-controller="FormController">
+        <div class="navbar navbar-fixed-top navbarup">
+            <img src="dist/img/ip_logo.png" alt="Imagine Partners">
+            <div class="navbardown">
+                <div class="btn-group">
+                    <div class="btn-toolbar pull-left">
+                        <button class="btn btn-success navbutton" onclick="$('#saveModal').modal('show');">
+                            <i class="toolbar-button ng-scope editor-icon editor-icon-save glyphicon glyphicon-ok" data-toggle="tooltip" title="Save"></i>
+                        </button>
+                    </div>
+                </div>
+                <span style="color: #FFF;" ng-show="formId">{{modalForm.name}} ({{formId}})</span>
+                <div class="btn-group pull-right">
+                    <div class="btn-toolbar pull-right">
+                        <button class="btn btn-danger navbutton" onclick='document.location.href = "../../pages/formulaire/liste.xhtml"'>
+                            <i class="toolbar-button ng-scope editor-icon editor-icon-close glyphicon glyphicon-remove" data-toggle="tooltip" title="Close"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr/><hr/><hr/>
+        <div class="row" id="div-contner">
+            <div class="col-md-2 accordion-contner" ng-style="style()" resizable>
+                <div fb-components></div>
+            </div>
+            <div class="col-md-7 form-contner" ng-style="style()" resizable>
+                    <div fb-builder="default" ng-if="ajaxResponse == 8"></div>
+                    <div ng-if="ajaxResponse != 8" class="image-load"><img src="dist/img/chargement.gif"></div>
+            </div>
+            <div class="col-md-3 popover-contner" id="popover-contner"  ng-style="style()" resizable>
+
+            </div>
+        </div>
+
+        <div id="saveModal" role="dialog" class="modal fade bs-example-modal-md" aria-labelledby="mySmallModalLabel">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label class='control-label'>Name</label>
+                                <input type='text' ng-model="modalForm.name" validator="[required]" class='form-control'/>
+                            </div>
+                            <div class="form-group">
+                                <label class='control-label'>Description</label>
+                                <textarea type='text' ng-model="modalForm.description" class='form-control'>
+                                </textarea>
+                            </div>
+                            <hr/>
+                            <div class="alert alert-danger" ng-if="saveError">
+                                {{saveError}}
+                            </div>
+                            <div class='form-group'>
+
+                                <input type='submit' ng-click="submit(false)" class='btn btn-primary' value='Save'/>
+                                <input type='submit' ng-click="submit(true)" class='btn btn-primary' value='Save and close form builder'/>
+                                <input type='button' onclick="$('#saveModal').modal('hide');" class='btn btn-default' value='Cancel'/>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div id="formModal" role="dialog" class="modal fade bs-example-modal-sm" aria-labelledby="mySmallModalLabel">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="alert alert-danger" ng-if="formError">
+                            {{formError}}
+                        </div>
+                        <div class='form-group'>
+
+                            <input type='button' onclick="$('#formModal').modal('hide');" class='btn btn-default' value='OK'/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div id="exitModal" role="dialog" class="modal fade bs-example-modal-md" aria-labelledby="mySmallModalLabel">
+            <div class="modal-dialog modal-md" style="width: 350px">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        Are you sure you want to exit without saving ?
+                        <hr/>
+                        <input type='submit' onclick='document.location.href = "../../pages/formulaire/liste.xhtml"' class='btn btn-primary' value='Yes'/>
+                        <input type='button' onclick="$('#exitModal').modal('hide');" class='btn btn-default' value='Cancel'/>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </body>
+</html>

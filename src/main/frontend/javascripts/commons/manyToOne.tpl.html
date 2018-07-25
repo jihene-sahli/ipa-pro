@@ -1,0 +1,22 @@
+<div ng-switch="type">
+	<div ng-switch-when="edit">
+		<div class="ui-grid-row">
+			<div class="ui-panelgrid-cell ui-grid-col-12">
+				<label class="ui-outputlabel ui-widget" for="select_{{ field.name }}">
+					{{ ::field.label }}
+				</label>
+			</div>
+		</div>
+		<div class="ui-grid-row">
+			<div class="ui-panelgrid-cell ui-grid-col-12">
+				<select ng-options="item as item[field.association.label] for item in items track by item[field.association.schema.primaryKey]" name="{{ field.name }}" ng-model="data[field.name]" id="select_{{ field.name }}">
+					<option value="">--Séléctionnez--</option>
+				</select>
+				<a ui-sref="workflow.entities.entity.add({entity: field.association.schema.name})">Ajouter</a>
+			</div>
+		</div>
+	</div>
+	<span ng-switch-when="view" ng-show="item[field.name]">
+		{{ ::item[field.name][field.association.label]}} <a ui-sref="workflow.entities.entity.add({entity: field.association.className})" ng-show="false">{{ field.association.className }}</a>
+	</span>
+</div>

@@ -1,0 +1,18 @@
+<ui:composition
+
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+
+    <f:verbatim rendered="#{empty fileController.faviconDataImage}">
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/img/#{navigationController.companyFavIcon}"/>
+        <link rel="icon" type="image/png" href="#{request.contextPath}/resources/img/#{navigationController.companyFavIcon}" />
+    </f:verbatim>
+    <f:verbatim rendered="#{not empty fileController.faviconDataImage}">
+        <link rel="shortcut icon" type="image/x-icon" href="#{fileController.faviconDataImage}"/>
+        <link rel="icon" type="image/png" href="#{fileController.faviconDataImage}" />
+    </f:verbatim>
+</ui:composition>

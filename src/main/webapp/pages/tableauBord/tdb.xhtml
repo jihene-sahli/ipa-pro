@@ -1,0 +1,94 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+
+    <ui:define name="title">#{msg['iw.tableaubord']}</ui:define>
+    <ui:define name="subheader">
+        #{msg['iw.tableaubord']} | #{dashBoardController.processPie.title}
+    </ui:define>
+    <ui:define name="head">
+        <f:verbatim>
+            <script type="text/javascript">
+
+                function extLegend()
+                {
+                    this.cfg.legend = {
+                        show: true,
+                        location: 's',
+                        placement: 'outsideGrid'
+                    };
+                }
+            </script>
+        </f:verbatim>
+    </ui:define>
+
+
+    <ui:define name="content">
+        <div class="Container40 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <p:chart  type="pie" model="#{dashBoardController.processPie}" style="width:100%;height:500px;max-height:100%" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="Container30">
+            <div class="ContainerIndent">
+                <div class="Card ShadowEffect">
+                    <p:chart type="bar" model="#{dashBoardController.processBar}" style="width:100%;height:500px;max-height:100%" />
+                </div>
+            </div>
+        </div>
+		<ui:remove>
+        <div class="Container30 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect HeiAutoOnMobile">
+                       <ui:remove>
+                        <p:link outcome="dashBoard">
+                            <div class="Container100 Responsive">
+                                <div class="ContainerIndent">
+                                    <div class="Card ShadowEffect TurquoiseBack White TexAlCenter HoverEffect">
+                                        <div class="EmptyBox5"></div>
+                                        <i class="icon-bar-graph Fs40"></i>
+                                        <div class="EmptyBox5"></div>
+                                        <div class="FontRobotoLight Fs9 White DispBlock ClearBoth">
+                                            <p:outputLabel value="#{msg['iw.dashboaed.toutprocess']}" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:link>
+					   </ui:remove>
+                        <ui:repeat id="processListPanel"  value="#{navigationController.lastProcDefList}" var="procDef">
+                            <p:link outcome="dashBoard">
+                                <f:param name="process" value="#{procDef.key}" />
+                                <div class="Container50 Responsive">
+                                    <div class="ContainerIndent">
+                                        <div style="height: 120px;" class="Card ShadowEffect OrangeBack SoftOrange TexAlCenter HoverEffect">
+                                            <div class="EmptyBox5"></div>
+                                            <i class="icon-sun Fs40"></i>
+                                            <div class="EmptyBox5"></div>
+                                            <div class="FontRobotoLight Fs9 SoftOrange DispBlock ClearBoth">
+                                                <p:outputLabel value="#{procDef.name}" />
+                                                <p:outputLabel rendered="#{empty procDef.name}" value="#{procDef.id}" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:link>
+                        </ui:repeat>
+                    </div>
+                </div>
+            </div>
+        </div>
+		</ui:remove>
+    </ui:define>
+</ui:composition>

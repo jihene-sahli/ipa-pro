@@ -1,0 +1,198 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="../templates/modena/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <f:metadata>
+        <f:viewParam name="process" value="#{taskController.procDefKey}" />
+    </f:metadata>
+
+    <ui:define name="title">#{msg['iw.standalonetask.mestacheautonome']}</ui:define>
+    <ui:define name="subheader">
+        #{msg['iw.standalonetask.mestacheautonome']}
+		#{standaloneTaskController.init()}
+    </ui:define>
+    <ui:define name="content">
+        <f:verbatim>
+            <style type="text/css">
+                .ui-datatable table, .ui-datatable-resizable table {
+                    table-layout: auto !important;
+                }
+
+                .ui-datatable-scrollable table {
+                    table-layout: fixed !important;
+                }
+            </style>
+        </f:verbatim>
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+
+                        <h:form id="taskForm">
+
+							<p:tabView activeIndex="#{navigationController.indexActiveAppStd}" >
+								<p:ajax event="tabChange" listener="#{navigationController.updateTabIndexAppStd}" />
+								<p:tab title="Tous">
+									<p:dataTable rendered="#{empty standaloneTaskController.archive}" emptyMessage="#{iw.tache.message.tache.aucunetachetrouve}" value="#{standaloneTaskController.taskList}" var="task" paginator="true"
+												 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+												 rowsPerPageTemplate="10,50,100"
+												 rows="10">
+
+										<p:column headerText="#{msg['iw.tache.tache']}" filterBy="#{task.name}" filterMatchMode="contains" sortBy="#{task.name}">
+											<p:link  outcome="taskForm" value="#{task.name}">
+												<f:param name="taskAutonome" value="#{task.id}" />
+												<f:param name="functionId" value="#{standaloneTaskController.functionId}" />
+											</p:link>
+										</p:column>
+
+										<p:column headerText="#{msg['iw.tache.dateajout']}"  filterBy="#{task.createTime}" filterMatchMode="contains" sortBy="#{task.createTime}">
+											<p:outputLabel value="#{task.createTime}">
+												<f:converter binding="#{dateConverter}" />
+												<f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+											</p:outputLabel>
+										</p:column>
+									</p:dataTable>
+								</p:tab>
+								<c:forEach items="#{navigationController.userApplicationList}" var="app" varStatus="status" >
+ 									<c:set var="listFonctionApp" value="#{navigationController.getFonctionsByAppKey(app.iwKey)}" />
+									<p:tab title="#{app.iwName}" rendered="#{not empty listFonctionApp}">
+										<p:tabView   activeIndex="#{navigationController.indexActiveFunction}">
+											<p:ajax event="tabChange" listener="#{navigationController.updateTabIndexFunctoin}" />
+											<p:tab title="Tous">
+												<p:dataTable rendered="#{empty standaloneTaskController.archive}" emptyMessage="#{iw.tache.message.tache.aucunetachetrouve}" value="#{standaloneTaskController.taskApp.get(app.iwKey)}" var="task"  paginator="true"
+															 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+															 rowsPerPageTemplate="10,50,100"
+															 rows="10">
+													<p:column headerText="#{msg['iw.tache.tache']}" filterBy="#{task.name}" filterMatchMode="contains" sortBy="#{task.name}">
+														<p:link  outcome="taskForm" value="#{task.name}">
+															<f:param name="taskAutonome" value="#{task.id}" />
+															<f:param name="functionId" value="#{standaloneTaskController.functionId}" />
+														</p:link>
+													</p:column>
+
+													<p:column headerText="#{msg['iw.tache.dateajout']}"  filterBy="#{task.createTime}" filterMatchMode="contains" sortBy="#{task.createTime}">
+														<p:outputLabel value="#{task.createTime}">
+															<f:converter binding="#{dateConverter}" />
+															<f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+														</p:outputLabel>
+													</p:column>
+												</p:dataTable>
+
+											</p:tab>
+											<c:forEach items="#{listFonctionApp}" var="func">
+												<p:tab title="#{(empty func.iwName) ? func.iwStandAloneTaskId : func.iwName}">
+													<p:dataTable rendered="#{empty standaloneTaskController.archive}" emptyMessage="#{iw.tache.message.tache.aucunetachetrouve}" value="#{standaloneTaskController.tasksMap.get(app.iwKey).get(func.iwStandAloneTaskId)}" var="task"  paginator="true"
+																 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+																 rowsPerPageTemplate="10,50,100"
+																 rows="10">
+
+														<f:facet name="header">
+															<p:commandButton value="#{msg['iw.button.nouveau']}" icon="fa fa-plus" rendered="#{navigationController.displayStandalonetaskDialog == true}" oncomplete="PF('standaloneTaskDialog').show();" ajax="true" process="@this" actionListener="#{standaloneTaskController.selectFunctionId(func.iwStandAloneTaskId)}"  update=":fromDialogtsk"/>
+															<p:commandButton value="#{msg['iw.button.nouveau']}" icon="fa fa-plus" rendered="#{not navigationController.displayStandalonetaskDialog == true}"  action="#{standaloneTaskController.saveTask(func.iwStandAloneTaskId)}" process="@this" />
+														</f:facet>
+														<p:column headerText="#{msg['iw.tache.tache']}" filterBy="#{task.name}" filterMatchMode="contains" sortBy="#{task.name}">
+															<p:link  outcome="taskForm" value="#{task.name}">
+																<f:param name="taskAutonome" value="#{task.id}" />
+																<f:param name="functionId" value="#{standaloneTaskController.functionId}" />
+															</p:link>
+														</p:column>
+
+														<p:column headerText="#{msg['iw.tache.dateajout']}"  filterBy="#{task.createTime}" filterMatchMode="contains" sortBy="#{task.createTime}">
+															<p:outputLabel value="#{task.createTime}">
+																<f:converter binding="#{dateConverter}" />
+																<f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+															</p:outputLabel>
+														</p:column>
+													</p:dataTable>
+												</p:tab>
+											</c:forEach>
+										</p:tabView>
+									</p:tab>
+								</c:forEach>
+							</p:tabView>
+
+
+
+
+
+
+
+
+							<p:dataTable rendered="#{not empty standaloneTaskController.archive}" emptyMessage="#{iw.tache.message.tache.aucunetachetrouve}" value="#{standaloneTaskController.taskHistList}" var="task" id="standaloneTaskHistList" paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10,50,100"
+                                         rows="10">
+
+
+                                <p:column headerText="#{msg['iw.tache.tache']}" filterBy="#{task.name}" filterMatchMode="contains" sortBy="#{task.name}">
+                                    <p:outputLabel   value="#{task.name}"/>
+                                </p:column>
+
+                                <p:column headerText="#{msg['iw.standalonetask.utilisateur']}" filterBy="#{task.assignee}" filterMatchMode="contains" sortBy="#{task.name}">
+                                    <p:outputLabel   value="#{task.assignee}"/>
+                                </p:column>
+                                <p:column headerText="#{msg['iw.tache.dateajout']}"  filterBy="#{task.createTime}" filterMatchMode="contains" sortBy="#{task.createTime}">
+                                    <p:outputLabel value="#{task.createTime}">
+                                        <f:converter binding="#{dateConverter}" />
+                                        <f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{msg['iw.tache.datefin']}"  filterBy="#{task.createTime}" filterMatchMode="contains" sortBy="#{task.createTime}">
+                                    <p:outputLabel value="#{task.endTime}">
+                                        <f:converter binding="#{dateConverter}" />
+                                        <f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+                                    </p:outputLabel>
+                                </p:column>
+                            </p:dataTable>
+
+
+
+
+                        </h:form>
+                        <p:dialog appendTo="@(body)"  modal="true" header="#{standaloneTaskController.iwStandAloneTask.iwName}" widgetVar="standaloneTaskDialog">
+                            <h:form id="fromDialogtsk">
+                                <p:panelGrid columns="2" style="width:100%">
+
+                                    <p:outputLabel value="#{msg['iw.tacheautonome.nom']}" />
+                                    <p:inputText required="true" value="#{standaloneTaskController.iwStandAloneTask.iwName}" label="Saisir le nom de la tache" >
+										<p:ajax process="fromDialogtsk" />
+									</p:inputText>
+
+                                    <p:outputLabel value="#{msg['iw.tacheautonome.description']}" />
+                                    <p:inputTextarea value="#{standaloneTaskController.iwStandAloneTask.iwDescription}" label="Saisir la description de la tache">
+									   <p:ajax process="fromDialogtsk" />
+							     	</p:inputTextarea>
+
+                                    <p:outputLabel />
+                                    <p:outputPanel>
+                                        <p:commandButton value="#{msg['iw.bouton.valider']}" action="#{standaloneTaskController.saveTask()}" update="fromDialogtsk" >
+                                        </p:commandButton>
+                                        <p:commandButton value="#{msg['iw.bouton.annuler']}" onclick="PF('standaloneTaskDialog').hide();" type="reset" />
+                                    </p:outputPanel>
+                                </p:panelGrid>
+                            </h:form>
+
+                        </p:dialog>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ui:remove>
+            <div class="Container20 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect HeiAutoOnMobile">
+                            <ui:include src="../templates/processList.xhtml" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:remove>
+    </ui:define>
+</ui:composition>

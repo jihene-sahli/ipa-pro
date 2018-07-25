@@ -1,0 +1,61 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="../templates/modena/template.xhtml">
+
+    <ui:define name="title">#{msg['iw.avencement.avancementphase']}</ui:define>
+    <ui:define name="subheader">
+        #{msg['iw.avencement.avancementphase']}
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="fromAv">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <p:commandButton   value="#{msg['iw.avencement.creerunephaser']}"  actionListener="#{progressController.initPhase}"  onclick="PF('phaseDialog').show();" ajax="true" update=":formDialog"  icon="fa fa-plus"  />
+                    </div>
+                </div>
+            </div>
+
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <p:dataTable  id="dataPhase" value="#{progressController.phaseList}" var="phase"  class="hide-column-names"  >
+                            <p:column>
+                                <h:outputLabel value="#{phase.iwPhaseName}" />
+                            </p:column>
+                            <p:column>
+                                <p:commandButton  value="#{msg['iw.bouton.modifier']}" actionListener="#{progressController.setCurrentPhase(phase)}" onclick="PF('phaseDialog').show();" ajax="true"  update=":formDialog"  icon="fa fa-edit"  />
+                                <p:commandButton  value="#{msg['iw.button.supprimer']}"  actionListener="#{progressController.removePhase(phase)}"  ajax="true" update=":fromAv:dataPhase" icon="fa fa-remove" >
+                                    <p:confirm header="#{msg['iw.confirmation.titre']}" message="#{msg['iw.message.voulezvouscontinuer']}" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </div>
+
+        </h:form>
+        <p:dialog appendTo="@(body)"  modal="true" header="#{msg['iw.taches.nominstance']}" widgetVar="phaseDialog">
+            <h:form id="formDialog">
+                <p:panelGrid columns="2">
+
+                    <p:outputLabel value="#{msg['iw.avencement.saisirnomphase']}" />
+                    <p:inputText required="true" value="#{progressController.currentPhase.iwPhaseName}" label="#{msg['iw.avencement.saisirnomphase']}" />
+                    <p:outputLabel />
+                    <p:outputPanel>
+                        <p:commandButton value="#{msg['iw.bouton.valider']}" actionListener="#{progressController.saveCurrentPhase}" onclick="PF('phaseDialog').hide();"  ajax="true" update=":fromAv:dataPhase"/>
+                        <p:commandButton value="#{msg['iw.bouton.annuler']}" onclick="PF('phaseDialog').hide();" />
+                    </p:outputPanel>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+
+    </ui:define>
+
+</ui:composition>

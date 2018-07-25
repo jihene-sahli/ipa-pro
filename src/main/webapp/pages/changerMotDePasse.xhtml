@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view locale="#{navigationController.currentLocale}" >
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+            <ui:include src="templates/component/favicon.xhtml" />
+            <title>#{msg['iw.authentification.changervotremotpasse']} | #{navigationController.imagineworkflowTitle}</title>
+
+        </f:facet>
+        <ui:insert name="head" />
+    </h:head>
+
+    <h:body styleClass="GrayModena Geometry" style="height:auto;">
+
+        <div class="Wid90 DispBlock MarAuto MarTopPerc5 TexAlCenter">
+            <div class="Wid50 MarAuto WidAutoOnMobile">
+                <h:graphicImage rendered="#{empty fileController.loginLogo}" name="#{navigationController.loginLogo}" library="img" style="width:40%; max-width:200px;"/>
+                <p:graphicImage rendered="#{not empty fileController.loginLogo}" value="#{fileController.loginLogo}" style="width:40%; max-width:200px;"/>
+                <div class="EmptyBox30"></div>
+                <div class="Card ShadowEffect">
+                    <h:form id="loginForm" prependId="false">
+
+                        <div class="EmptyBox20"></div>
+                        <div class="Wid100 OvHidden BigTopic Fs30">
+                            <i class="icon-security Fs60 DispBlock"></i>#{msg['iw.authentification.changervotremotpasse']}
+                        </div>
+                        <div class="EmptyBox30"></div>
+                        <div class="Wid100">
+                            <p:password value="#{authenticationController.password}" required="true"
+                                        label="#{msg['iw.authentification.motpasseactuel']}"
+                                        placeholder="#{msg['iw.authentification.motpasseactuel']}"
+                                        styleClass="Wid80 TexAlCenter Fs18"/>
+                        </div>
+                        <div class="EmptyBox10"></div>
+                        <div class="Wid100">
+                            <p:password  value="#{authenticationController.newPassword}" id="newPassword" required="true" label="#{msg['iw.authentification.nouveaumotpasse']}"
+                                         placeholder="#{msg['iw.authentification.nouveaumotpasse']}"
+                                         styleClass="Wid80 TexAlCenter Fs18"
+                                         validatorMessage="#{msg['iw.message.nouveaumotpasseincorrect']}" >
+                                <f:validateRegex pattern="#{navigationController.passwordValidationRegExp}" />
+                            </p:password>
+                            <p:tooltip trackMouse="true" for="newPassword" showEffect="clip" hideEffect="clip" >
+                                <p:outputLabel class="White" value="#{navigationController.passwordValidationTip}" escape="false" />
+                            </p:tooltip>
+                        </div>
+                        <div class="EmptyBox10"></div>
+                        <div class="Wid100">
+                            <p:password required="true"
+                                        value="#{authenticationController.newPasswordConfirmation}"
+                                        label="#{msg['iw.authentification.confirmezvotrenouveaumotpasse']}"
+                                        placeholder="#{msg['iw.authentification.confirmezvotrenouveaumotpasse']}"
+                                        styleClass="Wid80 TexAlCenter Fs18"
+                                        validatorMessage="#{msg['iw.message.confirmationmotpasseincorrect']}"/>
+                        </div>
+                        <div class="EmptyBox30"></div>
+                        <div class="Separator"></div>
+                        <p:messages id="errorMessages" escape="false" showDetail="true" showSummary="false" showIcon="true"/>
+                        <div class="Wid100 Responsive100">
+                            <p:commandButton update="errorMessages" ajax="false" action="#{authenticationController.changePassword()}" type="submit" value="#{msg['iw.button.valider']}" styleClass="Wid100 White RaisedButton Fright FloatNoneOnMobile" />
+                        </div>
+                        <div class="EmptyBox20"></div>
+                    </h:form>
+                </div>
+                <div class="Wid100 TexAlCenter MarTop20 Fs14 FontRobotoRegular Gray">
+                    <p:outputLabel escape="false" value="#{navigationController.copyright}" />
+                </div>
+            </div>
+        </div>
+
+        <h:outputStylesheet name="css/core-layout.css" library="modena-layout" />
+        <h:outputStylesheet name="css/animate.css" library="modena-layout" />
+        <h:outputStylesheet name="css/modena-font.css" library="modena-layout" />
+        <h:outputStylesheet name="css/ripple-effect.css" library="modena-layout" />
+        <h:outputStylesheet name="css/font-awesome.css" library="modena-layout" />
+        <h:outputStylesheet name="css/modena-layout.css" library="modena-layout" />
+        <!-- import CSS-CORRECTIONS -->
+        <h:outputStylesheet library="css" name="css-corrections.css"  />
+    </h:body>
+    </f:view>
+</html>

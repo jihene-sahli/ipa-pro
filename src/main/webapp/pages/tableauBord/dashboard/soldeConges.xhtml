@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core">
+
+
+	<h:form id="conges">
+		<p:panelGrid columns="2" class="Wid100" id="aa">
+			<p:outputLabel for="team" value="Séléctionnez une équipe:"/>
+			<p:selectOneMenu id="team" value="#{dashController.teamId}"
+							 panelStyle="width:180px"
+							 effect="fade" var="t" style="width:160px" filter="true"
+							 filterMatchMode="startsWith">
+				<p:ajax event="change" listener="#{dashController.teamChanged}"
+						update="conges"/>
+				<f:selectItem itemLabel="Sélectionnez Equipe" itemValue=""
+							  noSelectionOption="true"/>
+				<f:selectItem itemLabel="Tous" itemValue="Tous"/>
+				<f:selectItems value="#{hierarchyController.groupList}" var="te"
+							   itemLabel="#{te.id}" itemValue="#{te.id}"/>
+			</p:selectOneMenu>
+
+		</p:panelGrid>
+
+		<h:panelGrid  cellpadding="10" style="margin: 0 auto;"  rendered="#{dashController.teamId !=null}" >
+
+			<p:dataTable id="colabTab" rowIndexVar="rowId" var="collaborateur"
+						 value="#{dashController.collaborateurs}"
+						 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+						 paginator="true" rows="10" style="margin-bottom:20px">
+
+				<f:facet name="{Exporters}" >
+					<h:commandLink style="float:right " ajax="false" actionListener="#{dashController.productPdf()}" rendered="#{!dashController.collaborateurs.isEmpty()}">
+						<p:graphicImage name="/img/pdf_icon.png" />
+
+
+					</h:commandLink>
+
+				<h:commandLink style="float:right " rendered="#{!dashController.collaborateurs.isEmpty()}" >
+					<p:graphicImage name="/img/excel_icon.png" />
+					<p:dataExporter type="xls" target="colabTab" fileName="soldeconges" />
+				</h:commandLink>
+
+
+
+				</f:facet>
+
+				<p:column width="80">
+					<p:graphicImage  style="height: 65px;" rendered="#{dashController.getAvatar(collaborateur)==false}"  url="/resources/img/avatar.png" />
+
+
+					<p:graphicImage cache="false" style="height: 65px;width: 85;" rendered = "#{dashController.getAvatar(collaborateur)==true}" value="#{fileController.avatar}">
+						<f:param name="user" value="#{collaborateur.actIdUser}" />
+					</p:graphicImage>
+				</p:column>
+
+				<p:column headerText="Nom" >
+					<p:outputLabel value="#{collaborateur.nom}"/>
+
+				</p:column>
+
+				<p:column headerText="Prénom" >
+					<p:outputLabel value="#{collaborateur.prenom}"/>
+				</p:column>
+
+				<p:column headerText="Solde congés" >
+					<p:outputLabel value="#{dashController.getSoldeConge(collaborateur.getId())}"/>
+				</p:column>
+
+			</p:dataTable>
+
+
+		</h:panelGrid>
+
+	</h:form>
+
+</ui:composition>

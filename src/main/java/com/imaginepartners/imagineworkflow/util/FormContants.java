@@ -1,0 +1,43 @@
+package com.imaginepartners.imagineworkflow.util;
+
+public class FormContants {
+	public static String GMAP_FORM_TYPE_NAME = "map";
+	public static String TEXTAREA_FORM_TYPE_NAME = "text";
+	public static String MONEY_FORM_TYPE_NAME = "money";
+	public static String TEXTAREA_FORM_TYPE_MIME_TYPE = "text/plain";
+	public static String FORM_BUILDER_RESPONSE_STATUS_NAME = "status";
+	public static String FORM_BUILDER_RESPONSE_SUCCESS_NAME = "success";
+	public static String FORM_BUILDER_RESPONSE_ERROR_NAME = "error";
+	public static String FORM_BUILDER_FORM_DOESNT_EXIST_MESSAGE = "doesntExists";
+	public static String FORM_BUILDER_FORM_ID_PARAM_NAME = "formId";
+	public static String FORM_BUILDER_NAME_PARAM_NAME = "name";
+	public static String FORM_BUILDER_DESCRIPTION_PARAM_NAME = "description";
+	public static String FORM_BUILDER_JSON_PARAM_NAME = "json";
+	public static String DOUBLE_FORM_TYPE_NAME = "double";
+	public static String FILE_FORM_TYPE_NAME = "file";
+	public static String FILE_INPUT_FORM_TYPE_NAME = "fileInput";
+	public static String FILE_INPUT_FORM_TYPE_NAME_GMAP = "imagezone";
+	public static String MULTI_LINE_FORM_TYPE_NAME = "multiline";
+	public static String LIST_FORM_TYPE_NAME = "list";
+	public static String PICKLIST_FORM_TYPE_NAME = "picklist";
+	public static String DOUBLE_CHECK_LIST_FORM_TYPE_NAME = "doublechecklist";
+	public static String USER_FORM_TYPE_NAME = "user";
+	public static String GROUP_FORM_TYPE_NAME = "group";
+	public static String DYNAMIC_TEXT_FORM_TYPE_NAME = "dynamicText";
+	public static String CONDITIONAL_SELECT_FORM_TYPE_NAME = "conditionalselect";
+	public static String SELECT_ONE_MENU_NAME= "select";
+	public static String ADD_ENTITY_FORM_TYPE_NAME = "addentity";
+	public static String DATE_FORM_TYPE_NAME = "date";
+	public static String TREE_CHECK_LIST_FORM_TYPE_NAME = "treechecklist";
+	public static String REGISTER_FORM_TYPE_NAME = "registre";
+	public static String MULTI_LINE_ENTITY_FORM_TYPE_NAME = "multilineentity";
+	public static String REGISTER_FORM_TYPE_TIMESTAMP_NAME = "TimeStimp";
+	public static String REGISTER_FORM_TYPE_NUM_INST_NAME = "Num_Instance";
+	public static String REGISTER_FORM_TYPE_NUM_TASK_NAME = "Num_Tache";
+	public static String REGISTER_FORM_TYPE_RANDOM_STRING_NAME = "Chaine_Auto";
+	public static String REGISTER_FORM_TYPE_RANDOM_NUM_NAME = "Num_Auto";
+	public static String REGISTER_FORM_TYPE_NUM_AUTO_INC_NAME = "Num_Auto_Increment";
+	public static String PICKLIST_IDENTITY_FORM_TYPE_NAME = "picklistidentity";
+	public static String STATIC_TEXT_FORM_TYPE_NAME = "staticText";
+	public static String MULTI_LINE_ENTITY_CONFIG_FORM_TYPE_NAME = "multilineentityconfig";
+}

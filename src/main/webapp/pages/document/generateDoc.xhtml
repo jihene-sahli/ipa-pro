@@ -1,0 +1,249 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:c="http://java.sun.com/jsp/jstl/core"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:sec="http://www.springframework.org/security/tags"
+				template="../templates/modena/template.xhtml"
+				xmlns:pe="http://primefaces.org/ui/extensions" >
+
+
+
+	<ui:define name="title">#{msg['iw.document.edit']}</ui:define>
+	<ui:define name="subheader">
+		#{msg['iw.document.edit']}
+	</ui:define>
+
+	<ui:define name="content">
+
+		<div class="Container100 Responsive100">
+			<h:form id="docForm">
+
+				<p:spacer height="20"/>
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<div class="Card ShadowEffect">
+
+
+							<p:tabView id="tabV">
+								<p:tab title="Nouveau Document">
+
+									<p:messages autoUpdate="true" />
+									<p:fileUpload value="#{documentController.doc}"
+												  mode="advanced"
+												  dragDropSupport="true"
+												  label="#{msg['iw.document.load']}"
+												  allowTypes="/(\.|\/)(docx)$/"
+												  skinSimple="true"
+												  sizeLimit="1048576"
+												  fileUploadListener="#{documentController.handleFileUpload}" update="docForm"/>
+									<p:commandButton value="convert to pdf"  action="#{documentController.doLoadDoc()}" style="float:right;"/>
+									<p:spacer height="10"/>
+									<pe:documentViewer height="500"  url="http://91.121.181.217:8080/test.pdf" style="margin-top:10px;"/>
+
+									<iframe src="C:/Users/lenovo/Desktop/test.pdf" width="100%" height="600" align="middle"></iframe>
+								</p:tab>
+
+								<p:tab title="Modifier Document" >
+									<h:form id="tabForm">
+										<p:panel  header="Documents existants" style="width: 100%;margin-right: 130px;">
+
+											<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+												<p:outputLabel for="doc" value="Document:" />
+												<p:selectOneRadio id="doc" value="#{documentController.selectedDoc}"  layout="grid" columns="4">
+													<f:selectItems value="#{documentController.docList}" var="doc" itemLabel="#{doc}" itemValue="#{doc}"/>
+													<p:ajax event="change" listener="#{documentController.onDocRadioSelect}"  />
+												</p:selectOneRadio>
+											</h:panelGrid>
+										</p:panel>
+
+										<p:panel  header="VARIABLE FORMULAIRE" style="width: 100%;margin-right: 130px;">
+
+										<h:panelGrid columns="1"  cellpadding="5" >
+
+											<p:dataTable value="#{formController.formList}"
+														 var="form"
+														 id="formList"
+														 paginator="true"
+														 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+														 rowsPerPageTemplate="10,50,100"
+														 draggableRows="true"
+														 selection="#{documentController.selectedForm}"
+														 rowKey="#{form.iwFormId}">
+
+												<p:ajax event="rowSelectRadio" listener="#{documentController.onFormRowSelect}" update="docForm:tabV:tabForm:inputList" />
+												<f:facet name="header">
+													Listes des formulaires
+												</f:facet>
+												<p:column selectionMode="single" style="width:16px;text-align:center"/>
+
+												<p:column  width="15%" headerText="#{msg['iw.formulaire.numero']}" filterBy="#{form.iwFormId}" filterMatchMode="contains">
+													<h:outputText value="#{form.iwFormId}" />
+												</p:column>
+
+												<p:column width="40%" headerText="#{msg['iw.formulaire.name']}" filterBy="#{form.iwName}" filterMatchMode="contains">
+													<h:outputText value="#{form.iwName}" />
+												</p:column>
+
+												<p:column headerText="#{msg['iw.formulaire.datecreation']}" filterBy="#{form.iwCreateTime}" filterMatchMode="contains">
+													<h:outputText value="#{form.iwCreateTime}" >
+														<f:converter binding="#{dateConverter}" />
+														<f:attribute name="format" value="#{navigationController.longDateFormat}"/>
+													</h:outputText>
+												</p:column>
+											</p:dataTable>
+
+											<p:dataTable value="#{documentController.inputList}"
+														 var="input"
+														 id="inputList"
+														 paginator="true"
+														 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+														 rowsPerPageTemplate="10,50,100"
+														 draggableRows="true"
+														 selection="#{documentController.selectedInput}"
+														 rowKey="#{input.id}">
+												<p:ajax event="rowSelectRadio" listener="#{documentController.onInputRowSelect}" update=":docForm:dialogVar" />
+												<f:facet name="header">
+													Variables Formulaires
+												</f:facet>
+												<p:column selectionMode="single" style="width:16px;text-align:center"/>
+
+												<p:column width="30%" headerText="ID " filterBy="#{input.id}" filterMatchMode="contains">
+													<h:outputText value="#{input.id}" />
+												</p:column>
+												<p:column headerText="Label" filterBy="#{input.label}" filterMatchMode="contains">
+													<h:outputText value="#{input.label}" />
+												</p:column>
+
+												<f:facet name="footer">
+													Le nombre totale des variables est #{documentController.inputList.size()}.
+												</f:facet>
+
+											</p:dataTable>
+										</h:panelGrid>
+										</p:panel>
+										<p:panel  header="VARIABLE TEMPLATE" style="width: 100%;margin-right: 130px;">
+											<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+
+												<p:outputLabel for="temp" value="Template : " />
+												<p:selectOneMenu id="temp" value="#{templateController.templateId}" style="width:150px">
+													<p:ajax listener="#{templateController.onTemplateChange}" update="docForm:tabV:tabForm:tabTemp" />
+													<f:selectItem itemLabel="Sélectionnez Template" itemValue="" noSelectionOption="true" />
+													<f:selectItems value="#{templateController.templateList}" var="t" itemValue="#{t.iwFormTemplateId}" itemLabel="#{t.iwName}" />
+												</p:selectOneMenu>
+
+											</h:panelGrid>
+
+
+										<h:panelGrid columns="1"  cellpadding="5" >
+
+											<p:dataTable value="#{templateController.variableTemplateList}"
+														 var="variable"
+														 id="tabTemp"
+														 paginator="true"
+														 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+														 rowsPerPageTemplate="10,50,100"
+														 draggableRows="true"
+														 selection="#{documentController.selectedVariableTemplate}"
+														 rowKey="#{variable.id}">
+												<p:ajax event="rowSelectRadio" listener="#{documentController.onVarTemplateRowSelect}" update=":docForm:dialogVar" />
+												<f:facet name="header">
+													Variables Template
+												</f:facet>
+												<p:column selectionMode="single" style="width:16px;text-align:center"/>
+
+												<p:column width="30%" headerText="ID " filterBy="#{variable.id}" filterMatchMode="contains">
+													<h:outputText value="#{variable.id}" />
+												</p:column>
+												<p:column headerText="Label" filterBy="#{variable.label}" filterMatchMode="contains">
+													<h:outputText value="#{variable.label}" />
+												</p:column>
+
+												<p:column headerText="Description" filterBy="#{variable.description}" filterMatchMode="contains">
+													<h:outputText value="#{variable.description}" />
+												</p:column>
+
+												<f:facet name="footer">
+													Le nombre totale des variables est #{templateController.variableTemplateList.size()}.
+												</f:facet>
+
+											</p:dataTable>
+
+										</h:panelGrid>
+										</p:panel>
+
+										<p:panel  header="VARIABLE PROCESS" style="width: 100%;margin-right: 130px;">
+
+										<h:panelGrid columns="1"  cellpadding="5" >
+
+											<p:dataTable value="#{procController.procDefList}"
+														 var="def"
+														 id="defList"
+														 paginator="true"
+														 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+														 rowsPerPageTemplate="10,50,100"
+														 draggableRows="true"
+														 selection="#{documentController.selectedProcDef}"
+														 rowKey="#{def.id}">
+												<p:ajax event="rowSelectRadio" listener="#{documentController.onDefRowSelect}"  update=":docForm:dialogVar"/>
+												<f:facet name="header">
+													Listes des process definitions
+												</f:facet>
+												<p:column selectionMode="single" style="width:16px;text-align:center"/>
+
+												<p:column width="30%" headerText="ID " filterBy="#{def.id}" filterMatchMode="contains">
+													<h:outputText value="#{def.id}" />
+												</p:column>
+												<p:column headerText="Label" filterBy="#{def.name}" filterMatchMode="contains">
+													<h:outputText value="#{def.name}" />
+												</p:column>
+
+
+												<f:facet name="footer">
+													Le nombre totale des champs est #{procController.procDefList.size()}.
+												</f:facet>
+
+											</p:dataTable>
+
+										</h:panelGrid>
+										</p:panel>
+									</h:form>
+
+								</p:tab>
+
+
+							</p:tabView>
+
+							<p:dialog id="dialogVar" widgetVar="dialogVar" header="Ajouter une Variable" resizable="false" showEffect="clip" hideEffect="clip" width="400" height="200">
+								<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5" id="inputPanel">
+
+									<p:outputLabel for="varList" value="Variables Process:"  rendered="#{not empty documentController.varList}"/>
+									<p:selectOneMenu id="varList" value="#{documentController.selectedVar}" panelStyle="width:180px" rendered="#{not empty documentController.varList}"
+													 effect="fade" var="v" style="width:160px" filter="true" filterMatchMode="startsWith" >
+										<f:selectItems value="#{documentController.varList}" var="variable" itemLabel="#{variable}" itemValue="#{variable}" />
+										<p:ajax event="change" listener="#{documentController.onVarRowSelect}" update="replacer" />
+
+										<p:column>
+											<h:outputText value="#{variable}" />
+										</p:column>
+									</p:selectOneMenu>
+									<p:outputLabel for="toFind" value="Chercher:" />
+									<p:inputText id="toFind" value="#{documentController.toFind}" label="Chercher" placeholder="Veuillez saisir le text à chercher" size="30"/>
+
+									<p:outputLabel for="replacer" value="Remplacer:" />
+									<p:inputText id="replacer" value="#{documentController.replacer}" label="Remplacer" placeholder="Veuillez saisir le text à remplacer" size="30"/>
+									<p:spacer height="10" />
+									<f:facet name="footer" >
+										<p:commandButton value="Submit" action="#{documentController.doAddIdsToDocx()}" oncomplete="PF('dialogVar').hide();"  />
+										<p:commandButton value="Annuler"  >
+											<p:ajax update="dialogVar" resetValues="true" />								</p:commandButton>
+									</f:facet>
+
+								</h:panelGrid>
+							</p:dialog>
+
+
+						</div></div></div>
+			</h:form></div></ui:define></ui:composition>

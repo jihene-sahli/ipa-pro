@@ -1,0 +1,149 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+			 xmlns:beans="http://www.springframework.org/schema/beans"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xmlns:context="http://www.springframework.org/schema/context"
+			 xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+	<!-- Activating spring annotations-->
+	<context:annotation-config/>
+	<!-- Used for the only reason to determin connected users number -->
+	<beans:bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl"/>
+	<!-- Bean to encode passwords -->
+	<beans:bean id="pwdEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+		<beans:constructor-arg name="strength" value="11"/>
+	</beans:bean>
+	<!-- Redirecting user when he have no right to be there -->
+	<beans:bean id="accessDeniedManager" class="org.springframework.security.web.access.AccessDeniedHandlerImpl">
+		<beans:property name="errorPage" value="/pages/accesRefuse.xhtml"/>
+	</beans:bean>
+	<beans:bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
+		<beans:constructor-arg ref="contextSource"/>
+	</beans:bean>
+	<beans:bean id="adAuthenticationProvider"
+				class="org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider">
+		<beans:constructor-arg value="imaginepartners.com"/>
+		<beans:constructor-arg value="ldap://192.168.1.120"/>
+		<beans:property name="userDetailsContextMapper" ref="inetOrgPersonContextMapper"/>
+	</beans:bean>
+	<beans:bean id="inetOrgPersonContextMapper"
+				class="org.springframework.security.ldap.userdetails.InetOrgPersonContextMapper">
+	</beans:bean>
+	<beans:bean id="contextSource"
+				class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
+		<beans:constructor-arg value="ldap://192.168.1.120:389/dc=imaginepartners,dc=com"/>
+		<beans:property name="userDn" value="cn=djamila.ladjimi@imaginepartners.com,dc=imaginepartners,dc=com"/>
+		<beans:property name="password" value="lllpit_2016"/>
+	</beans:bean>
+	<beans:bean id="customUserDetailsContextMapper"
+				class="com.imaginepartners.imagineworkflow.security.authentication.CustomUserDetailsContextMapper"/>
+	<authentication-manager id="inMemoryRescueAuthenticationManager">
+		<authentication-provider>
+			<user-service>
+				<user name="superadmin" password="superadmin" authorities="ROLE_SUPER_ADMIN"/>
+			</user-service>
+		</authentication-provider>
+	</authentication-manager>
+	<!-- ActiveDirectory authenthentication provider -->
+	<beans:bean id="ldapActiveDirectoryAuthenticationProvider"
+				class="org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider">
+		<beans:constructor-arg value="imagineworkflow.com"/>
+		<beans:constructor-arg value="ldap://192.168.1.120"/>
+		<beans:property name="useAuthenticationRequestCredentials" value="true"/>
+		<beans:property name="convertSubErrorCodesToExceptions" value="true"/>
+		<beans:property name="userDetailsContextMapper" ref="customUserDetailsContextMapper"/>
+	</beans:bean>
+	<!-- Authentication in database -->
+	<authentication-manager id="dataSourceAuthenticationManager">
+		<authentication-provider>
+			<jdbc-user-service data-source-ref="dataSource"
+							   users-by-username-query=
+								   "select ID_,PWD_, IW_USER_DETAILS.IW_ACTIVE from ACT_ID_USER,IW_USER_DETAILS where IW_USER_DETAILS.IW_ACT_ID_USER=ACT_ID_USER.ID_ and ACT_ID_USER.ID_=? and IW_TYPE_AUTHENTIFICATION='db'"
+							   authorities-by-username-query=
+								   "select USER_ID_, GROUP_ID_ from ACT_ID_MEMBERSHIP,IW_GROUP_DETAILS where USER_ID_=? and IW_GROUP=GROUP_ID_ and IW_ACTIVE=1 and GROUP_ID_ like 'ROLE%' "/>
+			<password-encoder ref="pwdEncoder"/>
+		</authentication-provider>
+	</authentication-manager>
+	<!-- Creating Beans with declared spring annotations -->
+	<context:component-scan base-package="com.imaginepartners.imagineworkflow.context"/>
+	<context:component-scan base-package="com.imaginepartners.imagineworkflow.controller"/>
+	<context:component-scan base-package="com.imaginepartners.imagineworkflow.converter"/>
+	<context:component-scan base-package="com.imaginepartners.imagineworkflow.repositories"/>
+	<context:component-scan base-package="com.imaginepartners.imagineworkflow.services"/>
+	<!-- Custom authentication providre that decide wich of the previous providers shoud use to authenticate (ldap or database) -->
+	<beans:bean id="imagineworkflowAuthenticationProvider"
+				class="com.imaginepartners.imagineworkflow.security.authentication.ImagineworkflowAuthenticationProvider">
+		<beans:property name="rescueMode" value="false"/>
+	</beans:bean>
+	<authentication-manager id="imagineworkflowAuthenticationManager">
+		<authentication-provider ref="imagineworkflowAuthenticationProvider"/>
+	</authentication-manager>
+	<!-- Doing thing when authentication is successful -->
+	<beans:bean id="successHandler"
+				class="com.imaginepartners.imagineworkflow.security.authentication.AuthenticationSuccessManager">
+	</beans:bean>
+
+	<!-- Injection of Docx4j.propreties -->
+	<beans:bean id="docxProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<beans:property name="location" value="classpath:docx4j.properties" />
+		<beans:property name="ignoreUnresolvablePlaceholders" value="true" />
+
+	</beans:bean>
+	<!-- Access and security configuration -->
+	<http pattern="/editor-app/**" security="none"/>
+	<http pattern="/service/**" security="none"/>
+	<http pattern="/javax.faces.resource/**" security="none"/>
+	<http pattern="/resources/**" security="none"/>
+	<http pattern="/pages/logout.xhtml" security="none"/>
+	<http pattern="/pages/login.xhtml**" security="none"/>
+	<http pattern="/pages/erreur.xhtml**" security="none"/>
+	<http auto-config="true" use-expressions="true" authentication-manager-ref="imagineworkflowAuthenticationManager">
+		<headers>
+			<frame-options policy="SAMEORIGIN"/>
+		</headers>
+		<intercept-url pattern="/j_spring_security_switch_user" access="hasRole('ROLE_SUPER_ADMIN')"/>
+		<intercept-url pattern="/pages/login.xhtml*" access="permitAll()"/>
+		<intercept-url pattern="/pages/login.xhtml*" access="permitAll()"/>
+		<intercept-url pattern="/apps/diagram-viewer/**" access="isAuthenticated()"/>
+		<intercept-url pattern="/apps/**" access="hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')"/>
+		<intercept-url pattern="/pages/avancement/**" access="hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')"/>
+		<intercept-url pattern="/pages/group/**" access="hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')"/>
+		<intercept-url pattern="/pages/hierarchie/**" access="hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')"/>
+		<intercept-url pattern="/pages/tacheAutonome/**" access="isAuthenticated()"/>
+		<intercept-url pattern="/pages/configuration/**" access="hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')"/>
+		<intercept-url pattern="/pages/definition/**" access="hasAnyRole('ROLE_SUPER_ADMIN')"/>
+		<intercept-url pattern="/pages/formulaire/**" access="hasAnyRole('ROLE_SUPER_ADMIN')"/>
+		<intercept-url pattern="/pages/modele/**" access="hasAnyRole('ROLE_SUPER_ADMIN')"/>
+		<intercept-url pattern="/pages/agenda/reservation.xhtml" access="hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')"/>
+		<intercept-url pattern="/pages/fonction/**" access="hasAnyRole('ROLE_SUPER_ADMIN')"/>
+		<intercept-url pattern="/pages/application/**" access="hasAnyRole('ROLE_SUPER_ADMIN')"/>
+		<intercept-url pattern="/pages/utilisateur/**" access="hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')"/>
+		<intercept-url pattern="/pages/droit/**" access="hasAnyRole('ROLE_SUPER_ADMIN')"/>
+		<intercept-url pattern="/pages/licence/**" access="hasAnyRole('ROLE_SUPER_ADMIN')"/>
+		<intercept-url pattern="/pages/cartouche/**" access="hasAnyRole('ROLE_SUPER_ADMIN')"/>
+		<intercept-url pattern="/pages/entite/**" access="hasAnyRole('ROLE_SUPER_ADMIN')"/>
+		<intercept-url pattern="/pages/arbre/**" access="hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')"/>
+		<intercept-url pattern="/pages/telechargement/**" access="hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')"/>
+		<intercept-url pattern="/pages/listes/**" access="hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')"/>
+		<intercept-url pattern="/pages/document/**" access="hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')"/>
+		<intercept-url pattern="/**" access="isAuthenticated()"/>
+		<form-login login-processing-url="/login" username-parameter="username" password-parameter="password"
+					login-page="/pages/login.xhtml" default-target-url="/pages/login.xhtml?success=1"
+					authentication-failure-url="/pages/login.xhtml?error=1"
+					authentication-success-handler-ref="successHandler"/>
+		<csrf disabled="true"/>
+		<access-denied-handler ref="accessDeniedManager"/>
+	</http>
+	<!-- Adding support for view scope-->
+	<beans:bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+		<beans:property name="scopes">
+			<beans:map>
+				<beans:entry key="view">
+					<beans:bean class="com.imaginepartners.imagineworkflow.jsf.ViewScope"/>
+				</beans:entry>
+			</beans:map>
+		</beans:property>
+	</beans:bean>
+</beans:beans>

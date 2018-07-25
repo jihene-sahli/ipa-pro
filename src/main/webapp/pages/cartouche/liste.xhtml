@@ -1,0 +1,104 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:sec="http://www.springframework.org/security/tags"
+                template="../templates/modena/template.xhtml">
+
+
+    <ui:define name="title">#{cartridgeController.colonne?msg['iw.avance.cartouche.configurationcolonne']:msg['iw.avance.cartouche.cartouchegenerale']}</ui:define>
+    <ui:define name="subheader">#{cartridgeController.colonne?msg['iw.avance.cartouche.configurationcolonne']:msg['iw.avance.cartouche.cartouchegenerale']}</ui:define>
+    <ui:define name="content">
+
+        <div class="Container100 Responsive100">
+            <div class="Container100">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect">
+                        <h:form id="formUp">
+                            <p:panelGrid columns="2" style="width: 100%">
+
+                                <p:column>
+                                    <p:outputLabel value="#{msg['iw.avance.cartouche.choisissezinstance']} :" />
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneMenu converter="#{processDefinitionByKeyConverter}" value="#{cartridgeController.slectedProcDef}">
+
+                                        <f:selectItem itemLabel="Selectionner" noSelectionOption="true"  />
+                                        <f:selectItems value="#{cartridgeController.lastProcDefList}" var="procDef" itemLabel="#{procDef.name}"  itemValue="#{procDef}" />
+                                        <f:attribute name="converterItemsList" value="#{cartridgeController.lastProcDefList}" />
+                                        <p:ajax event="change" update=":formUp"  listener="#{cartridgeController.displayFormlistMenu}"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+
+                                <!--2-->
+                                <p:column rendered="#{cartridgeController.displayFormList}" >
+                                    <p:outputLabel value="#{msg['iw.avance.cartouche.choisissezformulaire']}" />
+                                </p:column>
+                                <p:column rendered="#{cartridgeController.displayFormList}">
+                                    <p:pickList value="#{cartridgeController.forms}"
+                                                var="form"
+                                                itemLabel="formId[#{form.iwFormId}]  formLabel[#{form.iwName}]"
+                                                itemValue="#{form.iwFormId}"
+                                                converter="#{formConverter}"
+                                                responsive="true">
+
+                                        <p:ajax event="transfer" listener="#{cartridgeController.onTransfer}" update=":formUp" />
+                                    </p:pickList>
+                                </p:column>
+
+                                <p:column  rendered="#{cartridgeController.displayInputList}">
+									<p:outputLabel value="#{cartridgeController.colonne?msg['iw.avance.cartouche.ajouterchampscolonne']:msg['iw.avance.cartouche.ajouterchampscartouche']} :"/>
+                                </p:column>
+                                <p:column rendered="#{cartridgeController.displayInputList}">
+                                    <p:pickList value="#{cartridgeController.iwVariableProcessList}"
+                                                var="varProcess"
+                                                itemLabel="#{cartridgeController.getLabel(varProcess)} ]"
+                                                itemValue="#{varProcess}"
+                                                converter="#{variableProcessConverter}"
+                                                responsive="true">
+                                        <p:ajax event="transfer"  update="columnSizesId"/>
+                                        <f:attribute name="converterItemsList" value="#{cartridgeController.variableProcess}" />
+                                    </p:pickList>
+                                </p:column>
+								<!--4-->
+								<p:column  rendered="#{cartridgeController.displayInputList and cartridgeController.colonne}">
+									<p:outputLabel value="#{msg['iw.avance.cartouche.taillesdescolonnes']} :"/>
+								</p:column>
+								<p:column   rendered="#{cartridgeController.displayInputList and cartridgeController.colonne}">
+
+                               <p:dataGrid id="columnSizesId" value="#{cartridgeController.iwVariableProcessList.getTarget()}" var="column" columns="1" >
+								     <p:panelGrid columns="2" layout="grid">
+								       <h:outputLabel   value="#{cartridgeController.getLabel(column)}:" />
+ 								       <p:spinner value="#{column.iwColumnSize}" />
+									 </p:panelGrid>
+ 							    </p:dataGrid>
+								</p:column>
+
+								<f:facet name="footer">
+                                    <p:commandButton action="#{cartridgeController.saveVariableProcessList()}" icon="fa fa-check" value="Sauvegarder"  >
+                                        <p:confirm   header="#{msg['iw.confirmation.titre']}" message="#{msg['iw.message.voulezvouscontinuer']}" icon="fa fa-warning" />
+                                    </p:commandButton>
+                                </f:facet>
+
+                            </p:panelGrid>
+
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ui:remove>
+            <div class="Container20 Responsive100">
+                <div class="Container100">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect HeiAutoOnMobile">
+                            <ui:include src="../templates/processList.xhtml" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ui:remove>
+    </ui:define>
+</ui:composition>

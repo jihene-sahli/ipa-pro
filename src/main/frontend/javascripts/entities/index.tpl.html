@@ -1,0 +1,52 @@
+<div class="ui-widget BigTopic">
+	<div class="ui-panelgrid-content ui-widget-content ui-grid ui-grid-responsive">
+		<div class="ui-panelgrid-cell ui-grid-col-4">
+			<input type="text" ng-model="keywords" class="ui-autocomplete ui-inputfield ui-widget ui-state-default ui-corner-all" placeholder="Rechercher un enregistrement">
+		</div>
+		<div class="ui-panelgrid-cell ui-grid-col-8 text-right">
+			<button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" ng-click="create()">
+				<span class="ui-button-text ui-c">Ajouter</span>
+			</button>
+		</div>
+	</div>
+</div>
+<div class="ui-datatable ui-widget ui-datatable-reflow ui-datatable-items">
+	<div class="ui-datatable-header ui-widget-header ui-corner-top">
+		Gestion des <strong>{{ schema.label }}</strong> ({{ items.length }})<br>
+		<small ng-show="schema.description">{{ ::schema.description }}</small>
+	</div>
+	<div class="ui-datatable-tablewrapper">
+		<table role="grid">
+			<thead>
+				<tr role="row">
+					<th class="ui-state-default" role="columnheader" ng-repeat="field in schema.fields | columns: schema.columns as filteredColumns" ng-class="{'primary-key': field.primaryKey}">
+						<span class="ui-column-title" ng-bind="field.primaryKey ? '#' : field.label"></span>
+					</th>
+					<th class="entity-actions">
+						<span class="ui-column-title">Actions</span>
+					</th>
+				</tr>
+			</thead>
+			<tbody class="ui-datatable-data ui-widget-content">
+				<tr ng-repeat="item in items | filter: keywords" ng-show="items.length > 0" class="ui-widget-content" ng-class="{'ui-datatable-even': $even, 'ui-datatable-odd': $odd}" role="row">
+					<td ng-repeat="field in filteredColumns" ng-class="{'primary-key': field.primaryKey}" role="gridcell" ng-switch="field.type">
+						<span ng-switch-when="association">
+							<many-to-one></many-to-one>
+						</span>
+						<span ng-switch-default>
+							{{ ::item[field.name] }}
+						</span>
+					</td>
+					<td>
+						<a ng-click="delete(item)" href>Supprimer</a> | <a ui-sref="workflow.entities.entity.edit({entity: schema.name, id: item[schema.primaryKey]})">Modifier</a>
+					</td>
+				</tr>
+				<tr ng-hide="items.length">
+					<td colspan="{{ filteredColumns.length + 1 }}">
+						<p class="text-center">Aucun enregistrement correspond à <strong>{{ ::schema.name }}</strong> a été trouvé</p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

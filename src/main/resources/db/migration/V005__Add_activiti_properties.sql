@@ -1,0 +1,5 @@
+LOCK TABLES `ACT_GE_PROPERTY` WRITE;
+INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('next.dbid','1',1);
+INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('schema.history','create(5.20.0.1)',1);
+INSERT INTO `ACT_GE_PROPERTY` (`NAME_`, `VALUE_`, `REV_`) VALUES ('schema.version','5.20.0.1',1);
+UNLOCK TABLES;

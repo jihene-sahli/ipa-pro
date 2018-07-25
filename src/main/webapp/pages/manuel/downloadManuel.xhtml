@@ -1,0 +1,66 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core"
+				template="../templates/modena/template.xhtml"
+				xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+				xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+	<f:metadata>
+
+	</f:metadata>
+	<ui:define name="content">
+		<div class="Container100 Responsive100">
+			<div class="ContainerIndent">
+				<div class="iw2-center-block">
+					<p:panel styleClass="iw2-center-block iw2-width-80">
+
+						<!--The actual form-->
+						<h:form enctype="multipart/form-data">
+							<p:messages showDetail="true"/>
+							<div class="Card ShadowEffect ui-fluid">
+								<!--<h:outputLabel styleClass="CardTopic" name="subheader" rendered="#{empty userController.userId}" value="#{msg['iw.utilisateur.ajoututilisateur']}" />-->
+								<!--<div class="SeparatorFull"></div>-->
+
+								<div class="ui-panelgrid ui-widget ui-panelgrid-blank" style="border:0px !important; background:none;">
+									<div class="ui-panelgrid-content ui-widget-content ui-grid ui-grid-responsive">
+
+										<!--Upload a license-->
+										<div class="ui-grid-row" style="margin-bottom: 20px !important;">
+											<div class="iw2-center-block" style="text-align: center !important;">
+												<p:outputLabel style="font-size: medium !important; margin: 5px;" value="#{msg['iw.manuel.utilistation.download']}" />
+
+											</div>
+										</div>
+
+
+										<!--Validation-->
+										<div class="ui-grid-row" style="margin-top: 30px !important;">
+											<div class="ui-grid-col-3 iw2-center-block">
+												<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+													<p:graphicImage name="/demo/images/ajaxloadingbar.gif" />
+												</p:dialog>
+
+												<h:form>
+													<p:commandButton value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">
+														<p:fileDownload value="#{manualController.download()}" />
+													</p:commandButton>
+
+												</h:form>
+
+											</div>
+										</div>
+
+									</div>
+								</div>
+							</div>
+						</h:form>
+					</p:panel>
+				</div>
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>

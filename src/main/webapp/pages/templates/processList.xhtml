@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view locale="#{navigationController.currentLocale}" >
+    <h:form id="processListForm">
+        <p:link outcome="taskList">
+            <div class="Container100 Responsive">
+                <div class="ContainerIndent">
+                    <div class="Card ShadowEffect TurquoiseBack White TexAlCenter HoverEffect">
+                        <div class="EmptyBox5"></div>
+                        <i class="icon-briefcase Fs40"></i>
+                        <div class="EmptyBox5"></div>
+                        <div class="FontRobotoLight Fs9 White DispBlock ClearBoth">
+                            <p:outputLabel value="#{msg['iw.tache.toutprocess']}" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </p:link>
+        <ui:repeat id="processListPanel"  value="#{navigationController.lastProcDefList}" var="procDef">
+            <p:link  outcome="taskList">
+                <f:param name="process" value="#{procDef.key}" />
+                <div class="Container100 Responsive">
+                    <div class="ContainerIndent">
+                        <div class="Card ShadowEffect OrangeBack SoftOrange TexAlCenter HoverEffect">
+                            <div class="EmptyBox5"></div>
+                            <i class="icon-sun Fs40"></i>
+                            <div class="EmptyBox5"></div>
+                            <div class="FontRobotoLight Fs9 SoftOrange DispBlock ClearBoth">
+                                <p:outputLabel value="#{procDef.name}" />
+                                <p:outputLabel rendered="#{empty procDef.name}" value="#{procDef.id}" />z
+                            </div>
+                            <ui:remove>
+                                <div class="Separator"></div>
+
+                                <p:commandButton styleClass="TurquoiseBack" value="#{msg['iw.button.ajouter']}" icon="fa fa-plus" onclick="PF('procInstNameDialog').show();" ajax="true" />
+                            </ui:remove>
+                        </div>
+                    </div>
+                </div>
+            </p:link>
+        </ui:repeat>
+
+    </h:form>
+    </f:view>
+</html>
+

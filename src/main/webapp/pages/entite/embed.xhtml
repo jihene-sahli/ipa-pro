@@ -1,0 +1,17 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				template="../templates/modena/template.xhtml">
+	<ui:define name="head">
+		<h:outputStylesheet name="css/application.css" />
+		<h:outputScript name="javascripts/application.js" />
+		<base href="#{request.requestURL.substring(0, request.requestURL.length() - request.requestURI.length())}#{request.contextPath}/" />
+	</ui:define>
+	<ui:define name="title">#{msg['iw.entity.manager.title']}</ui:define>
+	<ui:define name="subheader">#{msg['iw.entity.manager.title']}</ui:define>
+	<ui:define name="content">
+		<div ng-app="workflow">
+			<div ui-view=""></div>
+		</div>
+	</ui:define>
+</ui:composition>

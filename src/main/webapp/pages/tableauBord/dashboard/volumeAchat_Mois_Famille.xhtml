@@ -1,0 +1,130 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:p="http://primefaces.org/ui"
+				xmlns:f="http://java.sun.com/jsf/core">
+
+
+				<h:form id="dash2" >
+
+					<p:panelGrid columns="2" class="Wid100" id="Parent">
+
+
+						<p:panel >
+							<p:panelGrid columns="2" class="Wid100" id="aa">
+								<p:outputLabel for="team" value="Séléctionnez une Année:"/>
+								<p:selectOneMenu id="team" value="#{dashAchatsController.selectedYear}"
+												 panelStyle="width:180px"
+												 effect="fade" var="t" style="width:160px" filter="true"
+												 filterMatchMode="startsWith">
+									<p:ajax event="change"
+											oncomplete="achatMoisFuntion()"
+											update="dash2"/>
+									<f:selectItems value="#{dashAchatsController.listYears}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panel>
+								<div id="buttons1"></div>
+								<br/><br/>
+								<div id="achat_mois">
+									<div id="chart_achat_mois" style="width: 100%; height: 250px;"></div>
+								</div>
+							</p:panel>
+						</p:panel>
+
+						<p:panel>
+							<div id="buttons2"></div>
+							<br/><br/>
+							<div id="achat_famille">
+								<div id="chart_achat_famille" style="    width: 300px; height: 250px;"></div>
+							</div>
+						</p:panel>
+
+					</p:panelGrid>
+
+
+
+
+					<script type="text/javascript"> /*For Mois / Annee */
+function  achatMoisFuntion() {
+
+	function AddNamespaceHandlerAchatMois() {
+		var svg = jQuery('#chart_achat_mois svg');
+		svg.attr("xmlns", "http://www.w3.org/2000/svg");
+		svg.css('overflow', 'visible');
+	}
+
+	var click = "return xepOnline.Formatter.Format('achat_mois', {render:'download', srctype:'svg'})";
+	jQuery('#buttons1').append('<button onclick="' + click + '">PDF</button>');
+	google.charts.load('current', {packages: ['corechart', 'bar']});
+	google.charts.setOnLoadCallback(drawAchat_mois);
+
+	function drawAchat_mois() {
+		var mydata = JSON.parse('#{dashAchatsController.getNbrAchatSelectedYear()}');
+		console.log("chart_achat_mois************: " + JSON.stringify(mydata));
+		var dataMois = new google.visualization.DataTable();
+		dataMois.addColumn('number', 'year');
+		dataMois.addColumn('number', 'Achats');
+		dataMois.addColumn({type: 'string', role: 'annotation'});
+		dataMois.addRows([[mydata.year, mydata.nbrAchats, mydata.nbrAchats + " Achat(s)"]]);
+
+
+		var optionsMinMax = {
+			title: 'Nombre des Achats par mois',
+			bar: {groupWidth: "30%"},
+			legend: {position: "none"},
+			hAxis: {
+				title: 'Année',
+				ticks: [mydata.year]
+			},
+			vAxis: {
+				title: 'NB Achats'
+			}
+		};
+
+		var achat_moisChart = new google.visualization.ColumnChart(document.getElementById('chart_achat_mois'));
+		google.visualization.events.addListener(achat_moisChart, 'ready', AddNamespaceHandlerAchatMois);
+		achat_moisChart.draw(dataMois, optionsMinMax);
+	}
+}
+					achatMoisFuntion();
+					</script>
+
+					<script type="text/javascript">/*For Achats / Famille */
+
+					function AddNamespaceHandlerFamilleAchat() {
+						var svg = jQuery('#chart_achat_famille svg');
+						svg.attr("xmlns", "http://www.w3.org/2000/svg");
+						svg.css('overflow', 'visible');
+					}
+
+					var click = "return xepOnline.Formatter.Format('chart_achat_famille', {render:'download', srctype:'svg'})";
+					jQuery('#buttons2').append('<button onclick="' + click + '">PDF</button>');
+
+					google.charts.load('current', {packages: ['corechart']});
+					google.charts.setOnLoadCallback(drawAchat_famille);
+
+					function drawAchat_famille() {
+						var mydata = JSON.parse('#{dashAchatsController.getNbrAchatFamille()}');
+						console.log('mydata => '+JSON.stringify(mydata));
+						var data = new google.visualization.DataTable();
+						data.addColumn('string', 'Famille');
+						data.addColumn('number', 'Nbr Achats');
+
+						for (var famille of mydata) {
+						data.addRows([[famille.id,famille.value]]);
+						}
+
+						var options = {
+							title: 'Achats par Famille',
+							pieHole: 0.2
+						};
+						var achatFamilleChart = new google.visualization.PieChart(document.getElementById('achat_famille'));
+						google.visualization.events.addListener(achatFamilleChart, 'ready', AddNamespaceHandlerFamilleAchat);
+						achatFamilleChart.draw(data, options);
+
+					}
+					</script>
+				</h:form>
+</ui:composition>
